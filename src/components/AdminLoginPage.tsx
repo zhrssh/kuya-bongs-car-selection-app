@@ -1,5 +1,15 @@
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import { Lock, Key, Eye, EyeOff, AlertCircle } from 'lucide-react';
+
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_FLASK_APP_API_URL: string;
+  }
+
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
 
 interface AdminLoginPageProps {
   onLoginSuccess: () => void;
@@ -12,23 +22,33 @@ export default function AdminLoginPage({ onLoginSuccess }: AdminLoginPageProps) 
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e: FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
 
-    // Simulate database lookup delay
-    setTimeout(() => {
-      const normalizedUser = username.trim().toLowerCase();
-      const normalizedPass = password.trim();
+    const normalizedUser = username.trim().toLowerCase();
+    const normalizedPass = password.trim();
 
-      if (normalizedUser === 'admin' && normalizedPass === 'admin') {
+    // Send POST request to Flask server
+    try {
+      const response = await fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: normalizedUser, password: normalizedPass }),
+      });
+
+      if (response.ok) {
         onLoginSuccess();
       } else {
-        setError('Incorrect security credentials. Please double-check your username and secret passcode.');
-        setIsSubmitting(false);
+        const data = await response.json();
+        setError(data.message || 'Login failed. Please check your credentials.');
       }
-    }, 600);
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again later.');
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -127,12 +147,12 @@ export default function AdminLoginPage({ onLoginSuccess }: AdminLoginPageProps) 
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                <span>Validating Signature...</span>
+                <span>Logging In...</span>
               </>
             ) : (
               <>
                 <Key className="w-3.5 h-3.5 text-blue-105" />
-                <span>Secure Administration Login</span>
+                <span>Login</span>
               </>
             )}
           </button>

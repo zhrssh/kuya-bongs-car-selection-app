@@ -43,13 +43,7 @@ export default function App() {
   }, []);
   
   // Administrator state
-  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('autodrive_is_admin') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // Real-time Database state
   const [cars, setCars] = useState<Car[]>(INITIAL_CARS);
@@ -84,25 +78,16 @@ export default function App() {
       userLocation: loc
     };
     setLogs(prev => [newLog, ...prev]);
+    // TODO: Add logs to db
   }, []);
 
   const handleLoginSuccess = useCallback(() => {
     setIsAdmin(true);
-    try {
-      localStorage.setItem('autodrive_is_admin', 'true');
-    } catch (e) {
-      console.error(e);
-    }
     addLog('update', 'System Auth', 'User authenticated successfully as System Administrator', 'Secure Terminal');
   }, [addLog]);
 
   const handleLogout = useCallback(() => {
     setIsAdmin(false);
-    try {
-      localStorage.removeItem('autodrive_is_admin');
-    } catch (e) {
-      console.error(e);
-    }
     addLog('update', 'System Auth', 'Administrator session terminated (logged out)', 'Secure Terminal');
   }, [addLog]);
 
