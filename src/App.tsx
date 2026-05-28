@@ -141,7 +141,7 @@ export default function App() {
 
   // 5. Compare Handling
   const handleToggleCompare = (car: Car) => {
-    setComparingCars((prev) => {
+    setComparingCars((prev: Car[]) => {
       const exists = prev.some((c) => c.id === car.id);
       if (exists) {
         return prev.filter((c) => c.id !== car.id);
@@ -154,7 +154,7 @@ export default function App() {
   };
 
   const handleRemoveFromCompare = (car: Car) => {
-    setComparingCars((prev) => prev.filter((c) => c.id !== car.id));
+    setComparingCars((prev: Car[]) => prev.filter((c) => c.id !== car.id));
   };
 
   const handleClearCompare = () => {
