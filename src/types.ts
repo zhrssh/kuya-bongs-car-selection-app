@@ -3,17 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export interface CarHistory {
-  owners: number;
-  accidents: number;
-  serviceHistory: string;
-}
-
 export interface SellerContact {
   name: string;
   phone: string;
   email: string;
-  rating: number;
   location: string;
 }
 
@@ -26,7 +19,7 @@ export interface Car {
   mileage: number;
   fuelType: 'Gasoline' | 'Electric' | 'Hybrid' | 'Diesel';
   transmission: 'Automatic' | 'Manual';
-  bodyType: 'SUV' | 'Sedan' | 'Coupe' | 'Truck' | 'Hatchback' | 'Convertible';
+  bodyType: 'Sedan' | 'SUV' | 'Truck' | 'Hatchback' | 'Coupe' | 'Convertible' | 'Van' | 'Wagon';
   exteriorColor: string;
   interiorColor: string;
   engine: string;
@@ -35,7 +28,6 @@ export interface Car {
   description: string;
   imageUrl: string;
   condition: 'Excellent' | 'Very Good' | 'Good';
-  history: CarHistory;
   seller: SellerContact;
 }
 

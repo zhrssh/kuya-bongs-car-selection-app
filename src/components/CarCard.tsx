@@ -112,12 +112,6 @@ export const CarCard: React.FC<CarCardProps> = ({
                 Recent
               </span>
             )}
-            {car.history.owners === 1 && (
-              <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider bg-slate-900/80 text-white font-bold px-2 py-1 rounded-full backdrop-blur-xs">
-                <ShieldCheck className="h-2.5 w-2.5 text-emerald-400" />
-                1 Owner
-              </span>
-            )}
           </div>
         </div>
       </div>

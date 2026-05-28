@@ -13,8 +13,6 @@ import {
   Layers,
   Fuel,
   Activity,
-  History,
-  ShieldCheck,
   User,
   Star,
   MapPin,
@@ -156,8 +154,8 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({ car, onClose }) 
               </div>
             </div>
 
-            {/* Vehicle History Check */}
-            <div className="border border-emerald-100 bg-emerald-50/30 rounded-xl p-4 flex flex-col gap-3">
+            {/* Vehicle History Check --REMOVED */}
+            {/* <div className="border border-emerald-100 bg-emerald-50/30 rounded-xl p-4 flex flex-col gap-3">
               <h4 className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider leading-none">
                 <ShieldCheck className="h-4.5 w-4.5 text-emerald-600" />
                 Verified Car History
@@ -176,7 +174,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({ car, onClose }) 
                   <span className="font-normal italic text-slate-700">{car.history.serviceHistory}</span>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
             {/* Description */}
             <div className="flex flex-col gap-2">
@@ -228,10 +226,6 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({ car, onClose }) 
                   <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium mt-1">
                     <MapPin className="h-3.5 w-3.5 text-slate-400" />
                     {car.seller.location}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-amber-500 font-bold mt-1">
-                    <Star className="h-3.5 w-3.5 fill-current" />
-                    {car.seller.rating} / 5.0 Rating
                   </div>
                 </div>
               </div>
