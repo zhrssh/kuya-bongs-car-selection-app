@@ -14,7 +14,7 @@ bp = Blueprint("admin", __name__, url_prefix="/admin")
 def auth_status():
     """Check if the user is authenticated."""
     if current_user.is_authenticated:
-        return {"authenticated": True, "username": current_user["username"]}, 200
+        return {"authenticated": True, "username": current_user.username}, 200
     else:
         return {"authenticated": False}, 200
 
