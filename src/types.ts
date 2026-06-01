@@ -19,9 +19,9 @@ export interface Car {
   year: number;
   price: number;
   mileage: number;
-  fuelType: 'Gasoline' | 'Electric' | 'Hybrid' | 'Diesel';
-  transmission: 'Automatic' | 'Manual';
-  bodyType: 'SUV' | 'Sedan' | 'Coupe' | 'Truck' | 'Hatchback' | 'Convertible';
+  fuelType: "Gasoline" | "Electric" | "Hybrid" | "Diesel";
+  transmission: "Automatic" | "Manual";
+  bodyType: "SUV" | "Sedan" | "Coupe" | "Truck" | "Hatchback" | "Convertible";
   exteriorColor: string;
   interiorColor: string;
   engine: string;
@@ -29,8 +29,9 @@ export interface Car {
   features: string[];
   description: string;
   imageUrl: string;
-  condition: 'Excellent' | 'Very Good' | 'Good';
-  status?: 'available' | 'sold' | 'archived';
+  images?: string[];
+  condition: "Excellent" | "Very Good" | "Good";
+  status?: "available" | "sold" | "archived";
   history: CarHistory;
   seller: SellerContact;
 }
@@ -49,12 +50,18 @@ export interface FilterState {
   condition: string;
 }
 
-export type SortKey = 'price-asc' | 'price-desc' | 'year-desc' | 'year-asc' | 'mileage-asc' | 'relevance';
+export type SortKey =
+  | "price-asc"
+  | "price-desc"
+  | "year-desc"
+  | "year-asc"
+  | "mileage-asc"
+  | "relevance";
 
 export interface ActivityLog {
   id: string;
   timestamp: string;
-  type: 'view' | 'enquiry' | 'search' | 'create' | 'update' | 'delete';
+  type: "view" | "enquiry" | "search" | "create" | "update" | "delete";
   carId?: string;
   carName: string;
   message: string;
