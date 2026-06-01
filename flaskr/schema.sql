@@ -5,7 +5,10 @@ DROP TABLE IF EXISTS cars;
 CREATE TABLE user (
     id TEXT PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    is_authenticated BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL DEFAULT FALSE,
+    is_anonymous BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 /*

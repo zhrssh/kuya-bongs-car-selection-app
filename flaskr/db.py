@@ -1,58 +1,61 @@
-import sqlite3
-from datetime import datetime
-
 import click
-from flask import current_app, g
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+
+from flask_login import UserMixin
+
 
 import os
 import uuid
 from werkzeug.security import generate_password_hash
 
-def get_db():
-    """Connect to the configured database. The connection is unique for each request and will be reused if this is called again."""
-    if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
-    
-    return g.db
 
-def close_db(e=None):
-    """Close the database connection."""
-    db = g.pop('db', None)
-    
-    if db is not None:
-        db.close()
-        
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
+
+
+class User(db.Model, UserMixin):
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(120), nullable=False)
+
+
+### Database initialization and CLI command
 def init_db():
     """Clear existing data and create new tables."""
-    db = get_db()
-    
-    # check if there is admin user set in env
-    if os.getenv('APP_ADMIN_USERNAME') is None or os.getenv('APP_ADMIN_PASSWORD') is None:
-        raise Exception('Admin username and password must be set in environment variables.')
 
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
-        
-    # insert admin user
-    db.execute(
-        'INSERT INTO user (id, username, password) VALUES (?, ?, ?)',
-        (str(uuid.uuid4()), os.environ['APP_ADMIN_USERNAME'], generate_password_hash(os.environ['APP_ADMIN_PASSWORD']))
-    )
-    db.commit()
-        
-@click.command('init-db')
+    # check if there is admin user set in env
+    if (
+        os.getenv("APP_ADMIN_USERNAME") is None
+        or os.getenv("APP_ADMIN_PASSWORD") is None
+    ):
+        raise Exception(
+            "Admin username and password must be set in environment variables."
+        )
+
+    # create initial user
+    admin_username = str(os.getenv("APP_ADMIN_USERNAME"))
+    admin_password = str(os.getenv("APP_ADMIN_PASSWORD"))
+
+    # Check if admin user already exists
+    existing_admin = User.query.filter_by(username=admin_username).first()
+    if not existing_admin:
+        new_admin = User()
+        new_admin.id = str(uuid.uuid4())
+        new_admin.username = admin_username
+        new_admin.password = generate_password_hash(admin_password)
+
+        db.session.add(new_admin)
+        db.session.commit()
+
+
+@click.command("init-db")
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database.')
-    
-sqlite3.register_converter('timestamp', lambda v: datetime.fromisoformat(v.decode('utf-8')))
-
-def init_app(app):
-    """Register database functions with the Flask app. This is called by the application factory."""
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+    click.echo("Initialized the database.")

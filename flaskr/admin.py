@@ -1,25 +1,27 @@
 import functools
 
+from .db import User
+
 from flask import Blueprint, flash, g, redirect, request, session, url_for
+from flask_login import login_user, logout_user, current_user, login_required
+
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.db import get_db
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 
-@bp.before_app_request
-def load_logged_in_user():
-    user_id = session.get("user_id")
-    if user_id is None:
-        g.user = None
+@bp.route("/auth/status", methods=["GET"])
+def auth_status():
+    """Check if the user is authenticated."""
+    if current_user.is_authenticated:
+        return {"authenticated": True, "username": current_user["username"]}, 200
     else:
-        g.user = (
-            get_db().execute("SELECT * FROM user WHERE id = ?", (user_id,)).fetchone()
-        )
+        return {"authenticated": False}, 200
 
 
 @bp.route("/login", methods=["POST"])
 def login():
+    """Log in."""
     data = request.get_json()
     username = data["username"]
     password = data["password"]
@@ -28,17 +30,14 @@ def login():
     username = username.strip().lower()
     password = password.strip()
 
-    db = get_db()
     error = None
 
-    user = db.execute("SELECT * FROM user WHERE username = ?", (username,)).fetchone()
-
-    if user is None or not check_password_hash(user["password"], password):
+    user = User.query.filter_by(username=username).first()
+    if user is None or not check_password_hash(user.password, password):
         error = "Incorrect username or password."
 
     if error is None:
-        session.clear()
-        session["user_id"] = user["id"]
+        login_user(user)
         return {"message": "Login successful."}, 200
 
     return {"error": error}, 401
@@ -46,17 +45,6 @@ def login():
 
 @bp.route("/logout", methods=["POST"])
 def logout():
-    session.clear()
+    """Log out the current user."""
+    logout_user()
     return {"message": "Logout successful."}, 200
-
-
-def login_required(route):
-    """Route decorator that requires login."""
-
-    @functools.wraps(route)
-    def wrapped_route(**kwargs):
-        if g.user is None:
-            return {"error": "Unauthorized."}, 401
-        return route(**kwargs)
-
-    return wrapped_route
