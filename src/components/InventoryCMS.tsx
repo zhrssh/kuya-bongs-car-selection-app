@@ -1819,7 +1819,7 @@ export default function InventoryCMS({
                   />
                 </div>
                 {/* Media URL / Upload Image section */}
-                <div className="space-y-3 border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                <div className="space-y-3 border border-slate-200 rounded-xl p-4 bg-slate-50/50 col-span-4">
                   <div className="flex justify-between items-center">
                     <label className="text-xs font-semibold text-zinc-700 block">
                       Vehicle Media Image Gallery *
