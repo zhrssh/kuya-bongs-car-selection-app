@@ -108,7 +108,7 @@ export default function App() {
 
   // On app load, check if user is already authenticated as admin
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/auth/status`, {
+    fetch(`https://server.docker.localhost/admin/auth/status`, {
       method: "GET",
       credentials: "include",
     })
@@ -144,7 +144,7 @@ export default function App() {
 
   // On logout, clear admin state on both client and server and log the event
   const handleLogout = useCallback(() => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/logout`, {
+    fetch(`https://server.docker.localhost/admin/logout`, {
       method: "POST",
       credentials: "include",
     })

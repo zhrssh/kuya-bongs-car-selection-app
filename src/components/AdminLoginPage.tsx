@@ -35,7 +35,7 @@ export default function AdminLoginPage({
     // Send POST request to Flask server
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_FLASK_APP_API_URL}/admin/login`,
+        `https://server.docker.localhost/admin/login`, // ! Changed to hardcoded url
         {
           credentials: "include",
           method: "POST",
