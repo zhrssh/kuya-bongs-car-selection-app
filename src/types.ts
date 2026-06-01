@@ -17,9 +17,17 @@ export interface Car {
   year: number;
   price: number;
   mileage: number;
-  fuelType: 'Gasoline' | 'Electric' | 'Hybrid' | 'Diesel';
-  transmission: 'Automatic' | 'Manual';
-  bodyType: 'Sedan' | 'SUV' | 'Truck' | 'Hatchback' | 'Coupe' | 'Convertible' | 'Van' | 'Wagon';
+  fuelType: "Gasoline" | "Electric" | "Hybrid" | "Diesel";
+  transmission: "Automatic" | "Manual";
+  bodyType:
+    | "Sedan"
+    | "SUV"
+    | "Truck"
+    | "Hatchback"
+    | "Coupe"
+    | "Convertible"
+    | "Van"
+    | "Wagon";
   exteriorColor: string;
   interiorColor: string;
   engine: string;
@@ -27,7 +35,8 @@ export interface Car {
   features: string[];
   description: string;
   imageUrl: string;
-  condition: 'Excellent' | 'Very Good' | 'Good';
+  images?: string[];
+  condition: "Excellent" | "Very Good" | "Good";
   seller: SellerContact;
 }
 
@@ -45,4 +54,10 @@ export interface FilterState {
   condition: string;
 }
 
-export type SortKey = 'price-asc' | 'price-desc' | 'year-desc' | 'year-asc' | 'mileage-asc' | 'relevance';
+export type SortKey =
+  | "price-asc"
+  | "price-desc"
+  | "year-desc"
+  | "year-asc"
+  | "mileage-asc"
+  | "relevance";
