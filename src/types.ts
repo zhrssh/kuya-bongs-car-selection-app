@@ -30,6 +30,7 @@ export interface Car {
   features: string[];
   description: string;
   imageUrl: string;
+  images?: string[];
   condition: "Excellent" | "Very Good" | "Good";
   status?: "available" | "sold" | "archived";
   seller: SellerContact;
