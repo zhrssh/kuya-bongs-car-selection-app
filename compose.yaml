@@ -69,6 +69,9 @@ services:
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls=true"
       - "traefik.service.web.loadbalancer.server.port=80"
+    depends_on:
+      - server
+      - traefik
 
   admin:
     image: kbcs-admin:latest
@@ -83,6 +86,9 @@ services:
       - "traefik.http.routers.admin.entrypoints=websecure"
       - "traefik.http.routers.admin.tls=true"
       - "traefik.service.admin.loadbalancer.server.port=80"
+    depends_on:
+      - server
+      - traefik
 
   server:
     image: kbcs-server:latest
@@ -97,6 +103,8 @@ services:
       - "traefik.http.routers.server.entrypoints=websecure"
       - "traefik.http.routers.server.tls=true"
       - "traefik.service.server.loadbalancer.server.port=5000"
+    depends_on:
+      - traefik
 
 networks:
   proxy:
