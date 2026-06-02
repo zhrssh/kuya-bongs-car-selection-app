@@ -1,4 +1,4 @@
-# Kuya Bong's Used Car Marketplace
+# Kuya Bong's Car Selection
 
 A simple marketplace for browsing, filtering, and comparing pre-owned vehicles. The app showcases a catalog of used cars with detailed listing pages, seller contact information, search and filter controls, and a comparison tool for up to three vehicles.
 
