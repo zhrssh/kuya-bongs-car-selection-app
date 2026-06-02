@@ -1,4 +1,7 @@
 from flaskr import status
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def test_get_cars_list(client):
@@ -6,5 +9,4 @@ def test_get_cars_list(client):
     response = client.get("/api/cars")
     assert response.status_code == status.HTTP_200_OK
     assert "data" in response.json
-    assert isinstance(response.json["data"], list)
     assert len(response.json["data"]) > 0

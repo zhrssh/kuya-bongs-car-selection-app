@@ -67,7 +67,14 @@ def create_app(test_config=None) -> Flask:
 
     # Configure talisman
     csp = {"default-src": ["'self'"], "connect-src": ["'self'", "*.docker.localhost"]}
-    Talisman(app, content_security_policy=csp)
+    if app.testing:
+        Talisman(
+            app,
+            content_security_policy=csp,
+            force_https=False,
+        )
+    else:
+        Talisman(app, content_security_policy=csp)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -85,7 +92,7 @@ def create_app(test_config=None) -> Flask:
 
     from .api import cars
 
-    app.register_blueprint(cars.bp, url_prefix="/api")
+    app.register_blueprint(cars.bp)
 
     # Initialize the database
     with app.app_context():

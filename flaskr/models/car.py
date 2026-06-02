@@ -49,8 +49,27 @@ class Car(db.Model):
     def __repr__(self):
         return "<Car {}>".format(self.id)
 
-    def create(self) -> None:
-        """Creates a Account to the database"""
-        logger.info("Creating %s", self.id)
-        db.session.add(self)
-        db.session.commit()
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "make": self.make,
+            "model": self.model,
+            "year": self.year,
+            "price": self.price,
+            "mileage": self.mileage,
+            "fuelType": self.fuelType,
+            "transmission": self.transmission,
+            "bodyType": self.bodyType,
+            "exteriorColor": self.exteriorColor,
+            "interiorColor": self.interiorColor,
+            "engine": self.engine,
+            "drivetrain": self.drivetrain,
+            "features": self.features,
+            "description": self.description,
+            "imageUrl": self.imageUrl,
+            "images": self.images,
+            "condition": self.condition,
+            "sellerId": self.sellerId,
+            "created": self.created,
+            "updated": self.updated,
+        }

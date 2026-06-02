@@ -44,4 +44,5 @@ def generate_cars(app, num_cars: int = 3):
         # Populate database with Notes
         for _ in range(num_cars):
             car = CarFactory()
-            car.create()
+            db.session.add(car)
+            db.session.commit()

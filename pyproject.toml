@@ -25,3 +25,5 @@ dev = [
 
 [tool.pytest.ini_options]
 addopts = ["--cov=flaskr","--cov-report=term-missing"]
+log_cli = true
+log_cli_level = "DEBUG"
