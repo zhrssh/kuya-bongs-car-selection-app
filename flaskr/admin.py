@@ -1,11 +1,9 @@
-import functools
+from .models.user import User
 
-from .db import User
+from flask import Blueprint, request
+from flask_login import login_user, logout_user, current_user
 
-from flask import Blueprint, flash, g, redirect, request, session, url_for
-from flask_login import login_user, logout_user, current_user, login_required
-
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
