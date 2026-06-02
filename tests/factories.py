@@ -33,7 +33,7 @@ class CarFactory(factory.base.Factory):
     id = LazyFunction(lambda: uuid.uuid4())
     make = Faker("company")
     model = Faker("city")
-    year = Faker("date_time")
+    year = FuzzyInteger(low=1900, high=2050)
     price = FuzzyInteger(low=100000, high=5000000)
     mileage = FuzzyInteger(low=10000, high=50000)
     fuelType = FuzzyChoice(["Gasoline", "Electric", "Hybrid", "Diesel"])

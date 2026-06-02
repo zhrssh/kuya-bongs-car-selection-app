@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ..db import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -23,7 +23,7 @@ class Car(db.Model):
     make: Mapped[str] = mapped_column(String(80), nullable=False)
     model: Mapped[str] = mapped_column(String(80), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)
-    price: Mapped[float] = mapped_column(Integer, nullable=False)
+    price: Mapped[int] = mapped_column(Integer, nullable=False)
     mileage: Mapped[int] = mapped_column(Integer, nullable=False)
     fuelType: Mapped[str] = mapped_column(String(80), nullable=False)
     transmission: Mapped[str] = mapped_column(String(80), nullable=False)
@@ -38,7 +38,7 @@ class Car(db.Model):
     images: Mapped[str] = mapped_column(String(255), nullable=True)
     condition: Mapped[str] = mapped_column(String(80), nullable=False)
     sellerId: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("seller.id", name="fk_car_seller_id"), nullable=False
+        ForeignKey("seller.id", name="fk_car_seller_id"), nullable=True
     )
     seller: Mapped["Seller"] = relationship("Seller", back_populates="cars")
     created: Mapped[datetime] = mapped_column(DateTime, default=func.now())
@@ -49,7 +49,7 @@ class Car(db.Model):
     def __repr__(self):
         return "<Car {}>".format(self.id)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "make": self.make,
@@ -73,3 +73,26 @@ class Car(db.Model):
             "created": self.created,
             "updated": self.updated,
         }
+
+    def create(self) -> None:
+        """Create the car in the database."""
+        logger.info("Creating car: %s", self.id)
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self) -> None:
+        """Update the car in the database."""
+        logger.info("Updating car: %s", self.id)
+        if not self.id:
+            raise ValueError("Car id is not set.")
+
+        db.session.commit()
+
+    def delete(self) -> None:
+        """Delete the car from the database."""
+        logger.info("Deleting car: %s", self.id)
+        if not self.id:
+            raise ValueError("Car id is not set.")
+
+        db.session.delete(self)
+        db.session.commit()
