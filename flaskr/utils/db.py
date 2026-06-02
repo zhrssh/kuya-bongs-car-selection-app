@@ -29,7 +29,6 @@ def init_db():
     existing_admin = User.query.filter_by(username=admin_username).first()
     if not existing_admin:
         new_admin = User()
-        new_admin.id = uuid.uuid4()
         new_admin.username = admin_username
         new_admin.password = generate_password_hash(admin_password)
 

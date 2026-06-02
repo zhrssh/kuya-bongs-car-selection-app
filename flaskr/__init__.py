@@ -1,4 +1,5 @@
 import os
+import uuid
 from typing import Dict
 
 from .db import db
@@ -78,7 +79,7 @@ def create_app(test_config=None) -> Flask:
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(user_id)
+        return User.query.filter_by(id=uuid.UUID(user_id)).first()
 
     # healthcheck
     @app.route("/health")

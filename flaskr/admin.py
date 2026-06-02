@@ -1,48 +1,86 @@
+from flaskr import status
+
 from .models.user import User
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, current_user
 
 from werkzeug.security import check_password_hash
 
+import pydantic_core
+from pydantic import BaseModel
+
 bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+
+class LoginSchema(BaseModel):
+    username: str
+    password: str
 
 
 @bp.route("/auth/status", methods=["GET"])
 def auth_status():
     """Check if the user is authenticated."""
     if current_user.is_authenticated:
-        return {"authenticated": True, "username": current_user.username}, 200
+        return {
+            "status": "success",
+            "authenticated": True,
+            "data": {"username": current_user.username},
+        }, 200
     else:
-        return {"authenticated": False}, 200
+        return jsonify({"status": "fail", "authenticated": False, "data": None}), 200
 
 
 @bp.route("/login", methods=["POST"])
 def login():
     """Log in."""
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-
-    # Sanitize username and password
-    username = username.strip().lower()
-    password = password.strip()
+    try:
+        data = LoginSchema(**request.get_json())
+        username = data.username.strip().lower()
+        password = data.password
+    except pydantic_core.ValidationError as e:
+        return {"error": str(e)}, status.HTTP_400_BAD_REQUEST
 
     error = None
-
     user = User.query.filter_by(username=username).first()
-    if user is None or not check_password_hash(user.password, password):
+    if user is None:
+        error = "User does not exists."
+    elif not check_password_hash(user.password, password):
         error = "Incorrect username or password."
 
     if error is None:
         login_user(user)
-        return {"message": "Login successful."}, 200
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "data": {"message": "Login successful."},
+                }
+            ),
+            status.HTTP_200_OK,
+        )
 
-    return {"error": error}, 401
+    return (
+        jsonify(
+            {
+                "status": "fail",
+                "error": {"message": error},
+            }
+        ),
+        status.HTTP_401_UNAUTHORIZED,
+    )
 
 
 @bp.route("/logout", methods=["POST"])
 def logout():
     """Log out the current user."""
     logout_user()
-    return {"message": "Logout successful."}, 200
+    return (
+        jsonify(
+            {
+                "status": "success",
+                "data": {"message": "Logout successful."},
+            }
+        ),
+        status.HTTP_200_OK,
+    )
