@@ -1,18 +1,23 @@
 import os
 from typing import Dict
 
-from .db import db, init_db_command, User
+from .db import db
+from .models.user import User
+from .utils.db import init_db_command
 from flask import Flask
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
+from flask_migrate import Migrate
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+migrate = Migrate()
 
 
 def create_app(test_config=None) -> Flask:
@@ -39,10 +44,7 @@ def create_app(test_config=None) -> Flask:
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile("config.py", silent=True)
-    else:
+    if test_config is not None:
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
@@ -54,6 +56,7 @@ def create_app(test_config=None) -> Flask:
 
     # setup sqlalchemy
     db.init_app(app)
+    migrate.init_app(app, db)
 
     # register CLI commands
     app.cli.add_command(init_db_command)
@@ -79,6 +82,10 @@ def create_app(test_config=None) -> Flask:
     from . import admin
 
     app.register_blueprint(admin.bp)
+
+    from .api import cars
+
+    app.register_blueprint(cars.bp, url_prefix="/api")
 
     # Initialize the database
     with app.app_context():
