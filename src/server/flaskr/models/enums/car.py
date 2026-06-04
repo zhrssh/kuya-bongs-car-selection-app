@@ -1,25 +1,25 @@
-import enum
+from enum import StrEnum
 
 
-class CarStatus(enum.Enum):
+class CarStatus(StrEnum):
     available = "Available"
     sold = "Sold"
     archived = "Archived"
 
 
-class CarFuelType(enum.Enum):
+class CarFuelType(StrEnum):
     gasoline = "Gasoline"
     electric = "Electric"
     hybrid = "Hybrid"
     diesel = "Diesel"
 
 
-class CarTransmission(enum.Enum):
+class CarTransmission(StrEnum):
     automatic = "Automatic"
     manual = "Manual"
 
 
-class CarBodyType(enum.Enum):
+class CarBodyType(StrEnum):
     suv = "SUV"
     sedan = "Sedan"
     coupe = "Coupe"
@@ -30,7 +30,7 @@ class CarBodyType(enum.Enum):
     wagon = "Wagon"
 
 
-class CarCondition(enum.Enum):
+class CarCondition(StrEnum):
     excellent = "Excellent"
     very_good = "Very Good"
     good = "Good"
