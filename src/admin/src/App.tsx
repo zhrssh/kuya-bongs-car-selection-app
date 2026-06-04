@@ -19,7 +19,6 @@ import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
 import { CarStatus } from "./enums";
 import {
-  INITIAL_CARS,
   INITIAL_LOGS,
   INITIAL_METRICS,
   RANDOM_NAMES,
@@ -60,7 +59,29 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // Real-time Database state
-  const [cars, setCars] = useState<Car[]>(INITIAL_CARS);
+  const [cars, setCars] = useState<Car[]>([]);
+
+  // On app load, fetch cars from the database
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            if (data.status === "success") {
+              setCars(data.data.cars);
+            }
+          });
+        } else {
+          setIsAdmin(false);
+        }
+      })
+      .catch(() => {
+        setIsAdmin(false);
+      });
+  }, []);
 
   // Metrics aggregate states
   const [dailyMetrics, setDailyMetrics] =

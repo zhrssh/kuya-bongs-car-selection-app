@@ -11,6 +11,7 @@ export interface SellerContact {
   phone: string;
   email: string;
   location: string;
+  status?: "Active" | "Inactive";
 }
 export interface Car {
   id?: string;
