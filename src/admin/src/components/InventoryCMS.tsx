@@ -16,7 +16,14 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  CarBodyType,
+  CarCondition,
+  CarFuelType,
+  CarStatus,
+  CarTransmission,
+} from "../enums";
 import { Car, FilterState, SortKey } from "../types";
 
 interface InventoryCMSProps {
@@ -57,34 +64,34 @@ export default function InventoryCMS({
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
-  const [statusTab, setStatusTab] = useState<"available" | "sold" | "archived">(
-    "available",
-  );
+  const [statusTab, setStatusTab] = useState<CarStatus>(CarStatus.Available);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
 
+  // Counts of cars by status
   const counts = useMemo(() => {
     let available = 0;
     let sold = 0;
     let archived = 0;
-    cars.forEach((car) => {
-      const s = car.status || "available";
-      if (s === "available") available++;
-      else if (s === "sold") sold++;
-      else if (s === "archived") archived++;
+    cars.forEach((car: Car) => {
+      const s = car.status;
+      if (s === CarStatus.Available) available++;
+      else if (s === CarStatus.Sold) sold++;
+      else if (s === CarStatus.Archived) archived++;
     });
     return { available, sold, archived };
   }, [cars]);
 
+  // Get condition color based on condition
   const getConditionColor = (condition: string) => {
     switch (condition) {
-      case "Excellent":
+      case CarCondition.Excellent:
         return "bg-emerald-50 text-emerald-700 border-emerald-200/60";
-      case "Very Good":
+      case CarCondition.VeryGood:
         return "bg-blue-50 text-blue-700 border-blue-200/60";
-      case "Good":
+      case CarCondition.Good:
       default:
         return "bg-amber-50 text-amber-700 border-amber-200/60";
     }
@@ -105,16 +112,21 @@ export default function InventoryCMS({
     () => Array.from(new Set(cars.map((c) => c.make))),
     [cars],
   );
-  const uniqueBodyTypes = [
-    "SUV",
-    "Sedan",
-    "Coupe",
-    "Truck",
-    "Hatchback",
-    "Convertible",
+
+  const uniqueBodyTypes = useMemo(
+    () => Array.from(new Set(cars.map((c) => c.bodyType))),
+    [cars],
+  );
+
+  const uniqueFuelTypes = useMemo(
+    () => Array.from(new Set(cars.map((c) => c.fuelType))),
+    [cars],
+  );
+
+  const uniqueTransmissions = [
+    CarTransmission.Automatic,
+    CarTransmission.Manual,
   ];
-  const uniqueFuelTypes = ["Gasoline", "Electric", "Hybrid", "Diesel"];
-  const uniqueTransmissions = ["Automatic", "Manual"];
 
   const modelsForMake = useMemo(() => {
     if (!filters.make) {
@@ -148,42 +160,31 @@ export default function InventoryCMS({
   const handleOpenAdd = () => {
     setEditingCar(null);
     setFormData({
-      id: "",
       make: "",
       model: "",
-      year: new Date().getFullYear(),
-      price: 25000,
-      mileage: 15000,
-      fuelType: "Gasoline",
-      transmission: "Automatic",
-      bodyType: "Sedan",
+      year: 0,
+      price: 0,
+      mileage: 0,
+      bodyType: CarBodyType.Sedan,
+      fuelType: CarFuelType.Gasoline,
+      transmission: CarTransmission.Automatic,
+      condition: CarCondition.Excellent,
       exteriorColor: "",
       interiorColor: "",
-      engine: "4-Cylinder Turbo",
-      drivetrain: "FWD",
+      engine: "",
+      drivetrain: "RWD",
       features: [],
       description: "",
-      imageUrl:
-        "https://picsum.photos/seed/" +
-        Math.floor(Math.random() * 1000) +
-        "/800/600",
-      condition: "Excellent",
-      history: {
-        owners: 1,
-        accidents: 0,
-        serviceHistory: "Full maintenance done periodically.",
-      },
+      imageUrl: "",
+      status: CarStatus.Available,
       seller: {
         name: "Auto Plaza Broker",
         phone: "(555) 301-4491",
         email: "sales@autoplazadealer.com",
-        rating: 4.8,
         location: "Denver, CO",
       },
     });
-    setFeaturesInput("Heated Seats, Back-up Camera, Bluetooth Connect");
     setFormError("");
-    setImageInputUrl("");
     setIsFormOpen(true);
   };
 
@@ -197,178 +198,8 @@ export default function InventoryCMS({
     setIsFormOpen(true);
   };
 
-  // Automated Quick Generator
-  const generateRandomCar = () => {
-    const brands = [
-      {
-        make: "Tesla",
-        model: "Model Y",
-        fuelType: "Electric",
-        bodyType: "SUV",
-        engine: "Dual Motor AWD",
-        drivetrain: "AWD",
-        features: [
-          "Autopilot",
-          "Supercharger access",
-          "Premium audio",
-          "Cold weather pack",
-        ],
-      },
-      {
-        make: "BMW",
-        model: "i4 Gran Coupe",
-        fuelType: "Electric",
-        bodyType: "Sedan",
-        engine: "eDrive40 Single Motor",
-        drivetrain: "RWD",
-        features: [
-          "BMW Curved Display",
-          "Parking Assistant",
-          "Harman Kardon Audio",
-        ],
-      },
-      {
-        make: "Porsche",
-        model: "Taycan",
-        fuelType: "Electric",
-        bodyType: "Sedan",
-        engine: "Dual Electric Motors",
-        drivetrain: "AWD",
-        features: [
-          "Performance Battery Plus",
-          "PCCB brakes",
-          "Chrono clock",
-          "Passenger screen",
-        ],
-      },
-      {
-        make: "Lexus",
-        model: "RX450h",
-        fuelType: "Hybrid",
-        bodyType: "SUV",
-        engine: "3.5L V6 Hybrid",
-        drivetrain: "AWD",
-        features: [
-          "Mark Levinson Sound",
-          "Lexus Safety System+",
-          "Heated/Ventilated Seats",
-        ],
-      },
-      {
-        make: "Jeep",
-        model: "Wrangler Rubicon",
-        fuelType: "Gasoline",
-        bodyType: "SUV",
-        engine: "2.0L Turbo I4",
-        drivetrain: "4WD",
-        features: [
-          "Fox Shocks",
-          "Rock Trac extreme 4WD",
-          "Removable hard top",
-          "Warn Winch",
-        ],
-      },
-      {
-        make: "Audi",
-        model: "RS e-tron GT",
-        fuelType: "Electric",
-        bodyType: "Coupe",
-        engine: "Dual Motor Quattro",
-        drivetrain: "AWD",
-        features: [
-          "Matrix LED headlights",
-          "Carbon Ceramic Brakes",
-          "B&O 3D Audiosystem",
-        ],
-      },
-      {
-        make: "Rivan",
-        model: "R1T",
-        fuelType: "Electric",
-        bodyType: "Truck",
-        engine: "Quad-Motor AWD",
-        drivetrain: "AWD",
-        features: [
-          "Gear Tunnel",
-          "Camp Kitchen Capable",
-          "Adaptive Air Suspension",
-          "Panorail sunroof",
-        ],
-      },
-    ];
-
-    const pick = brands[Math.floor(Math.random() * brands.length)];
-    const seed = Math.floor(Math.random() * 5000);
-    const years = [2021, 2022, 2023, 2024];
-    const pickedYear = years[Math.floor(Math.random() * years.length)];
-    const prices = [35000, 48000, 56400, 72000, 95000, 115000];
-    const pickedPrice =
-      prices[Math.floor(Math.random() * prices.length)] -
-      Math.floor(Math.random() * 1900);
-    const mileages = [4500, 12000, 22100, 31000, 48000];
-    const pickedMileage = mileages[Math.floor(Math.random() * mileages.length)];
-    const conditions = ["Excellent", "Very Good", "Good"] as const;
-
-    const randomCar: Car = {
-      id: "car-gen-" + Date.now(),
-      make: pick.make,
-      model: pick.model,
-      year: pickedYear,
-      price: pickedPrice,
-      mileage: pickedMileage,
-      fuelType: pick.fuelType as any,
-      transmission: "Automatic",
-      bodyType: pick.bodyType as any,
-      exteriorColor: [
-        "Midnight Metallic Gray",
-        "Chalk",
-        "Satin Frozen Black",
-        "Tanzanite Blue",
-        "Acid Green",
-      ][Math.floor(Math.random() * 5)],
-      interiorColor: [
-        "Black Nappa Leather",
-        "Merino Truffle",
-        "Chalk / Bordeaux Red",
-        "Sustainable Micro-Fiber",
-      ][Math.floor(Math.random() * 4)],
-      engine: pick.engine,
-      drivetrain: pick.drivetrain,
-      features: pick.features,
-      description: `Absolutely stunning ${pick.make} ${pick.model}. Fully loaded sports option in prime condition. Low mileage odometer reading, pristine interior upholstery, and fully valid brand warranty coverage still remaining. Fully inspected and authenticated.`,
-      imageUrl: `https://picsum.photos/seed/${seed}/800/600`,
-      condition: conditions[Math.floor(Math.random() * conditions.length)],
-      history: {
-        owners: Math.floor(Math.random() * 2) + 1,
-        accidents: 0,
-        serviceHistory:
-          "Full digital dealer stamps. Under factory maintenance.",
-      },
-      seller: {
-        name: [
-          "Cassandra Pierce",
-          "Maxwell Vance",
-          "Nathaniel Reed",
-          "Elara Vance",
-        ][Math.floor(Math.random() * 4)],
-        phone: `(312) 555-0${Math.floor(Math.random() * 900) + 100}`,
-        email: `broker.${pick.make.toLowerCase()}@dealership.com`,
-        rating: +(4.6 + Math.random() * 0.4).toFixed(1),
-        location: [
-          "San Francisco, CA",
-          "New York, NY",
-          "Austin, TX",
-          "Miami, FL",
-          "Seattle, WA",
-        ][Math.floor(Math.random() * 5)],
-      },
-    };
-
-    onAddCar(randomCar);
-  };
-
   // Form submit handler
-  const handleFormSubmit = (e: FormEvent) => {
+  const handleFormSubmit = (e: any) => {
     e.preventDefault();
 
     const {
@@ -410,8 +241,8 @@ export default function InventoryCMS({
       price: Number(price),
       mileage: Number(mileage),
       features: featureArray,
-      condition: condition || "Excellent",
-      status: formData.status || "available",
+      condition: condition || CarCondition.Excellent,
+      status: formData.status || CarStatus.Available,
       images:
         formData.images && formData.images.length > 0
           ? formData.images
@@ -453,14 +284,23 @@ export default function InventoryCMS({
         }
 
         // Filter by Tab (available, sold, archived)
-        const carStatus = car.status || "available";
-        if (statusTab === "available" && carStatus !== "available")
+        const carStatus = car.status || CarStatus.Available;
+        if (
+          statusTab === CarStatus.Available &&
+          carStatus !== CarStatus.Available
+        )
           return false;
-        if (statusTab === "sold" && carStatus !== "sold") return false;
-        if (statusTab === "archived" && carStatus !== "archived") return false;
+        if (statusTab === CarStatus.Sold && carStatus !== CarStatus.Sold)
+          return false;
+        if (
+          statusTab === CarStatus.Archived &&
+          carStatus !== CarStatus.Archived
+        )
+          return false;
 
         // Dropdowns and ranges
         if (filters.make && car.make !== filters.make) return false;
+        if (filters.model && car.model !== filters.model) return false;
         if (filters.bodyType && car.bodyType !== filters.bodyType) return false;
         if (filters.fuelType && car.fuelType !== filters.fuelType) return false;
         if (filters.transmission && car.transmission !== filters.transmission)
@@ -682,7 +522,11 @@ export default function InventoryCMS({
                     Vehicle Condition
                   </label>
                   <div className="flex flex-wrap gap-1.5">
-                    {["Excellent", "Very Good", "Good"].map((cond) => {
+                    {[
+                      CarCondition.Excellent,
+                      CarCondition.VeryGood,
+                      CarCondition.Good,
+                    ].map((cond) => {
                       const isSelected = filters.condition === cond;
                       return (
                         <button
@@ -917,72 +761,72 @@ export default function InventoryCMS({
           <div className="flex border-b border-slate-200/80 gap-6 overflow-x-auto pb-0.5">
             <button
               onClick={() => {
-                setStatusTab("available");
+                setStatusTab(CarStatus.Available);
                 setCurrentPage(1);
               }}
               className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
-                statusTab === "available"
+                statusTab === CarStatus.Available
                   ? "text-blue-600 font-bold"
                   : "text-slate-500 hover:text-slate-800"
               }`}>
               <span>Available Stock</span>
               <span
                 className={`text-[11px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  statusTab === "available"
+                  statusTab === CarStatus.Available
                     ? "bg-blue-105 bg-blue-100 text-blue-700"
                     : "bg-slate-100 text-slate-600"
                 }`}>
                 {counts.available}
               </span>
-              {statusTab === "available" && (
+              {statusTab === CarStatus.Available && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full animate-fade-in" />
               )}
             </button>
 
             <button
               onClick={() => {
-                setStatusTab("sold");
+                setStatusTab(CarStatus.Sold);
                 setCurrentPage(1);
               }}
               className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
-                statusTab === "sold"
+                statusTab === CarStatus.Sold
                   ? "text-emerald-600 font-bold"
                   : "text-slate-500 hover:text-slate-800"
               }`}>
               <span>Sold Vehicles</span>
               <span
                 className={`text-[11px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  statusTab === "sold"
+                  statusTab === CarStatus.Sold
                     ? "bg-emerald-100 text-emerald-700"
                     : "bg-slate-100 text-slate-600"
                 }`}>
                 {counts.sold}
               </span>
-              {statusTab === "sold" && (
+              {statusTab === CarStatus.Sold && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
               )}
             </button>
 
             <button
               onClick={() => {
-                setStatusTab("archived");
+                setStatusTab(CarStatus.Archived);
                 setCurrentPage(1);
               }}
               className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
-                statusTab === "archived"
+                statusTab === CarStatus.Archived
                   ? "text-amber-600 font-bold"
                   : "text-slate-500 hover:text-slate-800"
               }`}>
               <span>Archived Listings</span>
               <span
                 className={`text-[11px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  statusTab === "archived"
+                  statusTab === CarStatus.Archived
                     ? "bg-amber-100 text-amber-700"
                     : "bg-slate-100 text-slate-600"
                 }`}>
                 {counts.archived}
               </span>
-              {statusTab === "archived" && (
+              {statusTab === CarStatus.Archived && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600 rounded-full" />
               )}
             </button>
@@ -1004,14 +848,14 @@ export default function InventoryCMS({
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedCars.map((car) => {
-                const isComparing = compareIds.includes(car.id);
+                const isComparing = compareIds.includes(car.id!);
                 const canCompare = compareIds.length < 3;
                 const onToggleCompare = (clickedCar: Car) => {
                   setCompareIds((prev) =>
-                    prev.includes(clickedCar.id)
-                      ? prev.filter((id) => id !== clickedCar.id)
+                    prev.includes(clickedCar.id!)
+                      ? prev.filter((id) => id !== clickedCar.id!)
                       : prev.length < 3
-                        ? [...prev, clickedCar.id]
+                        ? [...prev, clickedCar.id!]
                         : prev,
                   );
                 };
@@ -1034,11 +878,11 @@ export default function InventoryCMS({
                       />
 
                       {/* Status Overlay Badge */}
-                      {car.status && car.status !== "available" && (
+                      {car.status && car.status !== CarStatus.Available && (
                         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center pointer-events-none transition-all duration-300">
                           <span
                             className={`px-4 py-2 rounded-xl text-xs font-bold font-mono tracking-wider uppercase border shadow-md transform -skew-x-6 scale-110 select-none ${
-                              car.status === "sold"
+                              car.status === CarStatus.Sold
                                 ? "bg-emerald-600 border-emerald-500 text-white"
                                 : "bg-amber-605 border-amber-550 text-white"
                             }`}>
@@ -1166,7 +1010,7 @@ export default function InventoryCMS({
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => onDeleteCar(car.id)}
+                            onClick={() => onDeleteCar(car.id!)}
                             className="p-2 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
                             title="Delete stock"
                             id={`btn_del_grid_${car.id}`}>
@@ -1237,9 +1081,9 @@ export default function InventoryCMS({
                         <td className="p-4">
                           <span
                             className={`text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded font-mono uppercase ${
-                              car.condition === "Excellent"
+                              car.condition === CarCondition.Excellent
                                 ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                                : car.condition === "Very Good"
+                                : car.condition === CarCondition.VeryGood
                                   ? "bg-blue-50 text-blue-700 border border-blue-200/60"
                                   : "bg-amber-50 text-amber-700 border border-amber-200/60"
                             }`}>
@@ -1251,13 +1095,13 @@ export default function InventoryCMS({
                         <td className="p-4">
                           <span
                             className={`text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full font-mono uppercase border ${
-                              !car.status || car.status === "available"
+                              !car.status || car.status === CarStatus.Available
                                 ? "bg-blue-50/60 text-blue-700 border-blue-200"
-                                : car.status === "sold"
+                                : car.status === CarStatus.Sold
                                   ? "bg-emerald-50/60 text-emerald-700 border-emerald-200"
                                   : "bg-amber-50/60 text-amber-700 border-amber-200"
                             }`}>
-                            {car.status || "available"}
+                            {car.status || CarStatus.Available}
                           </span>
                         </td>
 
@@ -1295,7 +1139,7 @@ export default function InventoryCMS({
                               <Edit className="w-3.5 h-3.5 text-zinc-500" />
                             </button>
                             <button
-                              onClick={() => onDeleteCar(car.id)}
+                              onClick={() => onDeleteCar(car.id!)}
                               className="p-1 px-1.5 bg-zinc-50 hover:bg-rose-50 border border-zinc-200/70 text-rose-650 rounded transition cursor-pointer"
                               title="Delete vehicle listing"
                               id={`btn_del_tbl_${car.id}`}>
@@ -1767,7 +1611,7 @@ export default function InventoryCMS({
                     Body Type
                   </label>
                   <select
-                    value={formData.bodyType || "Sedan"}
+                    value={formData.bodyType || CarBodyType.Sedan}
                     onChange={(e) =>
                       setFormData((p) => ({
                         ...p,
@@ -1775,12 +1619,22 @@ export default function InventoryCMS({
                       }))
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
-                    <option value="Sedan">Sedan</option>
-                    <option value="SUV">SUV</option>
-                    <option value="Coupe">Coupe</option>
-                    <option value="Truck">Truck</option>
-                    <option value="Hatchback">Hatchback</option>
-                    <option value="Convertible">Convertible</option>
+                    <option value={CarBodyType.Sedan}>
+                      {CarBodyType.Sedan}
+                    </option>
+                    <option value={CarBodyType.SUV}>{CarBodyType.SUV}</option>
+                    <option value={CarBodyType.Coupe}>
+                      {CarBodyType.Coupe}
+                    </option>
+                    <option value={CarBodyType.Truck}>
+                      {CarBodyType.Truck}
+                    </option>
+                    <option value={CarBodyType.Hatchback}>
+                      {CarBodyType.Hatchback}
+                    </option>
+                    <option value={CarBodyType.Convertible}>
+                      {CarBodyType.Convertible}
+                    </option>
                   </select>
                 </div>
 
@@ -1789,7 +1643,7 @@ export default function InventoryCMS({
                     Fuel Type
                   </label>
                   <select
-                    value={formData.fuelType || "Gasoline"}
+                    value={formData.fuelType || CarFuelType.Gasoline}
                     onChange={(e) =>
                       setFormData((p) => ({
                         ...p,
@@ -1797,10 +1651,18 @@ export default function InventoryCMS({
                       }))
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
-                    <option value="Gasoline">Gasoline</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Hybrid">Hybrid</option>
-                    <option value="Diesel">Diesel</option>
+                    <option value={CarFuelType.Gasoline}>
+                      {CarFuelType.Gasoline}
+                    </option>
+                    <option value={CarFuelType.Electric}>
+                      {CarFuelType.Electric}
+                    </option>
+                    <option value={CarFuelType.Hybrid}>
+                      {CarFuelType.Hybrid}
+                    </option>
+                    <option value={CarFuelType.Diesel}>
+                      {CarFuelType.Diesel}
+                    </option>
                   </select>
                 </div>
 
@@ -1809,7 +1671,7 @@ export default function InventoryCMS({
                     Transmission
                   </label>
                   <select
-                    value={formData.transmission || "Automatic"}
+                    value={formData.transmission || CarTransmission.Automatic}
                     onChange={(e) =>
                       setFormData((p) => ({
                         ...p,
@@ -1817,8 +1679,12 @@ export default function InventoryCMS({
                       }))
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
-                    <option value="Automatic">Automatic</option>
-                    <option value="Manual">Manual</option>
+                    <option value={CarTransmission.Automatic}>
+                      {CarTransmission.Automatic}
+                    </option>
+                    <option value={CarTransmission.Manual}>
+                      {CarTransmission.Manual}
+                    </option>
                   </select>
                 </div>
 
@@ -1827,7 +1693,7 @@ export default function InventoryCMS({
                     Condition
                   </label>
                   <select
-                    value={formData.condition || "Excellent"}
+                    value={formData.condition || CarCondition.Excellent}
                     onChange={(e) =>
                       setFormData((p) => ({
                         ...p,
@@ -1835,9 +1701,15 @@ export default function InventoryCMS({
                       }))
                     }
                     className="w-full bg-zinc-50 border border-zinc-205 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none">
-                    <option value="Excellent">Excellent</option>
-                    <option value="Very Good">Very Good</option>
-                    <option value="Good">Good</option>
+                    <option value={CarCondition.Excellent}>
+                      {CarCondition.Excellent}
+                    </option>
+                    <option value={CarCondition.VeryGood}>
+                      {CarCondition.VeryGood}
+                    </option>
+                    <option value={CarCondition.Good}>
+                      {CarCondition.Good}
+                    </option>
                   </select>
                 </div>
 
@@ -1846,7 +1718,7 @@ export default function InventoryCMS({
                     Status
                   </label>
                   <select
-                    value={formData.status || "available"}
+                    value={formData.status || CarStatus.Available}
                     onChange={(e) =>
                       setFormData((p) => ({
                         ...p,
@@ -1854,9 +1726,13 @@ export default function InventoryCMS({
                       }))
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none focus:border-blue-300">
-                    <option value="available">Available</option>
-                    <option value="sold">Sold</option>
-                    <option value="archived">Archived</option>
+                    <option value={CarStatus.Available}>
+                      {CarStatus.Available}
+                    </option>
+                    <option value={CarStatus.Sold}>{CarStatus.Sold}</option>
+                    <option value={CarStatus.Archived}>
+                      {CarStatus.Archived}
+                    </option>
                   </select>
                 </div>
               </div>
