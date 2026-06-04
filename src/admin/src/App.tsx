@@ -17,6 +17,7 @@ import DashboardMetrics from "./components/DashboardMetrics";
 import EventLogs from "./components/EventLogs";
 import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
+import { CarStatus } from "./enums";
 import {
   INITIAL_CARS,
   INITIAL_LOGS,
@@ -295,10 +296,7 @@ export default function App() {
   };
 
   // UPDATE CAR STATUS
-  const handleUpdateCarStatus = (
-    id: string,
-    status: "available" | "sold" | "archived",
-  ) => {
+  const handleUpdateCarStatus = (id: string, status: CarStatus) => {
     const target = cars.find((c) => c.id === id);
     if (!target) return;
     const updated = { ...target, status };

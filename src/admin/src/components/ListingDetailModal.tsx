@@ -16,16 +16,14 @@ import {
   User,
   X,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { CarStatus } from "../enums";
 import { Car } from "../types";
 
 interface ListingDetailModalProps {
   car: Car | null;
   onClose: () => void;
-  onUpdateStatus: (
-    id: string,
-    status: "available" | "sold" | "archived",
-  ) => void;
+  onUpdateStatus: (id: string, status: CarStatus) => void;
 }
 
 export default function ListingDetailModal({
@@ -47,6 +45,7 @@ export default function ListingDetailModal({
   >("none");
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
+  // ! FOR DEVELOPMENT ONLY
   // Generate 4 beautiful images for any car if not defined
   const carImages = useMemo(() => {
     if (car.images && car.images.length > 0) {
@@ -88,7 +87,7 @@ export default function ListingDetailModal({
 
   const formattedMileage = new Intl.NumberFormat("en-US").format(car.mileage);
 
-  const handleSubmitMessage = (e: React.FormEvent) => {
+  const handleSubmitMessage = (e: any) => {
     e.preventDefault();
     if (!userName || !userEmail) return;
 
@@ -291,45 +290,45 @@ export default function ListingDetailModal({
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <button
-                    onClick={() => onUpdateStatus(car.id, "available")}
+                    onClick={() => onUpdateStatus(car.id!, CarStatus.Available)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
-                      !car.status || car.status === "available"
+                      car.status! === CarStatus.Available
                         ? "bg-blue-50 border-blue-200 text-blue-700 font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100"
                     }`}
                     id="status_btn_available">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${!car.status || car.status === "available" ? "bg-blue-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Available ? "bg-blue-600" : "bg-zinc-400"}`}></span>
                     <span className="text-[10px] tracking-tight">
                       Available
                     </span>
                   </button>
 
                   <button
-                    onClick={() => onUpdateStatus(car.id, "sold")}
+                    onClick={() => onUpdateStatus(car.id!, CarStatus.Sold)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
-                      car.status === "sold"
+                      car.status! === CarStatus.Sold
                         ? "bg-emerald-50 border-emerald-200 text-emerald-700 font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-emerald-700 hover:bg-emerald-50/55"
                     }`}
                     id="status_btn_sold">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status === "sold" ? "bg-emerald-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Sold ? "bg-emerald-600" : "bg-zinc-400"}`}></span>
                     <span className="text-[10px] tracking-tight">
                       Mark Sold
                     </span>
                   </button>
 
                   <button
-                    onClick={() => onUpdateStatus(car.id, "archived")}
+                    onClick={() => onUpdateStatus(car.id!, CarStatus.Archived)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
-                      car.status === "archived"
+                      car.status! === CarStatus.Archived
                         ? "bg-amber-50 border-amber-200 text-amber-700 font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-amber-700 hover:bg-amber-50/55"
                     }`}
                     id="status_btn_archived">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status === "archived" ? "bg-amber-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Archived ? "bg-amber-600" : "bg-zinc-400"}`}></span>
                     <span className="text-[10px] tracking-tight">Archive</span>
                   </button>
                 </div>
