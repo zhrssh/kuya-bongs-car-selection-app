@@ -4,6 +4,8 @@ Factory classes for creating models for testing.
 
 import factory
 import uuid
+import math
+import random
 from factory.declarations import LazyFunction, SubFactory
 from factory.faker import Faker
 from factory.fuzzy import FuzzyInteger, FuzzyChoice
@@ -69,7 +71,7 @@ class CarFactory(factory.base.Factory):
     drivetrain = FuzzyChoice(["FWD", "RWD", "AWD"])
     features = "Some features"
     description = Faker("catch_phrase")
-    imageUrl = "https://picsum.photos/seed/tesla3/800/600"
+    imageUrl = f"https://picsum.photos/seed/{math.floor(random.randrange(start=1, stop=1000))}/800/600"
     images = None
     condition = FuzzyChoice(
         [car.CarCondition.excellent, car.CarCondition.very_good, car.CarCondition.good]

@@ -58,32 +58,6 @@ class Car(db.Model):
     def __repr__(self):
         return "<Car {}>".format(self.id)
 
-    def to_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "status": self.status,
-            "make": self.make,
-            "model": self.model,
-            "year": self.year,
-            "price": self.price,
-            "mileage": self.mileage,
-            "fuelType": self.fuelType,
-            "transmission": self.transmission,
-            "bodyType": self.bodyType,
-            "exteriorColor": self.exteriorColor,
-            "interiorColor": self.interiorColor,
-            "engine": self.engine,
-            "drivetrain": self.drivetrain,
-            "features": self.features,
-            "description": self.description,
-            "imageUrl": self.imageUrl,
-            "images": self.images,
-            "condition": self.condition,
-            "sellerId": self.sellerId,
-            "created": self.created,
-            "updated": self.updated,
-        }
-
     def create(self) -> None:
         """Create the car in the database."""
         logger.info("Creating car: %s", self.id)
