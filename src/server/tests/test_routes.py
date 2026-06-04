@@ -2,7 +2,7 @@ from flaskr import status
 import logging
 import uuid
 
-from .factories import CarFactory
+from flaskr.utils.factories import CarFactory
 
 logger = logging.getLogger(__name__)
 

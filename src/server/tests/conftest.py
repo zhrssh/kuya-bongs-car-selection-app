@@ -2,7 +2,7 @@ import pytest
 
 from flaskr import create_app
 from flaskr.db import db
-from .factories import CarFactory
+from flaskr.utils.factories import CarFactory
 
 
 @pytest.fixture()
