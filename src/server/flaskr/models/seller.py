@@ -5,6 +5,8 @@ from ..db import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Uuid
 
+from .enums.seller import SellerStatus
+
 if TYPE_CHECKING:
     from .car import Car
 
@@ -19,4 +21,5 @@ class Seller(db.Model):
     phone: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(String(120), nullable=False)
     location: Mapped[str] = mapped_column(String(120), nullable=False)
+    status: Mapped[SellerStatus] = mapped_column(nullable=False, default="Active")
     cars: Mapped[List["Car"]] = relationship("Car", back_populates="seller")
