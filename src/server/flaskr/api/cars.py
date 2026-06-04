@@ -107,13 +107,13 @@ def update_car_by_id(car_id):
 
     # Fetch the request data
     request_data = CarSchema(**request.get_json())
-    logger.debug("Request data: %s", request_data)
+    update_data = request_data.model_dump(exclude_unset=True, exclude={"id", "seller"})
+    logger.debug("Request data: %s", update_data)
 
-    # Update the car
-    for key, value in request_data.model_dump(exclude_unset=True).items():
-        setattr(car, key, value)
-    car.update()
-    logger.debug("Updated car: %s", car)
+    # Update the car fields
+    for field, value in update_data.items():
+        setattr(car, field, value)
+    car.update()  # Update the car
 
     return (
         jsonify(

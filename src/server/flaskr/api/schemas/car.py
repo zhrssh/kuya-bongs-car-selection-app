@@ -1,11 +1,14 @@
 from pydantic import BaseModel, ConfigDict
 import uuid
 
+from .seller import SellerSchema
+
 
 class CarSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID | None = None
+    status: str
     make: str
     model: str
     year: int
@@ -24,3 +27,4 @@ class CarSchema(BaseModel):
     images: str | None = None
     condition: str
     sellerId: uuid.UUID
+    seller: SellerSchema | None = None
