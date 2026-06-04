@@ -8,6 +8,14 @@ from sqlalchemy import Integer, String, DateTime, Uuid, ForeignKey, func
 
 from datetime import datetime
 
+from .enums.car import (
+    CarStatus,
+    CarFuelType,
+    CarTransmission,
+    CarBodyType,
+    CarCondition,
+)
+
 if TYPE_CHECKING:
     from .seller import Seller
 
@@ -20,14 +28,15 @@ class Car(db.Model):
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
+    status: Mapped[CarStatus] = mapped_column(nullable=False, default="Available")
     make: Mapped[str] = mapped_column(String(80), nullable=False)
     model: Mapped[str] = mapped_column(String(80), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     mileage: Mapped[int] = mapped_column(Integer, nullable=False)
-    fuelType: Mapped[str] = mapped_column(String(80), nullable=False)
-    transmission: Mapped[str] = mapped_column(String(80), nullable=False)
-    bodyType: Mapped[str] = mapped_column(String(80), nullable=False)
+    fuelType: Mapped[CarFuelType] = mapped_column(nullable=False)
+    transmission: Mapped[CarTransmission] = mapped_column(nullable=False)
+    bodyType: Mapped[CarBodyType] = mapped_column(nullable=False)
     exteriorColor: Mapped[str] = mapped_column(String(80), nullable=True)
     interiorColor: Mapped[str] = mapped_column(String(80), nullable=True)
     engine: Mapped[str] = mapped_column(String(80), nullable=True)
@@ -36,7 +45,7 @@ class Car(db.Model):
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     imageUrl: Mapped[str] = mapped_column(String(80), nullable=False)
     images: Mapped[str] = mapped_column(String(255), nullable=True)
-    condition: Mapped[str] = mapped_column(String(80), nullable=False)
+    condition: Mapped[CarCondition] = mapped_column(nullable=False)
     sellerId: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("seller.id", name="fk_car_seller_id"), nullable=True
     )
@@ -52,6 +61,7 @@ class Car(db.Model):
     def to_dict(self) -> dict:
         return {
             "id": self.id,
+            "status": self.status,
             "make": self.make,
             "model": self.model,
             "year": self.year,

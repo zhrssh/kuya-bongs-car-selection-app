@@ -9,6 +9,7 @@ from pydantic import BaseModel
 import pydantic_core
 
 from flaskr import status
+from ..db import db
 from ..models.car import Car
 
 bp = Blueprint("cars", __name__, url_prefix="/api")
@@ -38,16 +39,32 @@ class CarSchema(BaseModel):
 
 @bp.route("/cars", methods=["GET"])
 def get_cars_list():
-    """Get a list of all cars."""
+    """Get a paginated list of cars."""
     logger.info("Request to get all cars")
 
-    # TODO: This should be optimized. Add pagination, sorting, etc.
+    pagination = db.paginate(
+        db.select(Car).order_by(Car.id),
+        max_per_page=20,
+    )
 
-    cars = Car.query.all()
-    logger.debug("Cars: %s", cars)
+    logger.debug("Cars page: %s", pagination.items)
+
     return (
         jsonify(
-            {"status": "success", "data": {"cars": [car.to_dict() for car in cars]}}
+            {
+                "status": "success",
+                "data": {
+                    "cars": [car.to_dict() for car in pagination.items],
+                    "pagination": {
+                        "page": pagination.page,
+                        "per_page": pagination.per_page,
+                        "total": pagination.total,
+                        "pages": pagination.pages,
+                        "has_next": pagination.has_next,
+                        "has_prev": pagination.has_prev,
+                    },
+                },
+            }
         ),
         status.HTTP_200_OK,
     )
