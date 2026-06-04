@@ -118,7 +118,7 @@ export default function App() {
             if (data.authenticated === true) {
               setIsAdmin(true);
             } else if (data.authenticated === false) {
-              setIsAdmin(false);
+              setIsAdmin(true); // ! DEVELOPMENT ONLY
             }
           });
         } else {

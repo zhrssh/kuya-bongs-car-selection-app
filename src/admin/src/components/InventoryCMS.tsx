@@ -1,4 +1,6 @@
 import {
+  ChevronLeft,
+  ChevronRight,
   Edit,
   Fuel,
   Grid as GridIcon,
@@ -58,6 +60,10 @@ export default function InventoryCMS({
   const [statusTab, setStatusTab] = useState<"available" | "sold" | "archived">(
     "available",
   );
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
 
   const counts = useMemo(() => {
     let available = 0;
@@ -130,10 +136,12 @@ export default function InventoryCMS({
       }
       return updated;
     });
+    setCurrentPage(1);
   };
 
   const handlePriceQuickSelect = (min: string, max: string) => {
     setFilters((prev) => ({ ...prev, priceMin: min, priceMax: max }));
+    setCurrentPage(1);
   };
 
   // Handle open form for new car
@@ -424,6 +432,7 @@ export default function InventoryCMS({
   // Reset Filters
   const resetFilters = () => {
     setFilters(INITIAL_FILTER);
+    setCurrentPage(1);
   };
 
   // Filter and Sort Logic
@@ -487,6 +496,17 @@ export default function InventoryCMS({
       });
   }, [cars, filters, sortKey, statusTab]);
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredAndSortedCars.length / ITEMS_PER_PAGE),
+  );
+  const activePage = Math.min(currentPage, totalPages);
+
+  const paginatedCars = useMemo(() => {
+    const startIndex = (activePage - 1) * ITEMS_PER_PAGE;
+    return filteredAndSortedCars.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredAndSortedCars, activePage]);
+
   return (
     <div className="space-y-6">
       {/* Search and Action Bar */}
@@ -521,7 +541,10 @@ export default function InventoryCMS({
           {/* Sorter Selector */}
           <select
             value={sortKey}
-            onChange={(e) => setSortKey(e.target.value as SortKey)}
+            onChange={(e) => {
+              setSortKey(e.target.value as SortKey);
+              setCurrentPage(1);
+            }}
             className="bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer"
             id="catalog_sorter">
             <option value="price-asc">Price: Low to High</option>
@@ -893,7 +916,10 @@ export default function InventoryCMS({
           {/* Status Tabs Selector */}
           <div className="flex border-b border-slate-200/80 gap-6 overflow-x-auto pb-0.5">
             <button
-              onClick={() => setStatusTab("available")}
+              onClick={() => {
+                setStatusTab("available");
+                setCurrentPage(1);
+              }}
               className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
                 statusTab === "available"
                   ? "text-blue-600 font-bold"
@@ -914,7 +940,10 @@ export default function InventoryCMS({
             </button>
 
             <button
-              onClick={() => setStatusTab("sold")}
+              onClick={() => {
+                setStatusTab("sold");
+                setCurrentPage(1);
+              }}
               className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
                 statusTab === "sold"
                   ? "text-emerald-600 font-bold"
@@ -935,7 +964,10 @@ export default function InventoryCMS({
             </button>
 
             <button
-              onClick={() => setStatusTab("archived")}
+              onClick={() => {
+                setStatusTab("archived");
+                setCurrentPage(1);
+              }}
               className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
                 statusTab === "archived"
                   ? "text-amber-600 font-bold"
@@ -971,7 +1003,7 @@ export default function InventoryCMS({
             </div>
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAndSortedCars.map((car) => {
+              {paginatedCars.map((car) => {
                 const isComparing = compareIds.includes(car.id);
                 const canCompare = compareIds.length < 3;
                 const onToggleCompare = (clickedCar: Car) => {
@@ -1170,7 +1202,7 @@ export default function InventoryCMS({
                   </thead>
 
                   <tbody className="divide-y divide-zinc-100 text-sm text-zinc-700">
-                    {filteredAndSortedCars.map((car) => (
+                    {paginatedCars.map((car) => (
                       <tr
                         key={car.id}
                         className="hover:bg-zinc-50/40 transition">
@@ -1276,6 +1308,81 @@ export default function InventoryCMS({
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {filteredAndSortedCars.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-8 border-t border-zinc-200">
+              <div className="text-xs text-zinc-500 font-sans">
+                Showing{" "}
+                <span className="font-semibold text-zinc-800">
+                  {Math.min(
+                    (activePage - 1) * ITEMS_PER_PAGE + 1,
+                    filteredAndSortedCars.length,
+                  )}
+                </span>{" "}
+                to{" "}
+                <span className="font-semibold text-zinc-800">
+                  {Math.min(
+                    activePage * ITEMS_PER_PAGE,
+                    filteredAndSortedCars.length,
+                  )}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-zinc-900">
+                  {filteredAndSortedCars.length}
+                </span>{" "}
+                vehicles
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1.5 font-sans">
+                  {/* Prev Button */}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(1, prev - 1))
+                    }
+                    disabled={activePage === 1}
+                    className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
+                    id="btn_prev_page"
+                    title="Previous Page">
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pg) => {
+                      const isSelected = activePage === pg;
+                      return (
+                        <button
+                          key={pg}
+                          onClick={() => setCurrentPage(pg)}
+                          className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
+                            isSelected
+                              ? "bg-blue-600 border-blue-600 text-white shadow-xs font-bold"
+                              : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
+                          }`}
+                          id={`btn_page_${pg}`}>
+                          {pg}
+                        </button>
+                      );
+                    },
+                  )}
+
+                  {/* Next Button */}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                    }
+                    disabled={activePage === totalPages}
+                    className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
+                    id="btn_next_page"
+                    title="Next Page">
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>{" "}
