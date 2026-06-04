@@ -236,7 +236,7 @@ export default function InventoryCMS({
 
     const readyCar: Car = {
       ...(formData as Car),
-      id: editingCar ? editingCar.id : "car-add-" + Date.now(),
+      id: editingCar ? editingCar.id : "",
       year: Number(year),
       price: Number(price),
       mileage: Number(mileage),
