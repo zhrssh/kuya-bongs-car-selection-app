@@ -7,11 +7,12 @@ import {
 } from "./enums";
 
 export interface SellerContact {
+  id?: string;
   name: string;
   phone: string;
   email: string;
   location: string;
-  status?: "Active" | "Inactive";
+  status?: "active" | "inactive";
 }
 export interface Car {
   id?: string;

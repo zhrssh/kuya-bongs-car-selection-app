@@ -23,7 +23,7 @@ interface SellersTabProps {
   sellers: SellerContact[];
   cars: Car[];
   onAddSeller: (seller: SellerContact) => void;
-  onToggleStatus: (name: string) => void;
+  onToggleStatus: (id: string) => void;
   isAdmin: boolean;
 }
 
@@ -47,10 +47,10 @@ export default function SellersTab({
   // Top metric aggregate computations
   const totalSellers = sellers.length;
   const activeSellersCount = sellers.filter(
-    (s) => s.status !== "Inactive",
+    (s) => s.status !== "inactive",
   ).length;
   const inactiveSellersCount = sellers.filter(
-    (s) => s.status === "Inactive",
+    (s) => s.status === "inactive",
   ).length;
 
   // Derived listings per seller
@@ -99,9 +99,8 @@ export default function SellersTab({
       name: name.trim(),
       phone: phone.trim(),
       email: email.trim(),
-      rating: 5,
       location: location.trim(),
-      status: "Active",
+      status: "active",
     };
 
     onAddSeller(newSeller);
@@ -305,16 +304,16 @@ export default function SellersTab({
                     </span>
 
                     <button
-                      onClick={() => onToggleStatus(seller.name)}
+                      onClick={() => onToggleStatus(seller.id)}
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase transition cursor-pointer ${
-                        seller.status === "Inactive"
+                        seller.status === "inactive"
                           ? "bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100"
                           : "bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100"
                       }`}
                       id={`btn_toggle_status_${index}`}
                       title="Click to toggle status">
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${seller.status === "Inactive" ? "bg-rose-500" : "bg-emerald-500"}`}></span>
+                        className={`w-1.5 h-1.5 rounded-full ${seller.status === "inactive" ? "bg-rose-500" : "bg-emerald-500"}`}></span>
                       {seller.status || "Active"}
                     </button>
                   </div>

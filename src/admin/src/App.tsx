@@ -10,6 +10,7 @@ import {
   Settings2,
   ShieldCheck,
   Unlock,
+  Users,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import AdminLoginPage from "./components/AdminLoginPage";
@@ -17,6 +18,7 @@ import DashboardMetrics from "./components/DashboardMetrics";
 import EventLogs from "./components/EventLogs";
 import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
+import SellersTab from "./components/SellersTab";
 import { CarStatus } from "./enums";
 import {
   INITIAL_LOGS,
@@ -24,7 +26,7 @@ import {
   RANDOM_NAMES,
   US_LOCATIONS,
 } from "./initialData";
-import { ActivityLog, Car, DailyMetricData } from "./types";
+import { ActivityLog, Car, DailyMetricData, SellerContact } from "./types";
 
 export default function App() {
   // Routing paths: / or /dashboard, /inventory, /login
@@ -60,28 +62,74 @@ export default function App() {
 
   // Real-time Database state
   const [cars, setCars] = useState<Car[]>([]);
+  const [sellers, setSellers] = useState<SellerContact[]>([]);
 
-  // On app load, fetch cars from the database
+  // On app load, check if user is already authenticated as admin
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
+    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/auth/status`, {
       method: "GET",
       credentials: "include",
     })
       .then((res) => {
         if (res.ok) {
           res.json().then((data) => {
-            if (data.status === "success") {
-              setCars(data.data.cars);
+            if (data.authenticated === true) {
+              setIsAdmin(true);
+            } else if (data.authenticated === false) {
+              setIsAdmin(true); // ! DEVELOPMENT ONLY
             }
           });
         } else {
           setIsAdmin(false);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Error fetching admin auth status:", err);
         setIsAdmin(false);
       });
   }, []);
+
+  // On app load, fetch cars from the database
+  useEffect(() => {
+    if (isAdmin) {
+      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((data) => {
+              if (data.status === "success") {
+                setCars(data.data.cars);
+              }
+            });
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching cars:", err);
+        });
+    }
+  }, [isAdmin]);
+
+  // On app load, fetch sellers from the database
+  useEffect(() => {
+    if (isAdmin) {
+      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers`, {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res) => {
+          if (res.ok) {
+            res.json().then((data) => {
+              if (data.status === "success") {
+                setSellers(data.data.sellers);
+              }
+            });
+          }
+        })
+        .catch((err) => console.error("Error fetching sellers:", err));
+    }
+  }, [isAdmin]);
 
   // Metrics aggregate states
   const [dailyMetrics, setDailyMetrics] =
@@ -127,30 +175,6 @@ export default function App() {
     },
     [],
   );
-
-  // On app load, check if user is already authenticated as admin
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/auth/status`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            if (data.authenticated === true) {
-              setIsAdmin(true);
-            } else if (data.authenticated === false) {
-              setIsAdmin(true); // ! DEVELOPMENT ONLY
-            }
-          });
-        } else {
-          setIsAdmin(false);
-        }
-      })
-      .catch(() => {
-        setIsAdmin(false);
-      });
-  }, []);
 
   const handleLoginSuccess = useCallback(() => {
     setIsAdmin(true);
@@ -253,12 +277,73 @@ export default function App() {
         `${target.make} ${target.model}`,
         `CMS: Revoked and unlisted vehicle ${target.make} ${target.model} from database pool`,
         target.seller.location,
+        target.id,
       );
 
       if (selectedCar?.id === id) {
         setSelectedCar(null);
       }
     }
+  };
+
+  // ADD SELLER
+  const handleAddSeller = (newSeller: SellerContact) => {
+    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newSeller),
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setSellers((prev) => [data.data.seller, ...prev]);
+          addLog(
+            "create",
+            newSeller.name,
+            `CMS: Registered new seller ${newSeller.name}`,
+            newSeller.location,
+          );
+        }
+      })
+      .catch((err) => console.error("Error adding seller:", err));
+  };
+
+  // TOGGLE SELLER STATUS
+  const handleToggleSellerStatus = (id: string) => {
+    const seller = sellers.find((s) => s.id === id);
+    if (!seller) return;
+
+    const newStatus = seller.status === "active" ? "inactive" : "active";
+
+    fetch(
+      `${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers/${id}/status`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+        credentials: "include",
+      },
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setSellers((prev) =>
+            prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s)),
+          );
+          addLog(
+            "update",
+            seller.name,
+            `CMS: Toggled seller status to ${newStatus}`,
+            seller.location,
+          );
+        }
+      })
+      .catch((err) => console.error("Error toggling seller status:", err));
   };
 
   // SIMULATE CAR VIEW
@@ -379,13 +464,27 @@ export default function App() {
                 />
                 Inventory CMS
               </button>
+
+              <button
+                onClick={() => navigate("/sellers")}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium tracking-wide transition cursor-pointer ${
+                  currentPath === "/sellers"
+                    ? "bg-blue-600 text-white shadow-xs font-semibold"
+                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
+                }`}
+                id="tab_sellers">
+                <Users
+                  className={`w-3.5 h-3.5 ${currentPath === "/sellers" ? "text-white" : "text-zinc-500"}`}
+                />
+                Sellers
+              </button>
             </nav>
 
             <div className="flex items-center gap-2 border-t sm:border-t-0 sm:border-l border-zinc-200/65 pt-3 sm:pt-0 sm:pl-4">
               {isAdmin ? (
                 <div className="flex items-center gap-2">
                   <span className="hidden sm:flex items-center gap-1.5 text-[10px] uppercase font-bold font-mono tracking-wider bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-150 shadow-xs header-status-tag">
-                    <ShieldCheck className="w-3 h-3 text-emerald-500 flex-shrink-0" />
+                    <ShieldCheck className="w-3 h-3 text-emerald-500 shrink-0" />
                     <span>Admin Active</span>
                   </span>
                   <button
@@ -403,7 +502,7 @@ export default function App() {
               ) : (
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] uppercase font-bold font-mono tracking-wider bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full border border-slate-200 border-dashed header-status-tag flex items-center gap-1">
-                    <Lock className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                    <Lock className="w-3 h-3 text-slate-400 shrink-0" />
                     <span>Read Only</span>
                   </span>
                   <button
@@ -482,6 +581,34 @@ export default function App() {
                   You are attempting to access the Inventory CMS console. Please
                   sign in with your admin credentials to publish new cars,
                   manage catalogs, or adjust pricing parameters.
+                </p>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="mt-6 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
+                  Sign In as Admin
+                </button>
+              </div>
+            ))}
+
+          {currentPath === "/sellers" &&
+            (isAdmin ? (
+              <SellersTab
+                sellers={sellers}
+                cars={cars}
+                onAddSeller={handleAddSeller}
+                onToggleStatus={handleToggleSellerStatus}
+                isAdmin={isAdmin}
+              />
+            ) : (
+              <div className="max-w-md w-full mx-auto my-12 p-8 text-center bg-white border border-zinc-200 shadow-md rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <Lock className="w-12 h-12 text-zinc-400 mx-auto mb-4" />
+                <h3 className="text-base font-bold text-zinc-900">
+                  Administrator Access Required
+                </h3>
+                <p className="text-xs text-zinc-500 mt-2 leading-relaxed">
+                  You are attempting to access the Sellers Management console.
+                  Please sign in with your admin credentials to manage seller
+                  profiles.
                 </p>
                 <button
                   onClick={() => navigate("/login")}

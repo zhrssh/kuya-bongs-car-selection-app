@@ -37,10 +37,12 @@ export const INITIAL_CARS: Car[] = [
     imageUrl: "https://picsum.photos/seed/tesla3/800/600",
     condition: "Excellent" as CarCondition,
     seller: {
+      id: "seller-1",
       name: "Eleanor Vance",
       phone: "(415) 555-0182",
       email: "eleanor.v@ev-owners.com",
       location: "San Francisco, CA",
+      status: "active",
     },
   },
   {
@@ -72,10 +74,12 @@ export const INITIAL_CARS: Car[] = [
     imageUrl: "https://picsum.photos/seed/bmwm4/800/600",
     condition: "Excellent" as CarCondition,
     seller: {
+      id: "seller-2",
       name: "Apex Motor Group",
       phone: "(650) 555-0194",
       email: "sales@apexmotorgroup.com",
       location: "Redwood City, CA",
+      status: "active",
     },
   },
   {
@@ -106,10 +110,12 @@ export const INITIAL_CARS: Car[] = [
     imageUrl: "https://picsum.photos/seed/porsche911/800/600",
     condition: "Excellent" as CarCondition,
     seller: {
+      id: "seller-3",
       name: "Prestige Auto Boutique",
       phone: "(310) 555-0143",
       email: "contact@prestigeautoboutique.com",
       location: "Beverly Hills, CA",
+      status: "active",
     },
   },
   {
@@ -141,10 +147,12 @@ export const INITIAL_CARS: Car[] = [
     imageUrl: "https://picsum.photos/seed/toyotagr86/800/600",
     condition: "Excellent" as CarCondition,
     seller: {
+      id: "seller-4",
       name: "Marcus Hale",
       phone: "(503) 555-0217",
       email: "marcus.hale@gr-drivers.com",
       location: "Portland, OR",
+      status: "inactive",
     },
   },
   {
@@ -176,10 +184,12 @@ export const INITIAL_CARS: Car[] = [
     imageUrl: "https://picsum.photos/seed/mustanggt/800/600",
     condition: "Good" as CarCondition,
     seller: {
+      id: "seller-5",
       name: "Riverside Classic Cars",
       phone: "(714) 555-0368",
       email: "sales@riversideclassiccars.com",
       location: "Anaheim, CA",
+      status: "inactive",
     },
   },
 ];

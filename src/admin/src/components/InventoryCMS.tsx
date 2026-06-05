@@ -24,7 +24,7 @@ import {
   CarStatus,
   CarTransmission,
 } from "../enums";
-import { Car, FilterState, SortKey } from "../types";
+import { Car, FilterState, SellerContact, SortKey } from "../types";
 
 interface InventoryCMSProps {
   cars: Car[];
@@ -178,6 +178,7 @@ export default function InventoryCMS({
       imageUrl: "",
       status: CarStatus.Available,
       seller: {
+        id: "",
         name: "Auto Plaza Broker",
         phone: "(555) 301-4491",
         email: "sales@autoplazadealer.com",
@@ -249,6 +250,10 @@ export default function InventoryCMS({
           : formData.imageUrl
             ? [formData.imageUrl]
             : [],
+      seller: {
+        ...(formData.seller as SellerContact),
+        id: (formData.seller as SellerContact).id || "",
+      },
     };
 
     if (editingCar) {
@@ -2103,86 +2108,69 @@ export default function InventoryCMS({
                 <h5 className="text-[10px] uppercase tracking-wider font-semibold text-zinc-450 font-mono">
                   Seller Assignment
                 </h5>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-zinc-400 font-medium">
-                      Contact Person
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={formData.seller?.name || ""}
-                      onChange={(e) =>
+                <div className="space-y-1">
+                  <span className="text-[10px] text-zinc-400 font-semibold block font-mono">
+                    Select Assigned Agent *
+                  </span>
+                  <select
+                    value={formData.seller?.name || ""}
+                    onChange={(e) => {
+                      const selectedName = e.target.value;
+                      const selectedSeller = sellers.find(
+                        (s) => s.name === selectedName,
+                      );
+                      if (selectedSeller) {
                         setFormData((p) => ({
                           ...p,
-                          seller: {
-                            ...(p.seller || {
-                              name: "",
-                              phone: "",
-                              email: "",
-                              rating: 5,
-                              location: "",
-                            }),
-                            name: e.target.value,
-                          },
-                        }))
-                      }
-                      className="w-full bg-white border border-zinc-200 rounded px-2.5 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-zinc-305"
-                    />
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-zinc-400 font-medium">
-                      Contact Mobile
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Phone"
-                      value={formData.seller?.phone || ""}
-                      onChange={(e) =>
+                          seller: { ...selectedSeller },
+                        }));
+                      } else {
                         setFormData((p) => ({
                           ...p,
-                          seller: {
-                            ...(p.seller || {
-                              name: "",
-                              phone: "",
-                              email: "",
-                              rating: 5,
-                              location: "",
-                            }),
-                            phone: e.target.value,
-                          },
-                        }))
+                          seller: undefined,
+                        }));
                       }
-                      className="w-full bg-white border border-zinc-200 rounded px-2.5 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-zinc-305"
-                    />
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] text-zinc-400 font-medium">
-                      Sales Email
-                    </span>
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={formData.seller?.email || ""}
-                      onChange={(e) =>
-                        setFormData((p) => ({
-                          ...p,
-                          seller: {
-                            ...(p.seller || {
-                              name: "",
-                              phone: "",
-                              email: "",
-                              rating: 5,
-                              location: "",
-                            }),
-                            email: e.target.value,
-                          },
-                        }))
-                      }
-                      className="w-full bg-white border border-zinc-200 rounded px-2.5 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-zinc-305"
-                    />
-                  </div>
+                    }}
+                    required
+                    className="w-full bg-white border border-zinc-200 rounded px-2.5 py-1.5 text-xs text-zinc-805 placeholder-zinc-400 focus:outline-none focus:border-zinc-350 cursor-pointer"
+                    id="select_seller_assignment">
+                    <option value="">-- Choose Agent from Directory --</option>
+                    {sellers.map((s, idx) => (
+                      <option key={idx} value={s.name}>
+                        {s.name} ({s.location} - {s.status || "Active"})
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                {formData.seller && formData.seller.name && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 bg-white/40 p-2.5 rounded border border-zinc-205/65">
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] text-zinc-400 font-mono block">
+                        Station/Office
+                      </span>
+                      <span className="text-xs font-semibold text-zinc-700">
+                        {formData.seller.location}
+                      </span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] text-zinc-400 font-mono block">
+                        Contact Phone
+                      </span>
+                      <span className="text-xs font-semibold text-zinc-700 font-mono">
+                        {formData.seller.phone}
+                      </span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] text-zinc-400 font-mono block">
+                        Sales Email
+                      </span>
+                      <span className="text-xs font-semibold text-zinc-700 line-clamp-1">
+                        {formData.seller.email}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
               {/* Control Buttons */}
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-150">
