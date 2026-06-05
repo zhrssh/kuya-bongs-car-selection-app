@@ -63,6 +63,21 @@ def test_create_seller(client):
     assert response_json["data"]["seller"]["email"] == seller_obj.email
 
 
+def test_update_seller_status(client, create_seller):
+    """It should update a seller status"""
+    seller = create_seller()
+
+    update_data = {
+        "status": "inactive",
+    }
+
+    response = client.put(f"/api/sellers/{seller.id}/status", json=update_data)
+    response_json = response.json
+    assert response.status_code == status.HTTP_200_OK
+    assert response_json["status"] == "success"
+    assert response_json["data"]["seller"]["status"] == "inactive"
+
+
 def test_update_seller_by_id(client, create_seller):
     """It should update a seller by id"""
     seller = create_seller()
