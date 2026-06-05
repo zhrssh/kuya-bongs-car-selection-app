@@ -2,35 +2,35 @@ from enum import StrEnum
 
 
 class CarStatus(StrEnum):
-    available = "Available"
-    sold = "Sold"
-    archived = "Archived"
+    available = "available"
+    sold = "sold"
+    archived = "archived"
 
 
 class CarFuelType(StrEnum):
-    gasoline = "Gasoline"
-    electric = "Electric"
-    hybrid = "Hybrid"
-    diesel = "Diesel"
+    gasoline = "gasoline"
+    electric = "electric"
+    hybrid = "hybrid"
+    diesel = "diesel"
 
 
 class CarTransmission(StrEnum):
-    automatic = "Automatic"
-    manual = "Manual"
+    automatic = "automatic"
+    manual = "manual"
 
 
 class CarBodyType(StrEnum):
-    suv = "SUV"
-    sedan = "Sedan"
-    coupe = "Coupe"
-    truck = "Truck"
-    hatchback = "Hatchback"
-    convertible = "Convertible"
-    van = "Van"
-    wagon = "Wagon"
+    suv = "suv"
+    sedan = "sedan"
+    coupe = "coupe"
+    truck = "truck"
+    hatchback = "hatchback"
+    convertible = "convertible"
+    van = "van"
+    wagon = "wagon"
 
 
 class CarCondition(StrEnum):
-    excellent = "Excellent"
-    very_good = "Very Good"
-    good = "Good"
+    excellent = "excellent"
+    very_good = "very Good"
+    good = "good"
