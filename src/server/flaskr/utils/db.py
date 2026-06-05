@@ -45,6 +45,22 @@ def add_car(count=5):
         db.session.commit()
 
 
+def add_seller(count=5):
+    """Add a new seller to the database. For testing purposes only."""
+    for _ in range(count):
+        new_seller = CarFactory()
+        db.session.add(new_seller)
+        db.session.commit()
+
+
+@click.command("add-seller")
+@click.option("--count", default=5, help="Number of sellers to add.")
+def add_seller_command(count):
+    """Add a new seller to the database."""
+    add_seller(count)
+    click.echo("Added sellers.")
+
+
 @click.command("add-car")
 @click.option("--count", default=5, help="Number of cars to add.")
 def add_car_command(count):

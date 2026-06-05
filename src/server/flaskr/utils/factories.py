@@ -12,6 +12,7 @@ from factory.fuzzy import FuzzyInteger, FuzzyChoice
 from flaskr.models.car import Car
 from flaskr.models.enums import car
 from flaskr.models.seller import Seller
+from flaskr.models.enums import seller
 
 
 class SellerFactory(factory.base.Factory):
@@ -25,6 +26,7 @@ class SellerFactory(factory.base.Factory):
     phone = Faker("phone_number")
     email = Faker("email")
     location = Faker("city")
+    status = FuzzyChoice([seller.SellerStatus.active, seller.SellerStatus.inactive])
 
 
 class CarFactory(factory.base.Factory):

@@ -47,7 +47,7 @@ class Car(db.Model):
     images: Mapped[str] = mapped_column(String(255), nullable=True)
     condition: Mapped[CarCondition] = mapped_column(nullable=False)
     sellerId: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("seller.id", name="fk_car_seller_id"), nullable=True
+        ForeignKey("seller.id", name="fk_car_seller_id"), nullable=False
     )
     seller: Mapped["Seller"] = relationship("Seller", back_populates="cars")
     created: Mapped[datetime] = mapped_column(DateTime, default=func.now())

@@ -22,7 +22,7 @@ def upgrade():
         batch_op.add_column(
             sa.Column(
                 "status",
-                sa.Enum("Active", "Inactive", name="sellerstatus"),
+                sa.Enum("active", "inactive", name="sellerstatus"),
                 nullable=True,
             )
         )
@@ -35,7 +35,7 @@ def upgrade():
     with op.batch_alter_table("seller", schema=None) as batch_op:
         batch_op.alter_column(
             "status",
-            existing_type=sa.Enum("Active", "Inactive", name="sellerstatus"),
+            existing_type=sa.Enum("active", "inactive", name="sellerstatus"),
             nullable=False,
         )
 
