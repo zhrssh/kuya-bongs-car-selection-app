@@ -57,15 +57,10 @@ export default function App() {
     };
   }, []);
 
-  // Administrator state
+  // Check if user is already authenticated as admin
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  // Real-time Database state
-  const [cars, setCars] = useState<Car[]>([]);
-  const [sellers, setSellers] = useState<SellerContact[]>([]);
-
-  // On app load, check if user is already authenticated as admin
-  useEffect(() => {
+  const handleGetAdminStatus = () => {
     fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/auth/status`, {
       method: "GET",
       credentials: "include",
@@ -87,49 +82,14 @@ export default function App() {
         console.error("Error fetching admin auth status:", err);
         setIsAdmin(false);
       });
+  };
+
+  // On app load, check if user is already authenticated as admin
+  useEffect(() => {
+    if (!isAdmin) {
+      handleGetAdminStatus();
+    }
   }, []);
-
-  // On app load, fetch cars from the database
-  useEffect(() => {
-    if (isAdmin) {
-      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((res) => {
-          if (res.ok) {
-            res.json().then((data) => {
-              if (data.status === "success") {
-                setCars(data.data.cars);
-              }
-            });
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching cars:", err);
-        });
-    }
-  }, [isAdmin]);
-
-  // On app load, fetch sellers from the database
-  useEffect(() => {
-    if (isAdmin) {
-      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((res) => {
-          if (res.ok) {
-            res.json().then((data) => {
-              if (data.status === "success") {
-                setSellers(data.data.sellers);
-              }
-            });
-          }
-        })
-        .catch((err) => console.error("Error fetching sellers:", err));
-    }
-  }, [isAdmin]);
 
   // Metrics aggregate states
   const [dailyMetrics, setDailyMetrics] =
@@ -217,48 +177,110 @@ export default function App() {
     setLogs([]);
   }, []);
 
+  // GET CAR Listing
+  const [cars, setCars] = useState<Car[]>([]);
+
+  const handleGetCarsList = () => {
+    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((res) => {
+            if (res.status === "success") {
+              setCars(res.data.cars);
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching cars:", err);
+      });
+  };
+
+  // On App load, fetch cars from the database
+  useEffect(() => {
+    if (isAdmin) {
+      handleGetCarsList();
+    }
+  }, [isAdmin]);
+
   // ADD CAR Listing
   const handleAddCar = (newCar: Car) => {
-    setCars((prev) => [newCar, ...prev]);
-    addLog(
-      "create",
-      `${newCar.make} ${newCar.model}`,
-      `CMS: Published new catalog listing for ${newCar.make} ${newCar.model} under ID ${newCar.id}`,
-      newCar.seller.location,
-      newCar.id,
-    );
+    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newCar),
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          const savedCar = data.data.car;
+          setCars((prev) => [savedCar, ...prev]);
+          addLog(
+            "create",
+            `${savedCar.make} ${savedCar.model}`,
+            `CMS: Published new catalog listing for ${savedCar.make} ${savedCar.model} under ID ${savedCar.id}`,
+            savedCar.seller.location,
+            savedCar.id,
+          );
 
-    // Auto simulate some baseline queries due to listing alert notifications
-    setDailyMetrics((prev) => {
-      const copy = [...prev];
-      if (copy.length > 0) {
-        copy[copy.length - 1] = {
-          ...copy[copy.length - 1],
-          searches: copy[copy.length - 1].searches + 15,
-          views: copy[copy.length - 1].views + 12,
-        };
-      }
-      return copy;
-    });
+          // Auto simulate some baseline queries due to listing alert notifications
+          setDailyMetrics((prev) => {
+            const copy = [...prev];
+            if (copy.length > 0) {
+              copy[copy.length - 1] = {
+                ...copy[copy.length - 1],
+                searches: copy[copy.length - 1].searches + 15,
+                views: copy[copy.length - 1].views + 12,
+              };
+            }
+            return copy;
+          });
+        }
+      })
+      .catch((err) => console.error("Error adding car:", err));
   };
 
   // UPDATE CAR Listing
   const handleUpdateCar = (updatedCar: Car) => {
-    setCars((prev) =>
-      prev.map((c) => (c.id === updatedCar.id ? updatedCar : c)),
-    );
-    addLog(
-      "update",
-      `${updatedCar.make} ${updatedCar.model}`,
-      `CMS: Modified attributes/specifications of ${updatedCar.make} ${updatedCar.model}`,
-      updatedCar.seller.location,
-      updatedCar.id,
-    );
+    fetch(
+      `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${updatedCar.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedCar),
+        credentials: "include",
+      },
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          const savedCar = data.data.car;
+          setCars((prev) =>
+            prev.map((c) => (c.id === savedCar.id ? savedCar : c)),
+          );
+          addLog(
+            "update",
+            `${savedCar.make} ${savedCar.model}`,
+            `CMS: Modified attributes/specifications of ${savedCar.make} ${savedCar.model}`,
+            savedCar.seller.location,
+            savedCar.id,
+          );
 
-    // Mirror update in detail modal if active
-    if (selectedCar?.id === updatedCar.id) {
-      setSelectedCar(updatedCar);
-    }
+          // Mirror update in detail modal if active
+          if (selectedCar?.id === savedCar.id) {
+            setSelectedCar(savedCar);
+          }
+        }
+      })
+      .catch((err) => console.error("Error updating car:", err));
   };
 
   // DELETE CAR Listing
@@ -271,20 +293,56 @@ export default function App() {
         `Administrate CMS: Are you sure you want to permanently delete the listing for the ${target.make} ${target.model}?`,
       )
     ) {
-      setCars((prev) => prev.filter((c) => c.id !== id));
-      addLog(
-        "delete",
-        `${target.make} ${target.model}`,
-        `CMS: Revoked and unlisted vehicle ${target.make} ${target.model} from database pool`,
-        target.seller.location,
-        target.id,
-      );
+      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+        .then((res) => {
+          if (res.ok) {
+            setCars((prev) => prev.filter((c) => c.id !== id));
+            addLog(
+              "delete",
+              `${target.make} ${target.model}`,
+              `CMS: Revoked and unlisted vehicle ${target.make} ${target.model} from database pool`,
+              target.seller.location,
+              target.id,
+            );
 
-      if (selectedCar?.id === id) {
-        setSelectedCar(null);
-      }
+            if (selectedCar?.id === id) {
+              setSelectedCar(null);
+            }
+          }
+        })
+        .catch((err) => console.error("Error deleting car:", err));
     }
   };
+
+  // GET SELLERS List
+  const [sellers, setSellers] = useState<SellerContact[]>([]);
+
+  const handleGetSellersList = () => {
+    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            if (data.status === "success") {
+              setSellers(data.data.sellers);
+            }
+          });
+        }
+      })
+      .catch((err) => console.error("Error fetching sellers:", err));
+  };
+
+  // On app load, fetch sellers from the database
+  useEffect(() => {
+    if (isAdmin) {
+      handleGetSellersList();
+    }
+  }, [isAdmin]);
 
   // ADD SELLER
   const handleAddSeller = (newSeller: SellerContact) => {
@@ -565,6 +623,7 @@ export default function App() {
             (isAdmin ? (
               <InventoryCMS
                 cars={cars}
+                sellers={sellers}
                 onAddCar={handleAddCar}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}

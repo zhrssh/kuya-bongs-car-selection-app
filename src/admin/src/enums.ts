@@ -1,34 +1,34 @@
 export enum CarStatus {
-  Available = "Available",
-  Sold = "Sold",
-  Archived = "Archived",
+  Available = "available",
+  Sold = "sold",
+  Archived = "archived",
 }
 
 export enum CarFuelType {
-  Gasoline = "Gasoline",
-  Electric = "Electric",
-  Hybrid = "Hybrid",
-  Diesel = "Diesel",
+  Gasoline = "gasoline",
+  Electric = "electric",
+  Hybrid = "hybrid",
+  Diesel = "diesel",
 }
 
 export enum CarTransmission {
-  Automatic = "Automatic",
-  Manual = "Manual",
+  Automatic = "automatic",
+  Manual = "manual",
 }
 
 export enum CarBodyType {
-  Sedan = "Sedan",
-  SUV = "SUV",
-  Truck = "Truck",
-  Hatchback = "Hatchback",
-  Coupe = "Coupe",
-  Convertible = "Convertible",
-  Van = "Van",
-  Wagon = "Wagon",
+  Sedan = "sedan",
+  SUV = "suv",
+  Truck = "truck",
+  Hatchback = "hatchback",
+  Coupe = "coupe",
+  Convertible = "convertible",
+  Van = "van",
+  Wagon = "wagon",
 }
 
 export enum CarCondition {
-  Excellent = "Excellent",
-  VeryGood = "Very Good",
-  Good = "Good",
+  Excellent = "excellent",
+  VeryGood = "very Good",
+  Good = "good",
 }

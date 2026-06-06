@@ -25,16 +25,17 @@ export interface Car {
   fuelType: CarFuelType;
   transmission: CarTransmission;
   bodyType: CarBodyType;
-  exteriorColor: string;
-  interiorColor: string;
-  engine: string;
-  drivetrain: string;
-  features: string[];
+  exteriorColor?: string;
+  interiorColor?: string;
+  engine?: string;
+  drivetrain?: string;
+  features?: string;
   description: string;
   imageUrl: string;
   images?: string[];
   condition: CarCondition;
-  seller: SellerContact;
+  sellerId?: string;
+  seller?: SellerContact;
 }
 
 export interface FilterState {

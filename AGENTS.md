@@ -27,15 +27,15 @@ A platform for managing used car inventory and sellers (Back-office/Client) and 
 
 ### Issue tracker
 
-GitHub issues. See `docs/agents/issue-tracker.md`.
+GitHub Issues. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-Canonical labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+Default canonical labels. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Multi-context. See `docs/agents/domain.md`.
+Multi-context layout using CONTEXT-MAP.md. See `docs/agents/domain.md`.
 
 ## Implementation Protocol
 
