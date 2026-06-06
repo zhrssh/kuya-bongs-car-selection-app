@@ -105,6 +105,8 @@ services:
       - "traefik.service.server.loadbalancer.server.port=5000"
     depends_on:
       - traefik
+    volumes:
+      - ../src/server/instance:/app/instance:rw
 
 networks:
   proxy:

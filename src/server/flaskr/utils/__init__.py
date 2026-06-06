@@ -1,1 +1,1 @@
-from . import db, factories
+from . import db

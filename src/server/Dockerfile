@@ -40,7 +40,6 @@ ENV PATH="/app/.venv/bin:$PATH" \
 ENV FLASK_APP=flaskr
 ENV FLASK_ENV=production
 COPY .env .
-RUN flask --app flaskr init-db
 
 # Switch to the non-root execution user
 USER appuser

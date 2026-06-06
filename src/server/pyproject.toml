@@ -28,3 +28,5 @@ dev = [
 addopts = ["--cov=flaskr","--cov-report=term-missing"]
 log_cli = true
 log_cli_level = "DEBUG"
+pythonpath = ["."]   # ← add this
+testpaths = ["tests"]

@@ -62,8 +62,8 @@ def create_app(test_config=None) -> Flask:
     migrate.init_app(app, db)
 
     # register CLI commands
+    app.cli.add_command(init_db_command)
     if app.config["FLASK_ENV"] == "development":
-        app.cli.add_command(init_db_command)
         app.cli.add_command(add_car_command)
         app.cli.add_command(add_seller_command)
 

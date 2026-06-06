@@ -2,8 +2,8 @@ import pytest
 
 from flaskr import create_app
 from flaskr.db import db
-from flaskr.utils.factories import CarFactory, SellerFactory
 from flaskr.api.schemas.seller import SellerSchema
+from .factories import CarFactory, SellerFactory
 
 
 @pytest.fixture()
@@ -54,10 +54,10 @@ def create_seller(client):
     def _create_seller(seller_obj=None):
         if seller_obj is None:
             seller_obj = SellerFactory()
-        
+
         data = SellerSchema.model_validate(seller_obj).model_dump(exclude={"id"})
         response = client.post("/api/sellers", json=data)
         assert response.status_code == 201
         return SellerSchema.model_validate(response.json["data"]["seller"])
-    return _create_seller
 
+    return _create_seller

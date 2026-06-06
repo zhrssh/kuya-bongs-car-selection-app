@@ -1,1 +1,1 @@
-from . import conftest, test_cars, test_sellers
+from . import conftest, test_cars, test_sellers, factories

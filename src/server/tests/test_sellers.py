@@ -1,9 +1,8 @@
 from flaskr import status
 import uuid
-import json
 
 from flaskr.api.schemas.seller import SellerSchema
-from flaskr.utils.factories import SellerFactory
+from .factories import SellerFactory
 
 
 def test_get_sellers_list(client):

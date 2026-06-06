@@ -1,13 +1,10 @@
 import os
-import uuid
 import click
 
 from ..models.user import User
 from werkzeug.security import generate_password_hash
 
 from ..db import db
-from .factories import CarFactory
-
 
 ### Database initialization and CLI command
 def init_db():
@@ -39,18 +36,20 @@ def init_db():
 
 def add_car(count=5):
     """Add a new car to the database. For testing purposes only."""
-    for _ in range(count):
-        new_car = CarFactory()
-        db.session.add(new_car)
-        db.session.commit()
+    return # ! QUICK FIX
+    # for _ in range(count):
+    #     new_car = CarFactory()
+    #     db.session.add(new_car)
+    #     db.session.commit()
 
 
 def add_seller(count=5):
     """Add a new seller to the database. For testing purposes only."""
-    for _ in range(count):
-        new_seller = CarFactory()
-        db.session.add(new_seller)
-        db.session.commit()
+    return # ! QUICK FIX
+    # for _ in range(count):
+    #     new_seller = CarFactory()
+    #     db.session.add(new_seller)
+    #     db.session.commit()
 
 
 @click.command("add-seller")

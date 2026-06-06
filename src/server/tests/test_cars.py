@@ -1,11 +1,9 @@
 from flaskr import status
 import logging
 import uuid
-import factory
-import json
 
 from flaskr.api.cars import CarSchema
-from flaskr.utils.factories import CarFactory
+from .factories import CarFactory
 
 logger = logging.getLogger(__name__)
 
