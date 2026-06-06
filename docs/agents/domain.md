@@ -1,9 +1,8 @@
 # Domain docs
 
-This project uses a **multi-context** layout.
+This project uses a multi-context layout defined in `CONTEXT-MAP.md`.
 
-- `CONTEXT-MAP.md` at the root defines the mapping of contexts.
-- Each context has its own `CONTEXT.md` file.
-- ADRs are located under `docs/adr/`.
-
-Skills requiring domain knowledge will parse `CONTEXT-MAP.md` to identify the relevant `CONTEXT.md` files based on the scope of the task.
+Skills requiring context should read:
+1. `CONTEXT-MAP.md` to identify the relevant sub-context.
+2. The specific `CONTEXT.md` file indicated in the map for the relevant domain (Backend, Admin, or Storefront).
+3. The corresponding `docs/adr/` directory for that domain for architectural decisions.

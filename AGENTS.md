@@ -37,6 +37,7 @@ Default canonical labels. See `docs/agents/triage-labels.md`.
 
 Multi-context layout using CONTEXT-MAP.md. See `docs/agents/domain.md`.
 
+
 ## Implementation Protocol
 
 - **TDD**: Always use the `/tdd` skill when implementing code.

@@ -1,9 +1,9 @@
 # Triage labels
 
-This project uses the following canonical triage labels:
+The `triage` skill uses these label mappings to manage issue state.
 
-- `needs-triage`
-- `needs-info`
-- `ready-for-agent`
-- `ready-for-human`
-- `wontfix`
+- `needs-triage` — maintainer needs to evaluate
+- `needs-info` — waiting on reporter
+- `ready-for-agent` — fully specified, AFK-ready
+- `ready-for-human` — needs human implementation
+- `wontfix` — will not be actioned
