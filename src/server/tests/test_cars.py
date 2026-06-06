@@ -1,8 +1,11 @@
 from flaskr import status
 import logging
 import uuid
+import factory
+import json
 
-from .factories import CarFactory
+from flaskr.api.cars import CarSchema
+from flaskr.utils.factories import CarFactory
 
 logger = logging.getLogger(__name__)
 
@@ -129,8 +132,15 @@ def test_delete_car_by_nonexistent_id(client):
 def test_create_car(client):
     """It should create a new car"""
     new_car = CarFactory()
-    new_car.id = None
-    response = client.post("/api/cars", json=new_car.to_dict())
+    new_car.sellerId = new_car.seller.id  # Set the seller id
+
+    # Serialize via Pydantic, excluding seller object and id
+    car_data = CarSchema.model_validate(new_car).model_dump(
+        mode="json",
+        exclude={"id", "seller"},  # exclude nested seller object
+    )
+
+    response = client.post("/api/cars", json=car_data)
     assert response.status_code == status.HTTP_201_CREATED
 
     responseJson = response.json

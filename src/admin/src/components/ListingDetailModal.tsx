@@ -7,25 +7,21 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  ClipboardList,
   Mail,
   MapPin,
   Phone,
   ShieldCheck,
-  Sparkles,
   User,
   X,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { CarStatus } from "../enums";
 import { Car } from "../types";
 
 interface ListingDetailModalProps {
   car: Car | null;
   onClose: () => void;
-  onUpdateStatus: (
-    id: string,
-    status: "available" | "sold" | "archived",
-  ) => void;
+  onUpdateStatus: (id: string, status: CarStatus) => void;
 }
 
 export default function ListingDetailModal({
@@ -47,6 +43,7 @@ export default function ListingDetailModal({
   >("none");
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
+  // ! FOR DEVELOPMENT ONLY
   // Generate 4 beautiful images for any car if not defined
   const carImages = useMemo(() => {
     if (car.images && car.images.length > 0) {
@@ -88,7 +85,7 @@ export default function ListingDetailModal({
 
   const formattedMileage = new Intl.NumberFormat("en-US").format(car.mileage);
 
-  const handleSubmitMessage = (e: React.FormEvent) => {
+  const handleSubmitMessage = (e: any) => {
     e.preventDefault();
     if (!userName || !userEmail) return;
 
@@ -291,45 +288,45 @@ export default function ListingDetailModal({
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <button
-                    onClick={() => onUpdateStatus(car.id, "available")}
+                    onClick={() => onUpdateStatus(car.id!, CarStatus.Available)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
-                      !car.status || car.status === "available"
+                      car.status! === CarStatus.Available
                         ? "bg-blue-50 border-blue-200 text-blue-700 font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100"
                     }`}
                     id="status_btn_available">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${!car.status || car.status === "available" ? "bg-blue-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Available ? "bg-blue-600" : "bg-zinc-400"}`}></span>
                     <span className="text-[10px] tracking-tight">
                       Available
                     </span>
                   </button>
 
                   <button
-                    onClick={() => onUpdateStatus(car.id, "sold")}
+                    onClick={() => onUpdateStatus(car.id!, CarStatus.Sold)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
-                      car.status === "sold"
+                      car.status! === CarStatus.Sold
                         ? "bg-emerald-50 border-emerald-200 text-emerald-700 font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-emerald-700 hover:bg-emerald-50/55"
                     }`}
                     id="status_btn_sold">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status === "sold" ? "bg-emerald-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Sold ? "bg-emerald-600" : "bg-zinc-400"}`}></span>
                     <span className="text-[10px] tracking-tight">
                       Mark Sold
                     </span>
                   </button>
 
                   <button
-                    onClick={() => onUpdateStatus(car.id, "archived")}
+                    onClick={() => onUpdateStatus(car.id!, CarStatus.Archived)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
-                      car.status === "archived"
+                      car.status! === CarStatus.Archived
                         ? "bg-amber-50 border-amber-200 text-amber-700 font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-amber-700 hover:bg-amber-50/55"
                     }`}
                     id="status_btn_archived">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status === "archived" ? "bg-amber-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Archived ? "bg-amber-600" : "bg-zinc-400"}`}></span>
                     <span className="text-[10px] tracking-tight">Archive</span>
                   </button>
                 </div>
@@ -402,184 +399,6 @@ export default function ListingDetailModal({
                   {car.seller.email}
                 </div>
               )}
-            </div>
-
-            {/* Detailed Interest Form */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.01)] flex flex-col gap-4">
-              <div className="border-b border-slate-100 pb-3 leading-none flex items-center justify-between">
-                <div>
-                  <h4 className="font-display font-semibold text-sm text-slate-900 leading-none">
-                    Send Inquiry Form
-                  </h4>
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Inquire directly to agent
-                  </span>
-                </div>
-                <Sparkles className="h-4 w-4 text-blue-500" />
-              </div>
-
-              <form
-                onSubmit={handleSubmitMessage}
-                className="flex flex-col gap-3.5">
-                {/* Interest Selector tabs */}
-                <div className="grid grid-cols-3 gap-1 bg-gray-50 p-1.5 rounded-xl">
-                  <button
-                    type="button"
-                    onClick={() => setInterestType("questions")}
-                    className={`text-[10px] py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
-                      interestType === "questions"
-                        ? "bg-white text-gray-900 shadow-xs"
-                        : "text-gray-500 hover:text-gray-800"
-                    }`}>
-                    Questions
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInterestType("test-drive")}
-                    className={`text-[10px] py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
-                      interestType === "test-drive"
-                        ? "bg-white text-gray-900 shadow-xs"
-                        : "text-gray-500 hover:text-gray-800"
-                    }`}>
-                    Test Drive
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInterestType("finance")}
-                    className={`text-[10px] py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
-                      interestType === "finance"
-                        ? "bg-white text-gray-900 shadow-xs"
-                        : "text-gray-500 hover:text-gray-800"
-                    }`}>
-                    Finance Option
-                  </button>
-                </div>
-
-                {/* Sender Details */}
-                <div className="grid grid-cols-1 gap-3">
-                  <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                      Your Name *
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. John Doe"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
-                      className="w-full bg-white border border-slate-205 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800 border-gray-200"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                        Email Address *
-                      </label>
-                      <input
-                        required
-                        type="email"
-                        placeholder="john@example.com"
-                        value={userEmail}
-                        onChange={(e) => setUserEmail(e.target.value)}
-                        className="w-full bg-white border border-slate-205 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800 border-gray-200"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                        Phone (Optional)
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="(555) 000-0000"
-                        value={userPhone}
-                        onChange={(e) => setUserPhone(e.target.value)}
-                        className="w-full bg-white border border-slate-205 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800 border-gray-200"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Message TextArea */}
-                <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                    Your Message
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder={
-                      interestType === "test-drive"
-                        ? "I would love to arrange a test drive for this vehicle. What is your upcoming schedule availability?"
-                        : interestType === "finance"
-                          ? "I am interested in obtaining finance pre-approval configurations for this vehicle. Let me know the typical conditions."
-                          : `Hi, I am interested in this ${car.year} ${car.make} ${car.model}. Is the price negotiable?`
-                    }
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="w-full bg-white border border-slate-205 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800 border-gray-200"
-                  />
-                </div>
-
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !userName || !userEmail}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-full text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 focus:outline-none">
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24">
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Sending Inquiry...
-                    </>
-                  ) : submitSuccess ? (
-                    "Inquiry Sent Successfully!"
-                  ) : interestType === "test-drive" ? (
-                    "Schedule Test Drive"
-                  ) : (
-                    "Send Message to Agent"
-                  )}
-                </button>
-
-                {/* Visual Feedback Confirmation */}
-                {submitSuccess && (
-                  <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl text-xs text-emerald-800 animate-in fade-in duration-200">
-                    <p className="font-semibold mb-0.5">
-                      Success! Your inquiry has been sent.
-                    </p>
-                    <p className="text-emerald-700">
-                      The selling agent ({car.seller.name}) typically responds
-                      within 2 hours. Keep an eye on your email inbox!
-                    </p>
-                  </div>
-                )}
-              </form>
-            </div>
-
-            {/* Quick tips box */}
-            <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-4 text-xs text-amber-900 flex gap-2">
-              <ClipboardList className="h-5 w-5 text-amber-600 shrink-0" />
-              <div>
-                <span className="font-bold">Advice for Buyers:</span> We always
-                recommend getting a third-party pre-purchase inspection prior to
-                buying any pre-owned vehicle, as well as verifying the
-                registration documents in person.
-              </div>
             </div>
           </div>
         </div>

@@ -1,28 +1,30 @@
+import {
+  CarBodyType,
+  CarCondition,
+  CarFuelType,
+  CarStatus,
+  CarTransmission,
+} from "./enums";
+
 export interface SellerContact {
+  id?: string;
   name: string;
   phone: string;
   email: string;
   location: string;
+  status?: "active" | "inactive";
 }
-
 export interface Car {
-  id: string;
+  id?: string;
+  status: CarStatus;
   make: string;
   model: string;
   year: number;
   price: number;
   mileage: number;
-  fuelType: "Gasoline" | "Electric" | "Hybrid" | "Diesel";
-  transmission: "Automatic" | "Manual";
-  bodyType:
-    | "Sedan"
-    | "SUV"
-    | "Truck"
-    | "Hatchback"
-    | "Coupe"
-    | "Convertible"
-    | "Van"
-    | "Wagon";
+  fuelType: CarFuelType;
+  transmission: CarTransmission;
+  bodyType: CarBodyType;
   exteriorColor: string;
   interiorColor: string;
   engine: string;
@@ -31,8 +33,7 @@ export interface Car {
   description: string;
   imageUrl: string;
   images?: string[];
-  condition: "Excellent" | "Very Good" | "Good";
-  status?: "available" | "sold" | "archived";
+  condition: CarCondition;
   seller: SellerContact;
 }
 

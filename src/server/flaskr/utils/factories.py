@@ -4,11 +4,15 @@ Factory classes for creating models for testing.
 
 import factory
 import uuid
+import math
+import random
 from factory.declarations import LazyFunction, SubFactory
 from factory.faker import Faker
 from factory.fuzzy import FuzzyInteger, FuzzyChoice
 from flaskr.models.car import Car
+from flaskr.models.enums import car
 from flaskr.models.seller import Seller
+from flaskr.models.enums import seller
 
 
 class SellerFactory(factory.base.Factory):
@@ -22,6 +26,7 @@ class SellerFactory(factory.base.Factory):
     phone = Faker("phone_number")
     email = Faker("email")
     location = Faker("city")
+    status = FuzzyChoice([seller.SellerStatus.active, seller.SellerStatus.inactive])
 
 
 class CarFactory(factory.base.Factory):
@@ -31,23 +36,35 @@ class CarFactory(factory.base.Factory):
         model = Car
 
     id = LazyFunction(lambda: uuid.uuid4())
+    status = FuzzyChoice(
+        [car.CarStatus.available, car.CarStatus.sold, car.CarStatus.archived]
+    )
     make = Faker("company")
     model = Faker("city")
     year = FuzzyInteger(low=1900, high=2050)
     price = FuzzyInteger(low=100000, high=5000000)
     mileage = FuzzyInteger(low=10000, high=50000)
-    fuelType = FuzzyChoice(["Gasoline", "Electric", "Hybrid", "Diesel"])
-    transmission = FuzzyChoice(["Automatic", "Manual"])
+    fuelType = FuzzyChoice(
+        [
+            car.CarFuelType.gasoline,
+            car.CarFuelType.electric,
+            car.CarFuelType.hybrid,
+            car.CarFuelType.diesel,
+        ]
+    )
+    transmission = FuzzyChoice(
+        [car.CarTransmission.automatic, car.CarTransmission.manual]
+    )
     bodyType = FuzzyChoice(
         [
-            "Sedan",
-            "SUV",
-            "Truck",
-            "Hatchback",
-            "Coupe",
-            "Convertible",
-            "Van",
-            "Wagon",
+            car.CarBodyType.sedan,
+            car.CarBodyType.suv,
+            car.CarBodyType.coupe,
+            car.CarBodyType.truck,
+            car.CarBodyType.hatchback,
+            car.CarBodyType.convertible,
+            car.CarBodyType.van,
+            car.CarBodyType.wagon,
         ]
     )
     exteriorColor = Faker("safe_color_name")
@@ -56,7 +73,9 @@ class CarFactory(factory.base.Factory):
     drivetrain = FuzzyChoice(["FWD", "RWD", "AWD"])
     features = "Some features"
     description = Faker("catch_phrase")
-    imageUrl = "https://picsum.photos/seed/tesla3/800/600"
+    imageUrl = f"https://picsum.photos/seed/{math.floor(random.randrange(start=1, stop=1000))}/800/600"
     images = None
-    condition = FuzzyChoice(["Excellent", "Very Good", "Good"])
+    condition = FuzzyChoice(
+        [car.CarCondition.excellent, car.CarCondition.very_good, car.CarCondition.good]
+    )
     seller = SubFactory(SellerFactory)

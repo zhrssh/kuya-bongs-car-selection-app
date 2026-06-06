@@ -12,6 +12,7 @@ import {
   Filler,
 } from 'chart.js';
 import { Car, DailyMetricData } from '../types';
+import { CarStatus } from '../enums';
 import { TrendingUp, DollarSign, CarFront, MessageSquare, Archive } from 'lucide-react';
 
 // Register ChartJS modules
@@ -34,13 +35,14 @@ interface DashboardMetricsProps {
 }
 
 export default function DashboardMetrics({ cars, dailyMetrics, totalLeads, totalViews }: DashboardMetricsProps) {
-  // Memoized KPIs
-  const stats = useMemo(() => {
-    const availableCars = cars.filter(c => !c.status || c.status === 'available');
-    const soldCars = cars.filter(c => c.status === 'sold');
-    const archivedCars = cars.filter(c => c.status === 'archived');
+   // Memoized KPIs
+   const stats = useMemo(() => {
+     const availableCars = cars.filter(c => !c.status || c.status === CarStatus.Available);
+     const soldCars = cars.filter(c => c.status === CarStatus.Sold);
+     const archivedCars = cars.filter(c => c.status === CarStatus.Archived);
 
-    const totalCount = availableCars.length;
+     const totalCount = availableCars.length;
+
     const totalValue = availableCars.reduce((sum, c) => sum + c.price, 0);
     const avgPrice = totalCount > 0 ? totalValue / totalCount : 0;
     

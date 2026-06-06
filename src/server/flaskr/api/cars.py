@@ -1,53 +1,51 @@
 import logging
 import uuid
-import datetime
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
+from sqlalchemy.orm import joinedload
 
-from itsdangerous import NoneAlgorithm
-from pydantic import BaseModel
 import pydantic_core
 
 from flaskr import status
+from ..db import db
 from ..models.car import Car
+from .schemas.car import CarSchema
 
 bp = Blueprint("cars", __name__, url_prefix="/api")
 logger = logging.getLogger(__name__)
 
 
-class CarSchema(BaseModel):
-    make: str
-    model: str
-    year: int
-    price: int
-    mileage: int
-    fuelType: str
-    transmission: str
-    bodyType: str
-    exteriorColor: str | None
-    interiorColor: str | None
-    engine: str | None
-    drivetrain: str | None
-    features: str | None
-    description: str
-    imageUrl: str
-    images: str | None
-    condition: str
-    sellerId: uuid.UUID | None
-
-
 @bp.route("/cars", methods=["GET"])
 def get_cars_list():
-    """Get a list of all cars."""
+    """Get a paginated list of cars."""
     logger.info("Request to get all cars")
 
-    # TODO: This should be optimized. Add pagination, sorting, etc.
+    pagination = db.paginate(
+        db.select(Car).options(joinedload(Car.seller)).order_by(Car.id),
+        max_per_page=20,
+    )
 
-    cars = Car.query.all()
-    logger.debug("Cars: %s", cars)
+    logger.debug("Cars page: %s", pagination.items)
+
     return (
         jsonify(
-            {"status": "success", "data": {"cars": [car.to_dict() for car in cars]}}
+            {
+                "status": "success",
+                "data": {
+                    "cars": [
+                        CarSchema.model_validate(car).model_dump()
+                        for car in pagination.items
+                    ],
+                    "pagination": {
+                        "page": pagination.page,
+                        "per_page": pagination.per_page,
+                        "total": pagination.total,
+                        "pages": pagination.pages,
+                        "has_next": pagination.has_next,
+                        "has_prev": pagination.has_prev,
+                    },
+                },
+            }
         ),
         status.HTTP_200_OK,
     )
@@ -67,7 +65,7 @@ def get_car_by_id(car_id):
             status.HTTP_400_BAD_REQUEST,
         )
 
-    car = Car.query.filter_by(id=car_id).first()
+    car = Car.query.options(joinedload(Car.seller)).filter_by(id=car_id).first()
     if not car:
         return (
             jsonify({"status": "fail", "data": {"id": "Car not found."}}),
@@ -75,7 +73,12 @@ def get_car_by_id(car_id):
         )
 
     return (
-        jsonify({"status": "success", "data": {"car": car.to_dict()}}),
+        jsonify(
+            {
+                "status": "success",
+                "data": {"car": CarSchema.model_validate(car).model_dump()},
+            }
+        ),
         status.HTTP_200_OK,
     )
 
@@ -95,7 +98,7 @@ def update_car_by_id(car_id):
         )
 
     # Check if car to update exists
-    car = Car.query.filter_by(id=car_id).first()
+    car = Car.query.options(joinedload(Car.seller)).filter_by(id=car_id).first()
     if not car:
         return (
             jsonify({"status": "fail", "data": {"id": "Car not found."}}),
@@ -104,16 +107,21 @@ def update_car_by_id(car_id):
 
     # Fetch the request data
     request_data = CarSchema(**request.get_json())
-    logger.debug("Request data: %s", request_data)
+    update_data = request_data.model_dump(exclude_unset=True, exclude={"id", "seller"})
+    logger.debug("Request data: %s", update_data)
 
-    # Update the car
-    for key, value in request_data.model_dump(exclude_unset=True).items():
-        setattr(car, key, value)
-    car.update()
-    logger.debug("Updated car: %s", car)
+    # Update the car fields
+    for field, value in update_data.items():
+        setattr(car, field, value)
+    car.update()  # Update the car
 
     return (
-        jsonify({"status": "success", "data": {"car": car.to_dict()}}),
+        jsonify(
+            {
+                "status": "success",
+                "data": {"car": CarSchema.model_validate(car).model_dump()},
+            }
+        ),
         status.HTTP_200_OK,
     )
 
@@ -133,7 +141,7 @@ def delete_car_by_id(car_id):
         )
 
     # Check if car to delete exists
-    car = Car.query.filter_by(id=car_id).first()
+    car = Car.query.options(joinedload(Car.seller)).filter_by(id=car_id).first()
     if not car:
         logger.info("Car not found: %s", car_id)
         return (
@@ -190,6 +198,11 @@ def create_car():
         )
 
     return (
-        jsonify({"status": "success", "data": {"car": car.to_dict()}}),
+        jsonify(
+            {
+                "status": "success",
+                "data": {"car": CarSchema.model_validate(car).model_dump()},
+            }
+        ),
         status.HTTP_201_CREATED,
     )
