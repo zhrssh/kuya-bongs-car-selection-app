@@ -4,7 +4,6 @@
  */
 
 import {
-  CheckCircle,
   ChevronLeft,
   ChevronRight,
   Mail,
@@ -246,18 +245,9 @@ export default function ListingDetailModal({
             {/* Highlights list */}
             <div>
               <h4 className="text-xs font-extrabold uppercase tracking-widest text-gray-500 mb-3.5">
-                Premium Equipment & Highlights
+                Features
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {car.features.map((feat) => (
-                  <span
-                    key={feat}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/60 text-xs font-medium text-slate-700">
-                    <CheckCircle className="h-3 w-3 text-blue-500" />
-                    {feat}
-                  </span>
-                ))}
-              </div>
+              <div className="flex flex-wrap gap-2">{car.features}</div>
             </div>
           </div>
         </div>
@@ -344,11 +334,11 @@ export default function ListingDetailModal({
                 </div>
                 <div>
                   <h5 className="font-semibold text-sm text-slate-800 leading-tight">
-                    {car.seller.name}
+                    {car.seller?.name}
                   </h5>
                   <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium mt-1">
                     <MapPin className="h-3.5 w-3.5 text-slate-400" />
-                    {car.seller.location}
+                    {car.seller?.location}
                   </div>
                 </div>
               </div>
@@ -369,7 +359,7 @@ export default function ListingDetailModal({
                   </span>
                   <span className="text-xs font-bold leading-tight select-all text-slate-800">
                     {revealContact === "phone"
-                      ? car.seller.phone
+                      ? car.seller?.phone
                       : "Click to View"}
                   </span>
                 </button>
@@ -388,7 +378,7 @@ export default function ListingDetailModal({
                   </span>
                   <span className="text-xs font-bold leading-tight select-all text-slate-800">
                     {revealContact === "email"
-                      ? car.seller.email.split("@")[0] + "..."
+                      ? car.seller?.email.split("@")[0] + "..."
                       : "Click to View"}
                   </span>
                 </button>
@@ -396,7 +386,7 @@ export default function ListingDetailModal({
 
               {revealContact === "email" && (
                 <div className="text-center text-xs text-blue-800 bg-blue-50 border border-blue-100 p-2.5 rounded-2xl font-mono select-all animate-in fade-in duration-200">
-                  {car.seller.email}
+                  {car.seller?.email}
                 </div>
               )}
             </div>
