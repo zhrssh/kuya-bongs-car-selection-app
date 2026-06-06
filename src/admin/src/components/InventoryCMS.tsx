@@ -13,7 +13,6 @@ import {
   Sparkles,
   Table,
   Trash2,
-  Upload,
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -28,6 +27,7 @@ import { Car, FilterState, SellerContact, SortKey } from "../types";
 
 interface InventoryCMSProps {
   cars: Car[];
+  sellers: SellerContact[];
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
   onDeleteCar: (id: string) => void;
@@ -51,6 +51,7 @@ const INITIAL_FILTER: FilterState = {
 
 export default function InventoryCMS({
   cars,
+  sellers,
   onAddCar,
   onUpdateCar,
   onDeleteCar,
@@ -103,7 +104,6 @@ export default function InventoryCMS({
 
   // Specific Form states
   const [formData, setFormData] = useState<Partial<Car>>({});
-  const [featuresInput, setFeaturesInput] = useState("");
   const [formError, setFormError] = useState("");
   const [imageInputUrl, setImageInputUrl] = useState("");
 
@@ -173,16 +173,16 @@ export default function InventoryCMS({
       interiorColor: "",
       engine: "",
       drivetrain: "RWD",
-      features: [],
+      features: "",
       description: "",
       imageUrl: "",
       status: CarStatus.Available,
       seller: {
         id: "",
-        name: "Auto Plaza Broker",
-        phone: "(555) 301-4491",
-        email: "sales@autoplazadealer.com",
-        location: "Denver, CO",
+        name: "",
+        phone: "",
+        email: "",
+        location: "",
       },
     });
     setFormError("");
@@ -193,7 +193,6 @@ export default function InventoryCMS({
   const handleOpenEdit = (car: Car) => {
     setEditingCar(car);
     setFormData({ ...car });
-    setFeaturesInput(car.features.join(", "));
     setFormError("");
     setImageInputUrl("");
     setIsFormOpen(true);
@@ -209,6 +208,7 @@ export default function InventoryCMS({
       year,
       price,
       mileage,
+      features,
       exteriorColor,
       interiorColor,
       description,
@@ -230,35 +230,33 @@ export default function InventoryCMS({
       return;
     }
 
-    const featureArray = featuresInput
-      .split(",")
-      .map((f) => f.trim())
-      .filter((f) => f.length > 0);
-
     const readyCar: Car = {
       ...(formData as Car),
       id: editingCar ? editingCar.id : "",
       year: Number(year),
       price: Number(price),
       mileage: Number(mileage),
-      features: featureArray,
+      features: features,
       condition: condition || CarCondition.Excellent,
       status: formData.status || CarStatus.Available,
-      images:
-        formData.images && formData.images.length > 0
-          ? formData.images
-          : formData.imageUrl
-            ? [formData.imageUrl]
-            : [],
+      // images:
+      //   formData.images && formData.images.length > 0
+      //     ? formData.images
+      //     : formData.imageUrl
+      //       ? [formData.imageUrl]
+      //       : [], // NOTE: REMOVED UNTIL BACKEND IS FIXED
       seller: {
         ...(formData.seller as SellerContact),
         id: (formData.seller as SellerContact).id || "",
       },
+      sellerId: formData.seller?.id || "",
     };
 
     if (editingCar) {
       onUpdateCar(readyCar);
     } else {
+      // Remove id prperty when adding new car
+      delete readyCar.id;
       onAddCar(readyCar);
     }
 
@@ -281,11 +279,7 @@ export default function InventoryCMS({
           const matchMake = car.make.toLowerCase().includes(q);
           const matchModel = car.model.toLowerCase().includes(q);
           const matchDesc = car.description.toLowerCase().includes(q);
-          const matchFeatures = car.features.some((f) =>
-            f.toLowerCase().includes(q),
-          );
-          if (!matchMake && !matchModel && !matchDesc && !matchFeatures)
-            return false;
+          if (!matchMake && !matchModel && !matchDesc) return false;
         }
 
         // Filter by Tab (available, sold, archived)
@@ -965,7 +959,7 @@ export default function InventoryCMS({
                           </span>
                           <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
                             <MapPin className="h-3 w-3 shrink-0" />
-                            {car.seller.location.split(",")[0]}
+                            {car.seller!.location.split(",")[0]}
                           </span>
                         </div>
                         <h3 className="font-display font-semibold text-base text-slate-905 text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
@@ -1466,13 +1460,7 @@ export default function InventoryCMS({
                       return (
                         <td key={id} className="py-3 px-4">
                           <div className="flex flex-wrap justify-center gap-1">
-                            {item.features.map((feat, index) => (
-                              <span
-                                key={index}
-                                className="bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-[9px] text-slate-600">
-                                {feat}
-                              </span>
-                            ))}
+                            {item.features}
                           </div>
                         </td>
                       );
@@ -1829,7 +1817,8 @@ export default function InventoryCMS({
                   </div>
 
                   {/* Drag and Drop Zone / File upload */}
-                  <div
+                  {/* NOTE: REMOVED UNTIL BACKEND IS FIXED */}
+                  {/* <div
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -1939,7 +1928,7 @@ export default function InventoryCMS({
                     <span className="text-[10px] text-zinc-400">
                       Multiple image uploads supported (PNG, JPG, WebP)
                     </span>
-                  </div>
+                  </div> */}
 
                   {/* Direct text input option */}
                   <div className="space-y-1.5 mt-2">
@@ -2077,13 +2066,15 @@ export default function InventoryCMS({
               {/* Key Features input comma list */}
               <div className="space-y-1">
                 <label className="text-xs font-medium text-zinc-550">
-                  Key Features (comma separated)
+                  Key Features
                 </label>
                 <input
                   type="text"
                   placeholder="Autopilot, Panoramic Roof, Heated Steering Wheel"
-                  value={featuresInput}
-                  onChange={(e) => setFeaturesInput(e.target.value)}
+                  value={formData.features || ""}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, features: e.target.value }))
+                  }
                   className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-805 placeholder-zinc-400 focus:outline-none focus:border-zinc-300"
                 />
               </div>
