@@ -182,7 +182,9 @@ def create_car():
 
     # Create the car
     car = Car()
-    for key, value in request_data.model_dump(exclude_unset=True).items():
+    for key, value in request_data.model_dump(
+        exclude_unset=True, exclude={"seller"}
+    ).items():
         setattr(car, key, value)
 
     try:
