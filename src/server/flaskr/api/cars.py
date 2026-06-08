@@ -32,6 +32,8 @@ def get_cars_list():
     condition_filter = request.args.get("condition")
     price_min = request.args.get("priceMin", type=int)
     price_max = request.args.get("priceMax", type=int)
+    year_min = request.args.get("yearMin", type=int)
+    year_max = request.args.get("yearMax", type=int)
     search_query = request.args.get("search")
 
     # Safety limits
@@ -58,6 +60,10 @@ def get_cars_list():
         query = query.filter(Car.price >= price_min)
     if price_max is not None:
         query = query.filter(Car.price <= price_max)
+    if year_min is not None:
+        query = query.filter(Car.year >= year_min)
+    if year_max is not None:
+        query = query.filter(Car.year <= year_max)
     if search_query:
         search_term = f"%{search_query}%"
         query = query.filter(
