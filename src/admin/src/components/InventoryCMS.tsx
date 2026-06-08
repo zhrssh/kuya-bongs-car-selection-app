@@ -16,7 +16,6 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useDebounce } from "../hooks/useDebounce";
 import {
   CarBodyType,
   CarCondition,
@@ -24,6 +23,7 @@ import {
   CarStatus,
   CarTransmission,
 } from "../enums";
+import { useDebounce } from "../hooks/useDebounce";
 import { Car, FilterState, SellerContact, SortKey } from "../types";
 
 interface InventoryCMSProps {
@@ -63,6 +63,8 @@ export default function InventoryCMS({
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTER);
   const [sortKey, setSortKey] = useState<SortKey>("year-desc");
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
+  const debouncedPriceMin = useDebounce(filters.priceMin, 300);
+  const debouncedPriceMax = useDebounce(filters.priceMax, 300);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
@@ -86,19 +88,21 @@ export default function InventoryCMS({
     () => ({
       ...filters,
       searchQuery: debouncedSearchQuery,
+      priceMin: debouncedPriceMin,
+      priceMax: debouncedPriceMax,
     }),
     [
       filters.make,
       filters.model,
       filters.yearMin,
       filters.yearMax,
-      filters.priceMin,
-      filters.priceMax,
       filters.bodyType,
       filters.fuelType,
       filters.transmission,
       filters.condition,
       debouncedSearchQuery,
+      debouncedPriceMin,
+      debouncedPriceMax,
     ],
   );
 
@@ -120,6 +124,8 @@ export default function InventoryCMS({
     if (filters.fuelType) url += `&fuelType=${filters.fuelType}`;
     if (filters.transmission) url += `&transmission=${filters.transmission}`;
     if (filters.condition) url += `&condition=${filters.condition}`;
+    if (filters.priceMin) url += `&priceMin=${filters.priceMin}`;
+    if (filters.priceMax) url += `&priceMax=${filters.priceMax}`;
     if (filters.searchQuery) url += `&search=${filters.searchQuery}`;
 
     // TODO: Add sort to URL

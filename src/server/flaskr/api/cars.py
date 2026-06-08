@@ -30,6 +30,8 @@ def get_cars_list():
     fuel_type_filter = request.args.get("fuelType")
     transmission_filter = request.args.get("transmission")
     condition_filter = request.args.get("condition")
+    price_min = request.args.get("priceMin", type=int)
+    price_max = request.args.get("priceMax", type=int)
     search_query = request.args.get("search")
 
     # Safety limits
@@ -52,6 +54,10 @@ def get_cars_list():
         query = query.filter(Car.transmission == transmission_filter)
     if condition_filter:
         query = query.filter(Car.condition == condition_filter)
+    if price_min is not None:
+        query = query.filter(Car.price >= price_min)
+    if price_max is not None:
+        query = query.filter(Car.price <= price_max)
     if search_query:
         search_term = f"%{search_query}%"
         query = query.filter(
