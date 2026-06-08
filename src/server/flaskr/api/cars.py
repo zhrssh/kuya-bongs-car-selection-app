@@ -24,6 +24,13 @@ def get_cars_list():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 21, type=int)
     status_filter = request.args.get("status")
+    make_filter = request.args.get("make")
+    model_filter = request.args.get("model")
+    body_type_filter = request.args.get("bodyType")
+    fuel_type_filter = request.args.get("fuelType")
+    transmission_filter = request.args.get("transmission")
+    condition_filter = request.args.get("condition")
+    search_query = request.args.get("search")
 
     # Safety limits
     page = max(1, page)
@@ -33,6 +40,27 @@ def get_cars_list():
     query = db.select(Car).options(joinedload(Car.seller)).order_by(Car.id)
     if status_filter:
         query = query.filter(Car.status == status_filter)
+    if make_filter:
+        query = query.filter(Car.make == make_filter)
+    if model_filter:
+        query = query.filter(Car.model == model_filter)
+    if body_type_filter:
+        query = query.filter(Car.bodyType == body_type_filter)
+    if fuel_type_filter:
+        query = query.filter(Car.fuelType == fuel_type_filter)
+    if transmission_filter:
+        query = query.filter(Car.transmission == transmission_filter)
+    if condition_filter:
+        query = query.filter(Car.condition == condition_filter)
+    if search_query:
+        search_term = f"%{search_query}%"
+        query = query.filter(
+            db.or_(
+                Car.make.ilike(search_term),
+                Car.model.ilike(search_term),
+                Car.description.ilike(search_term),
+            )
+        )
 
     pagination = db.paginate(
         query,

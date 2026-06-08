@@ -180,32 +180,6 @@ export default function App() {
   // GET CAR Listing
   const [cars, setCars] = useState<Car[]>([]);
 
-  const handleGetCarsList = () => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((res) => {
-            if (res.status === "success") {
-              setCars(res.data.cars);
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching cars:", err);
-      });
-  };
-
-  // On App load, fetch cars from the database
-  useEffect(() => {
-    if (isAdmin) {
-      handleGetCarsList();
-    }
-  }, [isAdmin]);
-
   // ADD CAR Listing
   const handleAddCar = (newCar: Car) => {
     fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
@@ -304,7 +278,7 @@ export default function App() {
               "delete",
               `${target.make} ${target.model}`,
               `CMS: Revoked and unlisted vehicle ${target.make} ${target.model} from database pool`,
-              target.seller.location,
+              target.seller?.location,
               target.id,
             );
 
@@ -453,7 +427,7 @@ export default function App() {
     addLog(
       "enquiry",
       `${car.make} ${car.model}`,
-      `Sales Lead: ${name} sent buy enquiry to ${car.seller.name} for the ${car.make} ${car.model}`,
+      `Sales Lead: ${name} sent buy enquiry to ${car.seller?.name} for the ${car.make} ${car.model}`,
       loc,
       car.id,
     );
@@ -622,7 +596,6 @@ export default function App() {
           {currentPath === "/inventory" &&
             (isAdmin ? (
               <InventoryCMS
-                cars={cars}
                 sellers={sellers}
                 onAddCar={handleAddCar}
                 onUpdateCar={handleUpdateCar}
