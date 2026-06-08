@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useDebounce } from "../hooks/useDebounce";
 import {
   CarBodyType,
   CarCondition,
@@ -61,6 +62,7 @@ export default function InventoryCMS({
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTER);
   const [sortKey, setSortKey] = useState<SortKey>("year-desc");
+  const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
@@ -77,6 +79,28 @@ export default function InventoryCMS({
     has_prev: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Derive effective filters: non-search filters update immediately,
+  // but searchQuery is debounced to avoid excessive API calls.
+  const effectiveFilters = useMemo<FilterState>(
+    () => ({
+      ...filters,
+      searchQuery: debouncedSearchQuery,
+    }),
+    [
+      filters.make,
+      filters.model,
+      filters.yearMin,
+      filters.yearMax,
+      filters.priceMin,
+      filters.priceMax,
+      filters.bodyType,
+      filters.fuelType,
+      filters.transmission,
+      filters.condition,
+      debouncedSearchQuery,
+    ],
+  );
 
   // Fetch data from API
   const fetchCars = async (
@@ -115,8 +139,8 @@ export default function InventoryCMS({
   };
 
   useEffect(() => {
-    fetchCars(currentPage, statusTab, filters, sortKey);
-  }, [currentPage, statusTab, filters, sortKey]);
+    fetchCars(currentPage, statusTab, effectiveFilters, sortKey);
+  }, [currentPage, statusTab, effectiveFilters, sortKey]);
 
   // Get condition color based on condition
   const getConditionColor = (condition: string) => {
