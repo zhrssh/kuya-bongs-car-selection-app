@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { Car } from '../types';
+import { CarCondition } from '../enums';
 import { SlidersHorizontal, X } from 'lucide-react';
 
 interface ComparePanelProps {
@@ -35,11 +36,11 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
-      case 'Excellent':
+      case CarCondition.Excellent:
         return 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
-      case 'Very Good':
+      case CarCondition.VeryGood:
         return 'bg-blue-50 text-blue-700 border-blue-200/60';
-      case 'Good':
+      case CarCondition.Good:
       default:
         return 'bg-amber-50 text-amber-700 border-amber-200/60';
     }
