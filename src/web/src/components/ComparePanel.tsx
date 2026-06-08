@@ -287,44 +287,16 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                         </td>
                       ))}
                   </tr>
+                  {/* Action row */}
                   <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                      Verified History
-                    </td>
-                    {comparingCars.map((car) => (
-                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
-                        <div className="flex flex-col items-center">
-                          <span className="font-bold text-slate-800">
-                            {car.history.owners} {car.history.owners === 1 ? 'Owner' : 'Owners'}
-                          </span>
-                          <span className="text-[10px] text-slate-400 italic">
-                            {car.history.accidents === 0 ? 'No Accidents' : `${car.history.accidents} Incident(s)`}
-                          </span>
-                        </div>
-                      </td>
-                    ))}
-                    {comparingCars.length < 3 &&
-                      Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-h-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic">
-                          —
-                        </td>
-                      ))}
-                  </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
+
                     <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
                       Highlights & Amenities
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3 px-4">
-                        <div className="flex flex-wrap justify-center gap-1 max-h-24 overflow-y-auto">
-                          {car.features.map((feat, index) => (
-                            <span
-                              key={index}
-                              className="bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-[9px] text-slate-600 block truncate max-w-[120px]"
-                            >
-                              {feat}
-                            </span>
-                          ))}
+                        <div className="flex justify-center text-[10px] text-slate-600 max-h-24 overflow-y-auto">
+                            {car.features}
                         </div>
                       </td>
                     ))}

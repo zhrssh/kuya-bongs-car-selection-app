@@ -272,16 +272,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
               <h4 className="text-xs font-extrabold uppercase tracking-widest text-gray-500 mb-3.5">
                 Premium Equipment & Highlights
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {car.features.map((feat) => (
-                  <span
-                    key={feat}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/60 text-xs font-medium text-slate-700">
-                    <CheckCircle className="h-3 w-3 text-blue-500" />
-                    {feat}
-                  </span>
-                ))}
-              </div>
+              <p className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/60 p-3 rounded-lg">
+                {car.features}
+              </p>
             </div>
           </div>
         </div>
