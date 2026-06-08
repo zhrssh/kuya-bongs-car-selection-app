@@ -20,9 +20,24 @@ def get_cars_list():
     """Get a paginated list of cars."""
     logger.info("Request to get all cars")
 
+    # Get query parameters
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 21, type=int)
+    status_filter = request.args.get("status")
+
+    # Safety limits
+    page = max(1, page)
+    per_page = min(max(1, per_page), 100)
+
+    # Build query
+    query = db.select(Car).options(joinedload(Car.seller)).order_by(Car.id)
+    if status_filter:
+        query = query.filter(Car.status == status_filter)
+
     pagination = db.paginate(
-        db.select(Car).options(joinedload(Car.seller)).order_by(Car.id),
-        max_per_page=20,
+        query,
+        page=page,
+        per_page=per_page,
     )
 
     logger.debug("Cars page: %s", pagination.items)

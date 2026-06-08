@@ -8,6 +8,50 @@ from .factories import CarFactory
 logger = logging.getLogger(__name__)
 
 
+def test_get_cars_list_pagination(client):
+    """It should fetch paginated cars"""
+    response = client.get("/api/cars")
+    assert response.status_code == 200
+    data = response.json["data"]
+    assert "pagination" in data
+    assert data["pagination"]["per_page"] == 21 # Default
+    assert data["pagination"]["page"] == 1
+
+    # Test custom page and per_page
+    response = client.get("/api/cars?page=1&per_page=5")
+    assert response.status_code == 200
+    data = response.json["data"]
+    assert data["pagination"]["page"] == 1
+    assert data["pagination"]["per_page"] == 5
+
+    # Test safety limits (page < 1, per_page > 100)
+    response = client.get("/api/cars?page=0&per_page=999")
+    assert response.status_code == 200
+    data = response.json["data"]
+    assert data["pagination"]["page"] == 1
+    assert data["pagination"]["per_page"] == 100
+
+
+def test_get_cars_list_filtering(client):
+    """It should filter cars by status"""
+    # Assume we have some cars with different statuses populated
+    # Get all cars to see statuses
+    response = client.get("/api/cars?per_page=100")
+    assert response.status_code == 200
+    cars = response.json["data"]["cars"]
+    
+    # Pick a status to filter by
+    status_to_filter = cars[0]["status"]
+    
+    # Filter by that status
+    response = client.get(f"/api/cars?status={status_to_filter}")
+    assert response.status_code == 200
+    filtered_cars = response.json["data"]["cars"]
+    
+    for car in filtered_cars:
+        assert car["status"] == status_to_filter
+
+
 def test_get_cars_list(client):
     """It should fetch all cars from the list"""
     response = client.get("/api/cars")
