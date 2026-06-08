@@ -1,15 +1,13 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useMemo } from 'react';
 import { FilterState, Car } from '../types';
-import { Search, RotateCcw, SlidersHorizontal, ChevronRight, X } from 'lucide-react';
+import { CarCondition } from '../enums';
+import { Search, RotateCcw, SlidersHorizontal, X } from 'lucide-react';
 
 interface FilterSidebarProps {
   filters: FilterState;
-  setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
+  onFilterChange: (key: keyof FilterState, value: string) => void;
+  onPriceQuickSelect: (min: string, max: string) => void;
+  onYearQuickSelect: (min: string, max: string) => void;
   cars: Car[];
   onReset: () => void;
   isOpen?: boolean;
@@ -18,13 +16,14 @@ interface FilterSidebarProps {
 
 export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   filters,
-  setFilters,
+  onFilterChange,
+  onPriceQuickSelect,
+  onYearQuickSelect,
   cars,
   onReset,
   isOpen = false,
   onClose,
 }) => {
-  // Extract dynamic search lists
   const makes = useMemo(() => {
     const list = new Set(cars.map((car) => car.make));
     return Array.from(list).sort();
@@ -55,25 +54,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
     return Array.from(list).sort();
   }, [cars]);
 
-  // Handler for generic inputs
-  const handleChange = (
-    key: keyof FilterState,
-    value: string
-  ) => {
-    setFilters((prev) => {
-      const updated = { ...prev, [key]: value };
-      // If we change the make, reset the model to prevent incompatible combos (e.g., Tesla M4)
-      if (key === 'make' && value !== prev.make) {
-        updated.model = '';
-      }
-      return updated;
-    });
-  };
-
-  const handlePriceQuickSelect = (min: string, max: string) => {
-    setFilters((prev) => ({ ...prev, priceMin: min, priceMax: max }));
-  };
-
   return (
     <aside
       className={`
@@ -81,7 +61,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         ${isOpen ? 'shadow-lg' : 'shadow-[0_1px_4px_rgba(0,0,0,0.01)]'}
       `}
     >
-      {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-slate-700" />
@@ -90,7 +69,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={onReset}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-505 text-slate-500 hover:text-blue-600 transition-colors focus:outline-none"
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors focus:outline-none"
             title="Reset all filters"
           >
             <RotateCcw className="h-3 w-3" />
@@ -107,9 +86,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </div>
       </div>
 
-      {/* Main Form Fields */}
       <div className="flex flex-col gap-5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1">
-        {/* Keyword Search */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Keyword Search
@@ -119,21 +96,20 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               type="text"
               placeholder="e.g. Autopilot, AWD, V8..."
               value={filters.searchQuery}
-              onChange={(e) => handleChange('searchQuery', e.target.value)}
+              onChange={(e) => onFilterChange('searchQuery', e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           </div>
         </div>
 
-        {/* Brand / Make */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Brand (Make)
           </label>
           <select
             value={filters.make}
-            onChange={(e) => handleChange('make', e.target.value)}
+            onChange={(e) => onFilterChange('make', e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer"
           >
             <option value="">All Brands</option>
@@ -145,14 +121,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </select>
         </div>
 
-        {/* Vehicle Model */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Model
           </label>
           <select
             value={filters.model}
-            onChange={(e) => handleChange('model', e.target.value)}
+            onChange={(e) => onFilterChange('model', e.target.value)}
             disabled={modelsForMake.length === 0}
             className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer disabled:opacity-50"
           >
@@ -167,19 +142,18 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </select>
         </div>
 
-        {/* Vehicle Condition */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Vehicle Condition
           </label>
           <div className="flex flex-wrap gap-1.5">
-            {['Excellent', 'Very Good', 'Good'].map((cond) => {
+            {[CarCondition.Excellent, CarCondition.VeryGood, CarCondition.Good].map((cond) => {
               const isSelected = filters.condition === cond;
               return (
                 <button
                   key={cond}
                   type="button"
-                  onClick={() => handleChange('condition', isSelected ? '' : cond)}
+                  onClick={() => onFilterChange('condition', isSelected ? '' : cond)}
                   className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                     isSelected
                       ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
@@ -193,7 +167,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Price Range */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Price Range (₱)
@@ -205,7 +178,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 type="number"
                 placeholder="No Min"
                 value={filters.priceMin}
-                onChange={(e) => handleChange('priceMin', e.target.value)}
+                onChange={(e) => onFilterChange('priceMin', e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
               />
             </div>
@@ -215,17 +188,16 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 type="number"
                 placeholder="No Max"
                 value={filters.priceMax}
-                onChange={(e) => handleChange('priceMax', e.target.value)}
+                onChange={(e) => onFilterChange('priceMax', e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
               />
             </div>
           </div>
 
-          {/* Quick Price Targets */}
           <div className="flex flex-wrap gap-1.5 mt-1.5">
             <button
               type="button"
-              onClick={() => handlePriceQuickSelect('', '1500000')}
+              onClick={() => onPriceQuickSelect('', '1500000')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.priceMax === '1500000' && filters.priceMin === ''
                   ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
@@ -236,7 +208,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => handlePriceQuickSelect('1500000', '3000000')}
+              onClick={() => onPriceQuickSelect('1500000', '3000000')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.priceMin === '1500000' && filters.priceMax === '3000000'
                   ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
@@ -247,7 +219,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => handlePriceQuickSelect('3000000', '')}
+              onClick={() => onPriceQuickSelect('3000000', '')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.priceMin === '3000000' && filters.priceMax === ''
                   ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
@@ -259,7 +231,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Year Range */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Model Year Range
@@ -267,38 +238,74 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Min Year</span>
-              <select
+              <input
+                type="number"
+                placeholder="No Min"
                 value={filters.yearMin}
-                onChange={(e) => handleChange('yearMin', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-1 focus:bg-white text-xs focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
-              >
-                <option value="">Any Min</option>
-                {[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024].map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                onChange={(e) => onFilterChange('yearMin', e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+              />
             </div>
             <div>
               <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Max Year</span>
-              <select
+              <input
+                type="number"
+                placeholder="No Max"
                 value={filters.yearMax}
-                onChange={(e) => handleChange('yearMax', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-1 focus:bg-white text-xs focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
-              >
-                <option value="">Any Max</option>
-                {[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024].map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                onChange={(e) => onFilterChange('yearMax', e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+              />
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            <button
+              type="button"
+              onClick={() => onYearQuickSelect('2024', '')}
+              className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                filters.yearMin === '2024' && filters.yearMax === ''
+                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              2024 & Newer
+            </button>
+            <button
+              type="button"
+              onClick={() => onYearQuickSelect('2020', '2024')}
+              className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                filters.yearMin === '2020' && filters.yearMax === '2024'
+                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              2020 - 2024
+            </button>
+            <button
+              type="button"
+              onClick={() => onYearQuickSelect('2015', '2019')}
+              className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                filters.yearMin === '2015' && filters.yearMax === '2019'
+                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              2015 - 2019
+            </button>
+            <button
+              type="button"
+              onClick={() => onYearQuickSelect('', '2015')}
+              className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                filters.yearMin === '' && filters.yearMax === '2015'
+                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              2015 & Older
+            </button>
           </div>
         </div>
 
-        {/* Body Type */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Body Type
@@ -309,7 +316,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               return (
                 <button
                   key={type}
-                  onClick={() => handleChange('bodyType', isSelected ? '' : type)}
+                  onClick={() => onFilterChange('bodyType', isSelected ? '' : type)}
                   className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                     isSelected
                       ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
@@ -323,14 +330,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </div>
         </div>
 
-        {/* Fuel Type */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Fuel Type
           </label>
           <select
             value={filters.fuelType}
-            onChange={(e) => handleChange('fuelType', e.target.value)}
+            onChange={(e) => onFilterChange('fuelType', e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer"
           >
             <option value="">All Fuel Types</option>
@@ -342,7 +348,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </select>
         </div>
 
-        {/* Transmission */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Transmission
@@ -353,7 +358,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               return (
                 <button
                   key={trans}
-                  onClick={() => handleChange('transmission', isSelected ? '' : trans)}
+                  onClick={() => onFilterChange('transmission', isSelected ? '' : trans)}
                   className={`text-xs py-2 rounded-full border font-medium transition-all cursor-pointer ${
                     isSelected
                       ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-semibold'

@@ -23,6 +23,7 @@ import {
   CarStatus,
   CarTransmission,
 } from "../enums";
+import { useDebounce } from "../hooks/useDebounce";
 import { Car, FilterState, SellerContact, SortKey } from "../types";
 
 interface InventoryCMSProps {
@@ -61,6 +62,9 @@ export default function InventoryCMS({
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTER);
   const [sortKey, setSortKey] = useState<SortKey>("year-desc");
+  const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
+  const debouncedPriceMin = useDebounce(filters.priceMin, 300);
+  const debouncedPriceMax = useDebounce(filters.priceMax, 300);
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
@@ -77,6 +81,30 @@ export default function InventoryCMS({
     has_prev: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Derive effective filters: non-search filters update immediately,
+  // but searchQuery is debounced to avoid excessive API calls.
+  const effectiveFilters = useMemo<FilterState>(
+    () => ({
+      ...filters,
+      searchQuery: debouncedSearchQuery,
+      priceMin: debouncedPriceMin,
+      priceMax: debouncedPriceMax,
+    }),
+    [
+      filters.make,
+      filters.model,
+      filters.yearMin,
+      filters.yearMax,
+      filters.bodyType,
+      filters.fuelType,
+      filters.transmission,
+      filters.condition,
+      debouncedSearchQuery,
+      debouncedPriceMin,
+      debouncedPriceMax,
+    ],
+  );
 
   // Fetch data from API
   const fetchCars = async (
@@ -96,6 +124,10 @@ export default function InventoryCMS({
     if (filters.fuelType) url += `&fuelType=${filters.fuelType}`;
     if (filters.transmission) url += `&transmission=${filters.transmission}`;
     if (filters.condition) url += `&condition=${filters.condition}`;
+    if (filters.priceMin) url += `&priceMin=${filters.priceMin}`;
+    if (filters.priceMax) url += `&priceMax=${filters.priceMax}`;
+    if (filters.yearMin) url += `&yearMin=${filters.yearMin}`;
+    if (filters.yearMax) url += `&yearMax=${filters.yearMax}`;
     if (filters.searchQuery) url += `&search=${filters.searchQuery}`;
 
     // TODO: Add sort to URL
@@ -115,8 +147,8 @@ export default function InventoryCMS({
   };
 
   useEffect(() => {
-    fetchCars(currentPage, statusTab, filters, sortKey);
-  }, [currentPage, statusTab, filters, sortKey]);
+    fetchCars(currentPage, statusTab, effectiveFilters, sortKey);
+  }, [currentPage, statusTab, effectiveFilters, sortKey]);
 
   // Get condition color based on condition
   const getConditionColor = (condition: string) => {
@@ -186,6 +218,11 @@ export default function InventoryCMS({
 
   const handlePriceQuickSelect = (min: string, max: string) => {
     setFilters((prev) => ({ ...prev, priceMin: min, priceMax: max }));
+    setCurrentPage(1);
+  };
+
+  const handleYearQuickSelect = (min: string, max: string) => {
+    setFilters((prev) => ({ ...prev, yearMin: min, yearMax: max }));
     setCurrentPage(1);
   };
 
@@ -593,44 +630,74 @@ export default function InventoryCMS({
                       <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
                         Min Year
                       </span>
-                      <select
+                      <input
+                        type="number"
+                        placeholder="No Min"
                         value={filters.yearMin}
                         onChange={(e) =>
                           handleChange("yearMin", e.target.value)
                         }
-                        className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-1 focus:bg-white text-xs focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 select-wrapper">
-                        <option value="">Any Min</option>
-                        {[
-                          2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
-                          2024,
-                        ].map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
+                        className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                      />
                     </div>
                     <div>
                       <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
                         Max Year
                       </span>
-                      <select
+                      <input
+                        type="number"
+                        placeholder="No Max"
                         value={filters.yearMax}
                         onChange={(e) =>
                           handleChange("yearMax", e.target.value)
                         }
-                        className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-1 focus:bg-white text-xs focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 select-wrapper">
-                        <option value="">Any Max</option>
-                        {[
-                          2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
-                          2024,
-                        ].map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
+                        className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                      />
                     </div>
+                  </div>
+
+                  {/* Quick Year Targets */}
+                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleYearQuickSelect("2024", "")}
+                      className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                        filters.yearMin === "2024" && filters.yearMax === ""
+                          ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                      }`}>
+                      2024 & Newer
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleYearQuickSelect("2020", "2024")}
+                      className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                        filters.yearMin === "2020" && filters.yearMax === "2024"
+                          ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                      }`}>
+                      2020 - 2024
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleYearQuickSelect("2015", "2019")}
+                      className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                        filters.yearMin === "2015" && filters.yearMax === "2019"
+                          ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                      }`}>
+                      2015 - 2019
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleYearQuickSelect("", "2015")}
+                      className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                        filters.yearMin === "" && filters.yearMax === "2015"
+                          ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                      }`}>
+                      2015 & Older
+                    </button>
                   </div>
                 </div>
 

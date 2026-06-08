@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { Car } from '../types';
+import { CarCondition } from '../enums';
 import { Fuel, ShieldCheck, MapPin, Milestone, Sparkles } from 'lucide-react';
 
 interface CarCardProps {
@@ -34,9 +35,9 @@ export const CarCard: React.FC<CarCardProps> = ({
   // Condition Badge Styling
   const getConditionColor = (cond: string) => {
     switch (cond) {
-      case 'Excellent':
+      case CarCondition.Excellent:
         return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'Very Good':
+      case CarCondition.VeryGood:
         return 'bg-sky-50 text-sky-700 border-sky-100';
       default:
         return 'bg-amber-50 text-amber-700 border-amber-100';

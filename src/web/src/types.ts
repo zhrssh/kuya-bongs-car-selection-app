@@ -3,6 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {
+  CarBodyType,
+  CarCondition,
+  CarFuelType,
+  CarTransmission,
+} from "./enums";
+
 export interface SellerContact {
   name: string;
   phone: string;
@@ -12,22 +19,15 @@ export interface SellerContact {
 
 export interface Car {
   id: string;
+  status?: string;
   make: string;
   model: string;
   year: number;
   price: number;
   mileage: number;
-  fuelType: "Gasoline" | "Electric" | "Hybrid" | "Diesel";
-  transmission: "Automatic" | "Manual";
-  bodyType:
-    | "Sedan"
-    | "SUV"
-    | "Truck"
-    | "Hatchback"
-    | "Coupe"
-    | "Convertible"
-    | "Van"
-    | "Wagon";
+  fuelType: CarFuelType;
+  transmission: CarTransmission;
+  bodyType: CarBodyType;
   exteriorColor: string;
   interiorColor: string;
   engine: string;
@@ -36,7 +36,7 @@ export interface Car {
   description: string;
   imageUrl: string;
   images?: string[];
-  condition: "Excellent" | "Very Good" | "Good";
+  condition: CarCondition;
   seller: SellerContact;
 }
 
@@ -61,3 +61,12 @@ export type SortKey =
   | "year-asc"
   | "mileage-asc"
   | "relevance";
+
+export interface Pagination {
+  page: number;
+  per_page: number;
+  total: number;
+  pages: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
