@@ -15,7 +15,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CarBodyType,
   CarCondition,
@@ -26,7 +26,6 @@ import {
 import { Car, FilterState, SellerContact, SortKey } from "../types";
 
 interface InventoryCMSProps {
-  cars: Car[];
   sellers: SellerContact[];
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
@@ -49,14 +48,14 @@ const INITIAL_FILTER: FilterState = {
   condition: "",
 };
 
+const ITEMS_PER_PAGE = 21;
+
 export default function InventoryCMS({
-  cars,
   sellers,
   onAddCar,
   onUpdateCar,
   onDeleteCar,
   onSelectCar,
-  onSimulateView,
 }: InventoryCMSProps) {
   // Navigation & layout states
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
@@ -66,24 +65,58 @@ export default function InventoryCMS({
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [statusTab, setStatusTab] = useState<CarStatus>(CarStatus.Available);
-
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 20;
 
-  // Counts of cars by status
-  const counts = useMemo(() => {
-    let available = 0;
-    let sold = 0;
-    let archived = 0;
-    cars.forEach((car: Car) => {
-      const s = car.status;
-      if (s === CarStatus.Available) available++;
-      else if (s === CarStatus.Sold) sold++;
-      else if (s === CarStatus.Archived) archived++;
-    });
-    return { available, sold, archived };
-  }, [cars]);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    per_page: ITEMS_PER_PAGE,
+    total: 0,
+    pages: 1,
+    has_next: false,
+    has_prev: false,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch data from API
+  const fetchCars = async (
+    page: number,
+    status: CarStatus,
+    filters: FilterState,
+    sort: SortKey,
+  ) => {
+    setIsLoading(true);
+    let url = `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars?page=${page}&per_page=${ITEMS_PER_PAGE}`;
+    if (status) url += `&status=${status}`;
+
+    // Add filters
+    if (filters.make) url += `&make=${filters.make}`;
+    if (filters.model) url += `&model=${filters.model}`;
+    if (filters.bodyType) url += `&bodyType=${filters.bodyType}`;
+    if (filters.fuelType) url += `&fuelType=${filters.fuelType}`;
+    if (filters.transmission) url += `&transmission=${filters.transmission}`;
+    if (filters.condition) url += `&condition=${filters.condition}`;
+    if (filters.searchQuery) url += `&search=${filters.searchQuery}`;
+
+    // TODO: Add sort to URL
+
+    try {
+      const response = await fetch(url, { credentials: "include" });
+      const data = await response.json();
+      if (data.status === "success") {
+        setCars(data.data.cars);
+        setPagination(data.data.pagination);
+      }
+    } catch (err) {
+      console.error("Error fetching cars:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCars(currentPage, statusTab, filters, sortKey);
+  }, [currentPage, statusTab, filters, sortKey]);
 
   // Get condition color based on condition
   const getConditionColor = (condition: string) => {
@@ -199,7 +232,7 @@ export default function InventoryCMS({
   };
 
   // Form submit handler
-  const handleFormSubmit = (e: any) => {
+  const handleFormSubmit = async (e: any) => {
     e.preventDefault();
 
     const {
@@ -210,7 +243,6 @@ export default function InventoryCMS({
       mileage,
       features,
       exteriorColor,
-      interiorColor,
       description,
       condition,
     } = formData;
@@ -253,98 +285,27 @@ export default function InventoryCMS({
     };
 
     if (editingCar) {
-      onUpdateCar(readyCar);
+      await onUpdateCar(readyCar);
     } else {
       // Remove id prperty when adding new car
       delete readyCar.id;
-      onAddCar(readyCar);
+      await onAddCar(readyCar);
     }
 
     setIsFormOpen(false);
+    await fetchCars(pagination.page, statusTab, filters, sortKey);
   };
 
-  // Reset Filters
-  const resetFilters = () => {
-    setFilters(INITIAL_FILTER);
-    setCurrentPage(1);
+  const handleDelete = async (id: string) => {
+    await onDeleteCar(id);
+    await fetchCars(pagination.page, statusTab, filters, sortKey);
   };
 
   // Filter and Sort Logic
-  const filteredAndSortedCars = useMemo(() => {
-    return cars
-      .filter((car) => {
-        // Search bar query (Make, Model, Engine, Features)
-        if (filters.searchQuery) {
-          const q = filters.searchQuery.toLowerCase();
-          const matchMake = car.make.toLowerCase().includes(q);
-          const matchModel = car.model.toLowerCase().includes(q);
-          const matchDesc = car.description.toLowerCase().includes(q);
-          if (!matchMake && !matchModel && !matchDesc) return false;
-        }
+  const totalPages = pagination.pages;
+  const activePage = pagination.page;
 
-        // Filter by Tab (available, sold, archived)
-        const carStatus = car.status || CarStatus.Available;
-        if (
-          statusTab === CarStatus.Available &&
-          carStatus !== CarStatus.Available
-        )
-          return false;
-        if (statusTab === CarStatus.Sold && carStatus !== CarStatus.Sold)
-          return false;
-        if (
-          statusTab === CarStatus.Archived &&
-          carStatus !== CarStatus.Archived
-        )
-          return false;
-
-        // Dropdowns and ranges
-        if (filters.make && car.make !== filters.make) return false;
-        if (filters.model && car.model !== filters.model) return false;
-        if (filters.bodyType && car.bodyType !== filters.bodyType) return false;
-        if (filters.fuelType && car.fuelType !== filters.fuelType) return false;
-        if (filters.transmission && car.transmission !== filters.transmission)
-          return false;
-        if (filters.condition && car.condition !== filters.condition)
-          return false;
-
-        if (filters.yearMin && car.year < Number(filters.yearMin)) return false;
-        if (filters.yearMax && car.year > Number(filters.yearMax)) return false;
-        if (filters.priceMin && car.price < Number(filters.priceMin))
-          return false;
-        if (filters.priceMax && car.price > Number(filters.priceMax))
-          return false;
-
-        return true;
-      })
-      .sort((a, b) => {
-        switch (sortKey) {
-          case "price-asc":
-            return a.price - b.price;
-          case "price-desc":
-            return b.price - a.price;
-          case "year-desc":
-            return b.year - a.year;
-          case "year-asc":
-            return a.year - b.year;
-          case "mileage-asc":
-            return a.mileage - b.mileage;
-          case "relevance":
-          default:
-            return b.year - a.year; // default to newer
-        }
-      });
-  }, [cars, filters, sortKey, statusTab]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredAndSortedCars.length / ITEMS_PER_PAGE),
-  );
-  const activePage = Math.min(currentPage, totalPages);
-
-  const paginatedCars = useMemo(() => {
-    const startIndex = (activePage - 1) * ITEMS_PER_PAGE;
-    return filteredAndSortedCars.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredAndSortedCars, activePage]);
+  const paginatedCars = cars;
 
   return (
     <div className="space-y-6">
@@ -439,7 +400,7 @@ export default function InventoryCMS({
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={resetFilters}
+                    onClick={() => setFilters(INITIAL_FILTER)}
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors focus:outline-none"
                     title="Reset all filters">
                     <RotateCcw className="h-3 w-3" />
@@ -756,89 +717,31 @@ export default function InventoryCMS({
               ? "lg:col-span-3 space-y-6"
               : "lg:col-span-4 space-y-6"
           }>
-          {/* Status Tabs Selector */}
-          <div className="flex border-b border-slate-200/80 gap-6 overflow-x-auto pb-0.5">
-            <button
-              onClick={() => {
-                setStatusTab(CarStatus.Available);
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              Status Filter
+            </label>
+            <select
+              value={statusTab}
+              onChange={(e) => {
+                setStatusTab(e.target.value as CarStatus);
                 setCurrentPage(1);
               }}
-              className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
-                statusTab === CarStatus.Available
-                  ? "text-blue-600 font-bold"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}>
-              <span>Available Stock</span>
-              <span
-                className={`text-[11px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  statusTab === CarStatus.Available
-                    ? "bg-blue-105 bg-blue-100 text-blue-700"
-                    : "bg-slate-100 text-slate-600"
-                }`}>
-                {counts.available}
-              </span>
-              {statusTab === CarStatus.Available && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full animate-fade-in" />
-              )}
-            </button>
-
-            <button
-              onClick={() => {
-                setStatusTab(CarStatus.Sold);
-                setCurrentPage(1);
-              }}
-              className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
-                statusTab === CarStatus.Sold
-                  ? "text-emerald-600 font-bold"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}>
-              <span>Sold Vehicles</span>
-              <span
-                className={`text-[11px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  statusTab === CarStatus.Sold
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-slate-100 text-slate-600"
-                }`}>
-                {counts.sold}
-              </span>
-              {statusTab === CarStatus.Sold && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-600 rounded-full" />
-              )}
-            </button>
-
-            <button
-              onClick={() => {
-                setStatusTab(CarStatus.Archived);
-                setCurrentPage(1);
-              }}
-              className={`pb-3 text-sm font-semibold relative transition-all duration-200 cursor-pointer focus:outline-none flex items-center gap-2 whitespace-nowrap ${
-                statusTab === CarStatus.Archived
-                  ? "text-amber-600 font-bold"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}>
-              <span>Archived Listings</span>
-              <span
-                className={`text-[11px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  statusTab === CarStatus.Archived
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-slate-100 text-slate-600"
-                }`}>
-                {counts.archived}
-              </span>
-              {statusTab === CarStatus.Archived && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600 rounded-full" />
-              )}
-            </button>
+              className="w-full bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer">
+              <option value={CarStatus.Available}>Available</option>
+              <option value={CarStatus.Sold}>Sold</option>
+              <option value={CarStatus.Archived}>Archived</option>
+            </select>
           </div>
 
           {/* Main Stock Content Layout */}
-          {filteredAndSortedCars.length === 0 ? (
+          {cars.length === 0 ? (
             <div className="bg-white border border-zinc-200 p-12 text-center rounded-xl shadow-xs">
               <p className="text-zinc-500 text-sm font-medium">
                 No vehicles match your active filtering variables.
               </p>
               <button
-                onClick={resetFilters}
+                onClick={() => setFilters(INITIAL_FILTER)}
                 className="mt-4 text-xs bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer font-medium"
                 id="reset_empty_state">
                 Clear Filters
@@ -1009,7 +912,7 @@ export default function InventoryCMS({
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => onDeleteCar(car.id!)}
+                            onClick={() => handleDelete(car.id!)}
                             className="p-2 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
                             title="Delete stock"
                             id={`btn_del_grid_${car.id}`}>
@@ -1138,7 +1041,7 @@ export default function InventoryCMS({
                               <Edit className="w-3.5 h-3.5 text-zinc-500" />
                             </button>
                             <button
-                              onClick={() => onDeleteCar(car.id!)}
+                              onClick={() => handleDelete(car.id!)}
                               className="p-1 px-1.5 bg-zinc-50 hover:bg-rose-50 border border-zinc-200/70 text-rose-650 rounded transition cursor-pointer"
                               title="Delete vehicle listing"
                               id={`btn_del_tbl_${car.id}`}>
@@ -1155,38 +1058,35 @@ export default function InventoryCMS({
           )}
 
           {/* Pagination Controls */}
-          {filteredAndSortedCars.length > 0 && (
+          {pagination.total > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-8 border-t border-zinc-200">
               <div className="text-xs text-zinc-500 font-sans">
                 Showing{" "}
                 <span className="font-semibold text-zinc-800">
                   {Math.min(
-                    (activePage - 1) * ITEMS_PER_PAGE + 1,
-                    filteredAndSortedCars.length,
+                    (pagination.page - 1) * ITEMS_PER_PAGE + 1,
+                    pagination.total,
                   )}
                 </span>{" "}
                 to{" "}
                 <span className="font-semibold text-zinc-800">
-                  {Math.min(
-                    activePage * ITEMS_PER_PAGE,
-                    filteredAndSortedCars.length,
-                  )}
+                  {Math.min(pagination.page * ITEMS_PER_PAGE, pagination.total)}
                 </span>{" "}
                 of{" "}
                 <span className="font-bold text-zinc-900">
-                  {filteredAndSortedCars.length}
+                  {pagination.total}
                 </span>{" "}
                 vehicles
               </div>
 
-              {totalPages > 1 && (
+              {pagination.pages > 1 && (
                 <div className="flex items-center gap-1.5 font-sans">
                   {/* Prev Button */}
                   <button
                     onClick={() =>
                       setCurrentPage((prev) => Math.max(1, prev - 1))
                     }
-                    disabled={activePage === 1}
+                    disabled={pagination.page === 1}
                     className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
                     id="btn_prev_page"
                     title="Previous Page">
@@ -1194,31 +1094,34 @@ export default function InventoryCMS({
                   </button>
 
                   {/* Page Numbers */}
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (pg) => {
-                      const isSelected = activePage === pg;
-                      return (
-                        <button
-                          key={pg}
-                          onClick={() => setCurrentPage(pg)}
-                          className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
-                            isSelected
-                              ? "bg-blue-600 border-blue-600 text-white shadow-xs font-bold"
-                              : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
-                          }`}
-                          id={`btn_page_${pg}`}>
-                          {pg}
-                        </button>
-                      );
-                    },
-                  )}
+                  {Array.from(
+                    { length: pagination.pages },
+                    (_, i) => i + 1,
+                  ).map((pg) => {
+                    const isSelected = pagination.page === pg;
+                    return (
+                      <button
+                        key={pg}
+                        onClick={() => setCurrentPage(pg)}
+                        className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
+                          isSelected
+                            ? "bg-blue-600 border-blue-600 text-white shadow-xs font-bold"
+                            : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
+                        }`}
+                        id={`btn_page_${pg}`}>
+                        {pg}
+                      </button>
+                    );
+                  })}
 
                   {/* Next Button */}
                   <button
                     onClick={() =>
-                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                      setCurrentPage((prev) =>
+                        Math.min(pagination.pages, prev + 1),
+                      )
                     }
-                    disabled={activePage === totalPages}
+                    disabled={pagination.page === pagination.pages}
                     className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
                     id="btn_next_page"
                     title="Next Page">
