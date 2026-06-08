@@ -4,7 +4,6 @@
  */
 
 import {
-  CheckCircle,
   ChevronLeft,
   ChevronRight,
   ClipboardList,
@@ -16,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
+import { sendEmail } from "../apiClient";
 import { Car } from "../types";
 
 interface CarDetailModalProps {
@@ -82,14 +82,14 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
   const formattedMileage = new Intl.NumberFormat("en-US").format(car.mileage);
 
-  const handleSubmitMessage = (e: React.FormEvent) => {
+  const handleSubmitMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userName || !userEmail) return;
+    if (!userName || !userEmail || !car) return;
 
     setIsSubmitting(true);
-    // Simulate API request
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      sendEmail(car, userName, userEmail, message, interestType);
       setSubmitSuccess(true);
       // Reset form fields after delay
       setTimeout(() => {
@@ -99,7 +99,12 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         setUserEmail("");
         setSubmitSuccess(false);
       }, 5000);
-    }, 1200);
+    } catch (error) {
+      console.error("Error submitting inquiry:", error);
+      alert("Failed to send inquiry. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

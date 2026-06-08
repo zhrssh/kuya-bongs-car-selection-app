@@ -97,10 +97,12 @@ def create_app(test_config=None) -> Flask:
 
     app.register_blueprint(admin.bp)
 
-    from .api import cars, sellers
+    from .api import cars, sellers, inquiries
 
     app.register_blueprint(cars.bp)
     app.register_blueprint(sellers.bp)
+    app.register_blueprint(inquiries.bp)
+
 
     # Initialize the database
     with app.app_context():
