@@ -34,6 +34,7 @@ def create_app(test_config=None) -> Flask:
             "https://web.docker.localhost",
             "https://admin.docker.localhost",
             "http://localhost:3001",
+            "http://localhost:3000",
         ],
     )
     app.config["CORS_HEADERS"] = "Content-Type"

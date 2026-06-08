@@ -32,7 +32,7 @@ export interface Car {
   interiorColor: string;
   engine: string;
   drivetrain: string;
-  features: string[];
+  features: string;
   description: string;
   imageUrl: string;
   images?: string[];

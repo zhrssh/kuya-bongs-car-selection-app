@@ -3,15 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Car, FilterState, SortKey } from './types';
-import { usedCars as originalCars } from './data';
-
-const usedCars: Car[] = originalCars.map((car) => ({
-  ...car,
-  price: car.price * 58,
-  mileage: Math.round(car.mileage * 1.60934)
-}));
+import { fetchCars } from './apiClient';
+import { filterCars } from './utils/filter';
 import { FilterSidebar } from './components/FilterSidebar';
 import { CarCard } from './components/CarCard';
 import { CarDetailModal } from './components/CarDetailModal';
@@ -49,6 +44,21 @@ export default function App() {
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [comparingCars, setComparingCars] = useState<Car[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchCars()
+      .then((data) => {
+        setCars(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   // 2. Handle Resetting Filters
   const handleResetFilters = () => {
@@ -69,54 +79,8 @@ export default function App() {
 
   // 3. Filtering Logic
   const filteredCars = useMemo(() => {
-    return usedCars.filter((car) => {
-      // Make / Brand
-      if (filters.make && car.make !== filters.make) return false;
-
-      // Model
-      if (filters.model && car.model !== filters.model) return false;
-
-      // Body Type
-      if (filters.bodyType && car.bodyType !== filters.bodyType) return false;
-
-      // Fuel Type
-      if (filters.fuelType && car.fuelType !== filters.fuelType) return false;
-
-      // Transmission
-      if (filters.transmission && car.transmission !== filters.transmission) return false;
-
-      // Condition
-      if (filters.condition && car.condition !== filters.condition) return false;
-
-      // Minimum Year
-      if (filters.yearMin && car.year < parseInt(filters.yearMin, 10)) return false;
-
-      // Maximum Year
-      if (filters.yearMax && car.year > parseInt(filters.yearMax, 10)) return false;
-
-      // Minimum Price
-      if (filters.priceMin && car.price < parseInt(filters.priceMin, 10)) return false;
-
-      // Maximum Price
-      if (filters.priceMax && car.price > parseInt(filters.priceMax, 10)) return false;
-
-      // Keyword Search query matches (Make, Model, Description, Features)
-      if (filters.searchQuery) {
-        const query = filters.searchQuery.toLowerCase().trim();
-        const matchesMake = car.make.toLowerCase().includes(query);
-        const matchesModel = car.model.toLowerCase().includes(query);
-        const matchesDesc = car.description.toLowerCase().includes(query);
-        const matchesFeatures = car.features.some((f) => f.toLowerCase().includes(query));
-        const matchesBody = car.bodyType.toLowerCase().includes(query);
-
-        if (!matchesMake && !matchesModel && !matchesDesc && !matchesFeatures && !matchesBody) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-  }, [filters]);
+    return filterCars(cars, filters);
+  }, [filters, cars]);
 
   // 4. Sorting Logic
   const sortedCars = useMemo(() => {
@@ -253,7 +217,7 @@ export default function App() {
             <FilterSidebar
               filters={filters}
               setFilters={setFilters}
-              cars={usedCars}
+              cars={cars}
               onReset={handleResetFilters}
             />
           </div>
@@ -455,7 +419,7 @@ export default function App() {
             <FilterSidebar
               filters={filters}
               setFilters={setFilters}
-              cars={usedCars}
+              cars={cars}
               onReset={handleResetFilters}
               isOpen={mobileFiltersOpen}
               onClose={() => setMobileFiltersOpen(false)}
