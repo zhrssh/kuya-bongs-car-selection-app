@@ -1,7 +1,5 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 import uuid
-
-from flaskr.models.enums import seller
 
 
 class SellerSchema(BaseModel):
@@ -12,4 +10,11 @@ class SellerSchema(BaseModel):
     phone: str
     email: str
     location: str
-    status: seller.SellerStatus
+    status: str
+
+    @field_validator("name", "phone", "email", "location", "status", mode="before")
+    @classmethod
+    def strip_lower_strings(cls, value):
+        if isinstance(value, str):
+            return value.strip().lower()
+        return value

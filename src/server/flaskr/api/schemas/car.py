@@ -5,6 +5,15 @@ import uuid
 
 from .seller import SellerSchema
 
+STRING_FIELDS_TO_STRIP = {
+    "make", "model", "exteriorColor", "interiorColor", "engine",
+    "drivetrain", "features", "description",
+}
+
+STRING_FIELDS_TO_LOWER = {
+    "status", "fuelType", "transmission", "bodyType", "condition",
+}
+
 
 class CarSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -46,3 +55,17 @@ class CarSchema(BaseModel):
             except (json.JSONDecodeError, TypeError):
                 pass
         return None
+
+    @field_validator(*STRING_FIELDS_TO_STRIP, mode="before")
+    @classmethod
+    def strip_strings(cls, value):
+        if isinstance(value, str):
+            return value.strip()
+        return value
+
+    @field_validator(*STRING_FIELDS_TO_LOWER, mode="before")
+    @classmethod
+    def strip_lower_strings(cls, value):
+        if isinstance(value, str):
+            return value.strip().lower()
+        return value
