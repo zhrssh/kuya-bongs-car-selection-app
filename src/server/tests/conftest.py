@@ -3,7 +3,13 @@ import pytest
 from flaskr import create_app
 from flaskr.db import db
 from flaskr.api.schemas.seller import SellerSchema
-from flaskr.models.enums.car import CarStatus
+from flaskr.models.enums.car import (
+    CarBodyType,
+    CarCondition,
+    CarFuelType,
+    CarStatus,
+    CarTransmission,
+)
 from .factories import CarFactory, SellerFactory
 
 
@@ -18,14 +24,15 @@ def app():
         }
     )
 
-    with app.app_context():
-        db.create_all()
+    ctx = app.app_context()
+    ctx.push()
+    db.create_all()
 
     yield app
 
-    with app.app_context():
-        db.session.remove()
-        db.drop_all()
+    db.session.remove()
+    db.drop_all()
+    ctx.pop()
 
 
 @pytest.fixture()
@@ -38,14 +45,76 @@ def runner(app):
     return app.test_cli_runner()
 
 
-@pytest.fixture(autouse=True)
-def generate_cars(app):
-    app.logger.info("Populating table with fake data...")
-    with app.app_context():
-        for status in [CarStatus.available, CarStatus.sold, CarStatus.archived]:
-            car = CarFactory(status=status)
-            db.session.add(car)
-            db.session.commit()
+@pytest.fixture()
+def seller_in_db(app):
+    seller = SellerFactory()
+    db.session.add(seller)
+    db.session.commit()
+    return seller
+
+
+@pytest.fixture()
+def car_in_db(app, seller_in_db):
+    car = CarFactory(
+        make="Toyota",
+        model="Camry",
+        status=CarStatus.available,
+        price=500000,
+        fuelType=CarFuelType.gasoline,
+        transmission=CarTransmission.automatic,
+        bodyType=CarBodyType.sedan,
+        condition=CarCondition.excellent,
+        description="A reliable sedan",
+        seller=seller_in_db,
+    )
+    db.session.add(car)
+    db.session.commit()
+    return car
+
+
+@pytest.fixture()
+def cars_data(app, seller_in_db):
+    cars = [
+        CarFactory(
+            make="Toyota", model="Camry", status=CarStatus.available,
+            price=500000, fuelType=CarFuelType.gasoline,
+            transmission=CarTransmission.automatic, bodyType=CarBodyType.sedan,
+            condition=CarCondition.excellent, description="A reliable sedan",
+            seller=seller_in_db,
+        ),
+        CarFactory(
+            make="Honda", model="Civic", status=CarStatus.available,
+            price=300000, fuelType=CarFuelType.hybrid,
+            transmission=CarTransmission.automatic, bodyType=CarBodyType.sedan,
+            condition=CarCondition.very_good, description="A fuel-efficient hybrid",
+            seller=seller_in_db,
+        ),
+        CarFactory(
+            make="Ford", model="Focus", status=CarStatus.available,
+            price=200000, fuelType=CarFuelType.gasoline,
+            transmission=CarTransmission.manual, bodyType=CarBodyType.hatchback,
+            condition=CarCondition.good, description="A compact hatchback",
+            seller=seller_in_db,
+        ),
+        CarFactory(
+            make="Toyota", model="RAV4", status=CarStatus.sold,
+            price=800000, fuelType=CarFuelType.hybrid,
+            transmission=CarTransmission.automatic, bodyType=CarBodyType.suv,
+            condition=CarCondition.excellent, description="Popular SUV",
+            seller=seller_in_db,
+        ),
+        CarFactory(
+            make="Honda", model="CR-V", status=CarStatus.archived,
+            price=600000, fuelType=CarFuelType.gasoline,
+            transmission=CarTransmission.automatic, bodyType=CarBodyType.suv,
+            condition=CarCondition.very_good, description="Old but reliable",
+            seller=seller_in_db,
+        ),
+    ]
+    for car in cars:
+        db.session.add(car)
+    db.session.commit()
+    return cars
 
 
 @pytest.fixture()
