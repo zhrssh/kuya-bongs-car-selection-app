@@ -6,6 +6,7 @@ from .db import db
 from .models.user import User
 from .utils.db import init_db_command
 from flask import Flask, send_from_directory
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask_talisman import Talisman
 from flask_migrate import Migrate
