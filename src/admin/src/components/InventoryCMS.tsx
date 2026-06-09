@@ -27,6 +27,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import { Car, FilterState, SellerContact, SortKey } from "../types";
 
 interface InventoryCMSProps {
+  refreshKey: number;
   sellers: SellerContact[];
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
@@ -52,6 +53,7 @@ const INITIAL_FILTER: FilterState = {
 const ITEMS_PER_PAGE = 21;
 
 export default function InventoryCMS({
+  refreshKey,
   sellers,
   onAddCar,
   onUpdateCar,
@@ -148,7 +150,7 @@ export default function InventoryCMS({
 
   useEffect(() => {
     fetchCars(currentPage, statusTab, effectiveFilters, sortKey);
-  }, [currentPage, statusTab, effectiveFilters, sortKey]);
+  }, [currentPage, statusTab, effectiveFilters, sortKey, refreshKey]);
 
   // Get condition color based on condition
   const getConditionColor = (condition: string) => {
@@ -183,10 +185,7 @@ export default function InventoryCMS({
     [cars],
   );
 
-  const uniqueFuelTypes = useMemo(
-    () => Array.from(new Set(cars.map((c) => c.fuelType))),
-    [cars],
-  );
+  const uniqueFuelTypes = useMemo(() => Object.values(CarFuelType), []);
 
   const uniqueTransmissions = [
     CarTransmission.Automatic,

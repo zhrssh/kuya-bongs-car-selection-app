@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { FilterState, Car } from '../types';
-import { CarCondition } from '../enums';
+import { CarCondition, CarFuelType, CarTransmission } from '../enums';
 import { Search, RotateCcw, SlidersHorizontal, X } from 'lucide-react';
 
 interface FilterSidebarProps {
@@ -44,15 +44,9 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
     return Array.from(list).sort();
   }, [cars]);
 
-  const fuelTypes = useMemo(() => {
-    const list = new Set(cars.map((car) => car.fuelType));
-    return Array.from(list).sort();
-  }, [cars]);
+  const fuelTypes = useMemo(() => Object.values(CarFuelType), []);
 
-  const transmissions = useMemo(() => {
-    const list = new Set(cars.map((car) => car.transmission));
-    return Array.from(list).sort();
-  }, [cars]);
+  const transmissions = useMemo(() => Object.values(CarTransmission), []);
 
   return (
     <aside

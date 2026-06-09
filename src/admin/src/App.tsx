@@ -179,6 +179,7 @@ export default function App() {
 
   // GET CAR Listing
   const [cars, setCars] = useState<Car[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // ADD CAR Listing
   const handleAddCar = (newCar: Car) => {
@@ -252,6 +253,7 @@ export default function App() {
           if (selectedCar?.id === savedCar.id) {
             setSelectedCar(savedCar);
           }
+          setRefreshKey((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error updating car:", err));
@@ -435,9 +437,8 @@ export default function App() {
 
   // UPDATE CAR STATUS
   const handleUpdateCarStatus = (id: string, status: CarStatus) => {
-    const target = cars.find((c) => c.id === id);
-    if (!target) return;
-    const updated = { ...target, status };
+    if (!selectedCar || selectedCar.id !== id) return;
+    const updated = { ...selectedCar, status };
     handleUpdateCar(updated);
   };
 
@@ -596,6 +597,7 @@ export default function App() {
           {currentPath === "/inventory" &&
             (isAdmin ? (
               <InventoryCMS
+                refreshKey={refreshKey}
                 sellers={sellers}
                 onAddCar={handleAddCar}
                 onUpdateCar={handleUpdateCar}
