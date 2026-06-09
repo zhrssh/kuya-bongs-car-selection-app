@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { FilterState, Car } from '../types';
+import { Car } from '../types';
+import { FilterState } from '@repo/shared';
 import {
   CarCondition,
   CarConditionLabel,
@@ -8,7 +9,7 @@ import {
   CarTransmission,
   CarTransmissionLabel,
   CarBodyTypeLabel,
-} from '../enums';
+} from '@repo/shared';
 import { Search, RotateCcw, SlidersHorizontal, X } from 'lucide-react';
 
 interface FilterSidebarProps {

@@ -1,4 +1,5 @@
-import { Car, FilterState, Pagination, SortKey } from "./types";
+import { Car, Pagination } from "./types";
+import { FilterState, SortKey } from "@repo/shared";
 
 const API_BASE_URL = (import.meta.env as any).VITE_FLASK_APP_API_URL;
 const ITEMS_PER_PAGE = 21;
