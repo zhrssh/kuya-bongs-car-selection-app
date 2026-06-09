@@ -3,6 +3,7 @@ import pytest
 from flaskr import create_app
 from flaskr.db import db
 from flaskr.api.schemas.seller import SellerSchema
+from flaskr.models.enums.car import CarStatus
 from .factories import CarFactory, SellerFactory
 
 
@@ -38,13 +39,11 @@ def runner(app):
 
 
 @pytest.fixture(autouse=True)
-def generate_cars(app, num_cars: int = 3):
-    # Create all tables
+def generate_cars(app):
     app.logger.info("Populating table with fake data...")
     with app.app_context():
-        # Populate database with Notes
-        for _ in range(num_cars):
-            car = CarFactory()
+        for status in [CarStatus.available, CarStatus.sold, CarStatus.archived]:
+            car = CarFactory(status=status)
             db.session.add(car)
             db.session.commit()
 

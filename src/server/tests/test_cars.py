@@ -32,24 +32,39 @@ def test_get_cars_list_pagination(client):
     assert data["pagination"]["per_page"] == 100
 
 
-def test_get_cars_list_filtering(client):
-    """It should filter cars by status"""
-    # Assume we have some cars with different statuses populated
-    # Get all cars to see statuses
-    response = client.get("/api/cars?per_page=100")
+def test_get_cars_list_defaults_to_available(client):
+    """It should default to filtering by 'available' status"""
+    response = client.get("/api/cars")
     assert response.status_code == 200
     cars = response.json["data"]["cars"]
-    
-    # Pick a status to filter by
-    status_to_filter = cars[0]["status"]
-    
-    # Filter by that status
-    response = client.get(f"/api/cars?status={status_to_filter}")
+
+    assert len(cars) > 0
+    for car in cars:
+        assert car["status"] == "available"
+
+
+def test_get_cars_list_filtering(client):
+    """It should filter cars by status"""
+    # Get all available cars
+    response = client.get("/api/cars?status=available")
     assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-    
-    for car in filtered_cars:
-        assert car["status"] == status_to_filter
+    available = response.json["data"]["cars"]
+    for car in available:
+        assert car["status"] == "available"
+
+    # Filter by sold
+    response = client.get("/api/cars?status=sold")
+    assert response.status_code == 200
+    sold = response.json["data"]["cars"]
+    for car in sold:
+        assert car["status"] == "sold"
+
+    # Filter by archived
+    response = client.get("/api/cars?status=archived")
+    assert response.status_code == 200
+    archived = response.json["data"]["cars"]
+    for car in archived:
+        assert car["status"] == "archived"
 
 
 def test_get_cars_list_filter_by_make(client):
