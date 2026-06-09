@@ -142,9 +142,10 @@ def create_app(test_config=None) -> Flask:
 
     app.register_blueprint(admin.bp)
 
-    from .api import cars, sellers, inquiries, uploads
+    from .api import cars, metrics, sellers, inquiries, uploads
 
     app.register_blueprint(cars.bp)
+    app.register_blueprint(metrics.bp)
     app.register_blueprint(sellers.bp)
     app.register_blueprint(inquiries.bp)
     app.register_blueprint(uploads.bp)
@@ -152,9 +153,5 @@ def create_app(test_config=None) -> Flask:
     @app.route("/public/images/<path:filename>")
     def uploaded_file(filename):
         return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
-
-    # Initialize the database
-    with app.app_context():
-        db.create_all()
 
     return app
