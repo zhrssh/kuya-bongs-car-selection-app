@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { sendEmail } from "../apiClient";
-import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from "../enums";
+import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from "@repo/shared";
 import { Car } from "../types";
 
 interface CarDetailModalProps {

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Car } from '../types';
-import { CarCondition, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from '../enums';
+import { CarCondition, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from '@repo/shared';
 import { Fuel, ShieldCheck, MapPin, Milestone, Sparkles } from 'lucide-react';
 
 interface CarCardProps {

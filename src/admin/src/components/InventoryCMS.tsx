@@ -1,4 +1,17 @@
 import {
+  CarBodyType,
+  CarBodyTypeLabel,
+  CarCondition,
+  CarConditionLabel,
+  CarFuelType,
+  CarFuelTypeLabel,
+  CarStatus,
+  CarTransmission,
+  CarTransmissionLabel,
+  FilterState,
+  SortKey,
+} from "@repo/shared";
+import {
   ChevronLeft,
   ChevronRight,
   Edit,
@@ -17,28 +30,15 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  CarBodyType,
-  CarBodyTypeLabel,
-  CarCondition,
-  CarConditionLabel,
-  CarFuelType,
-  CarFuelTypeLabel,
-  CarStatus,
-  CarTransmission,
-  CarTransmissionLabel,
-} from "../enums";
 import { useDebounce } from "../hooks/useDebounce";
-import { Car, FilterState, SellerContact, SortKey } from "../types";
+import { Car, SellerContact } from "../types";
+import { useCarStore } from "../stores/carStore";
 
 interface InventoryCMSProps {
   refreshKey: number;
   sellers: SellerContact[];
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
-  onDeleteCar: (id: string) => void;
-  onSelectCar: (car: Car) => void;
-  onSimulateView: (id: string) => void;
 }
 
 const INITIAL_FILTER: FilterState = {
@@ -62,8 +62,6 @@ export default function InventoryCMS({
   sellers,
   onAddCar,
   onUpdateCar,
-  onDeleteCar,
-  onSelectCar,
 }: InventoryCMSProps) {
   // Navigation & layout states
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
@@ -78,7 +76,9 @@ export default function InventoryCMS({
   const [statusTab, setStatusTab] = useState<CarStatus>(CarStatus.Available);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [cars, setCars] = useState<Car[]>([]);
+  const cars = useCarStore((s) => s.cars);
+  const setStoreCars = useCarStore((s) => s.setCars);
+  const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
   const [pagination, setPagination] = useState({
     page: 1,
     per_page: ITEMS_PER_PAGE,
@@ -143,7 +143,7 @@ export default function InventoryCMS({
       const response = await fetch(url, { credentials: "include" });
       const data = await response.json();
       if (data.status === "success") {
-        setCars(data.data.cars);
+        setStoreCars(data.data.cars);
         setPagination(data.data.pagination);
       }
     } catch (err) {
@@ -386,8 +386,21 @@ export default function InventoryCMS({
     await fetchCars(pagination.page, statusTab, filters, sortKey);
   };
 
-  const handleDelete = async (id: string) => {
-    await onDeleteCar(id);
+  const handleDelete = async (car: Car) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${car.id}`,
+        { method: "DELETE", credentials: "include" },
+      );
+      if (res.ok) {
+        useCarStore.getState().removeCar(car.id!);
+        if (useCarStore.getState().selectedCar?.id === car.id) {
+          useCarStore.getState().setSelectedCar(null);
+        }
+      }
+    } catch (err) {
+      console.error("Error deleting car:", err);
+    }
     await fetchCars(pagination.page, statusTab, filters, sortKey);
   };
 
@@ -883,7 +896,7 @@ export default function InventoryCMS({
                 };
                 const formattedMileage = car.mileage.toLocaleString();
                 const formattedPrice = `₱${car.price.toLocaleString()}`;
-                const onSelect = onSelectCar;
+                const onSelect = setStoreSelectedCar;
 
                 return (
                   <article
@@ -1033,7 +1046,7 @@ export default function InventoryCMS({
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => handleDelete(car.id!)}
+                            onClick={() => handleDelete(car)}
                             className="p-2 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
                             title="Delete stock"
                             id={`btn_del_grid_${car.id}`}>
@@ -1151,7 +1164,7 @@ export default function InventoryCMS({
                         <td className="p-4 text-right">
                           <div className="flex items-center justify-end gap-1.5 font-sans">
                             <button
-                              onClick={() => onSelectCar(car)}
+                              onClick={() => setStoreSelectedCar(car)}
                               className="px-2.5 py-1 bg-zinc-50 hover:bg-zinc-100 text-xs border border-zinc-200/70 text-zinc-700 rounded transition font-medium cursor-pointer"
                               id={`btn_detail_tbl_${car.id}`}>
                               View
@@ -1164,7 +1177,7 @@ export default function InventoryCMS({
                               <Edit className="w-3.5 h-3.5 text-zinc-500" />
                             </button>
                             <button
-                              onClick={() => handleDelete(car.id!)}
+                              onClick={() => handleDelete(car)}
                               className="p-1 px-1.5 bg-zinc-50 hover:bg-rose-50 border border-zinc-200/70 text-rose-650 rounded transition cursor-pointer"
                               title="Delete vehicle listing"
                               id={`btn_del_tbl_${car.id}`}>

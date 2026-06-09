@@ -20,10 +20,10 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Car, SellerContact } from "../types";
+import { useCarStore } from "../stores/carStore";
 
 interface SellersTabProps {
   sellers: SellerContact[];
-  cars: Car[];
   onAddSeller: (seller: SellerContact) => void;
   onUpdateSeller: (seller: SellerContact) => void;
   onDeleteSeller: (id: string) => void;
@@ -33,13 +33,13 @@ interface SellersTabProps {
 
 export default function SellersTab({
   sellers,
-  cars,
   onAddSeller,
   onUpdateSeller,
   onDeleteSeller,
   onToggleStatus,
   isAdmin,
 }: SellersTabProps) {
+  const cars = useCarStore((s) => s.cars);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
 

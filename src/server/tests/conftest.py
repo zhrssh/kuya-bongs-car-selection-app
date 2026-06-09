@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from flaskr import create_app
@@ -38,6 +40,25 @@ def app():
 @pytest.fixture()
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture()
+def auth_client(app, client):
+    os.environ["APP_ADMIN_USERNAME"] = "admin"
+    os.environ["APP_ADMIN_PASSWORD"] = "secret"
+
+    from werkzeug.security import generate_password_hash
+    from flaskr.models.user import User
+
+    user = User(
+        username="admin",
+        password=generate_password_hash("secret"),
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    client.post("/admin/login", json={"username": "admin", "password": "secret"})
+    return client
 
 
 @pytest.fixture()
@@ -118,13 +139,13 @@ def cars_data(app, seller_in_db):
 
 
 @pytest.fixture()
-def create_seller(client):
+def create_seller(auth_client):
     def _create_seller(seller_obj=None):
         if seller_obj is None:
             seller_obj = SellerFactory()
 
         data = SellerSchema.model_validate(seller_obj).model_dump(exclude={"id"})
-        response = client.post("/api/sellers", json=data)
+        response = auth_client.post("/api/sellers", json=data)
         assert response.status_code == 201
         return SellerSchema.model_validate(response.json["data"]["seller"])
 

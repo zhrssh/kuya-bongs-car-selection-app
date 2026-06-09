@@ -48,12 +48,12 @@ def test_get_seller_by_nonexistent_id(client):
     assert response_json["data"]["id"] == "Seller not found."
 
 
-def test_create_seller(client):
+def test_create_seller(auth_client):
     """It should create a new seller"""
     seller_obj = SellerFactory()
     data = SellerSchema.model_validate(seller_obj).model_dump(exclude={"id"})
 
-    response = client.post("/api/sellers", json=data)
+    response = auth_client.post("/api/sellers", json=data)
     assert response.status_code == status.HTTP_201_CREATED
 
     response_json = response.json
@@ -62,7 +62,7 @@ def test_create_seller(client):
     assert response_json["data"]["seller"]["email"] == seller_obj.email
 
 
-def test_update_seller_status(client, create_seller):
+def test_update_seller_status(auth_client, create_seller):
     """It should update a seller status"""
     seller = create_seller()
 
@@ -70,14 +70,14 @@ def test_update_seller_status(client, create_seller):
         "status": "inactive",
     }
 
-    response = client.put(f"/api/sellers/{seller.id}/status", json=update_data)
+    response = auth_client.put(f"/api/sellers/{seller.id}/status", json=update_data)
     response_json = response.json
     assert response.status_code == status.HTTP_200_OK
     assert response_json["status"] == "success"
     assert response_json["data"]["seller"]["status"] == "inactive"
 
 
-def test_update_seller_by_id(client, create_seller):
+def test_update_seller_by_id(auth_client, create_seller):
     """It should update a seller by id"""
     seller = create_seller()
 
@@ -89,7 +89,7 @@ def test_update_seller_by_id(client, create_seller):
         "status": "inactive",
     }
 
-    response = client.put(f"/api/sellers/{seller.id}", json=update_data)
+    response = auth_client.put(f"/api/sellers/{seller.id}", json=update_data)
     response_json = response.json
     assert response.status_code == status.HTTP_200_OK
     assert response_json["status"] == "success"
@@ -97,17 +97,17 @@ def test_update_seller_by_id(client, create_seller):
     assert response_json["data"]["seller"]["email"] == "updated@example.com"
 
 
-def test_delete_seller_by_id(client, create_seller):
+def test_delete_seller_by_id(auth_client, create_seller):
     """It should delete a seller by id"""
     seller = create_seller()
 
-    response = client.delete(f"/api/sellers/{seller.id}")
+    response = auth_client.delete(f"/api/sellers/{seller.id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
     # Verify it's gone
-    response = client.get(f"/api/sellers/{seller.id}")
+    response = auth_client.get(f"/api/sellers/{seller.id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
     # Verify it's gone
-    response = client.get(f"/api/sellers/{seller.id}")
+    response = auth_client.get(f"/api/sellers/{seller.id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND

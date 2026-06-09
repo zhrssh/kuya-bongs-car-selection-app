@@ -190,58 +190,58 @@ def test_get_car_by_nonexistent_id(client):
     assert responseJson["data"]["id"] == "Car not found."
 
 
-def test_update_car_by_id(client, car_in_db):
+def test_update_car_by_id(auth_client, car_in_db):
     """It should update a car by id"""
     car_data = CarSchema.model_validate(car_in_db).model_dump(mode="json")
     car_data["make"] = "Tesla"
-    response = client.put(f"/api/cars/{car_in_db.id}", json=car_data)
+    response = auth_client.put(f"/api/cars/{car_in_db.id}", json=car_data)
     responseJson = response.json
     assert responseJson["status"] == "success"
     assert responseJson["data"]["car"]["make"] == "Tesla"
 
 
-def test_update_car_by_invalid_id(client):
+def test_update_car_by_invalid_id(auth_client):
     """It should return a 400 if the car id is invalid"""
-    response = client.put("/api/cars/invalid-id", json={"make": "Tesla"})
+    response = auth_client.put("/api/cars/invalid-id", json={"make": "Tesla"})
     responseJson = response.json
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert responseJson["status"] == "fail"
     assert responseJson["data"]["id"] == "Invalid car id."
 
 
-def test_update_car_by_nonexistent_id(client):
+def test_update_car_by_nonexistent_id(auth_client):
     """It should return a 404 if the car id does not exist"""
     test_uuid = uuid.uuid4()
-    response = client.put(f"/api/cars/{test_uuid}", json={"make": "Tesla"})
+    response = auth_client.put(f"/api/cars/{test_uuid}", json={"make": "Tesla"})
     responseJson = response.json
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert responseJson["status"] == "fail"
     assert responseJson["data"]["id"] == "Car not found."
 
 
-def test_delete_car_by_id(client, car_in_db):
+def test_delete_car_by_id(auth_client, car_in_db):
     """It should delete a car by id"""
-    response = client.delete(f"/api/cars/{car_in_db.id}")
+    response = auth_client.delete(f"/api/cars/{car_in_db.id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
-def test_delete_car_by_invalid_id(client):
+def test_delete_car_by_invalid_id(auth_client):
     """It should return a 400 if the car id is invalid"""
-    response = client.delete("/api/cars/invalid-id")
+    response = auth_client.delete("/api/cars/invalid-id")
     responseJson = response.json
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert responseJson["status"] == "fail"
     assert responseJson["data"]["id"] == "Invalid car id."
 
 
-def test_delete_car_by_nonexistent_id(client):
+def test_delete_car_by_nonexistent_id(auth_client):
     """It should return a 204 if the car id does not exist"""
     test_uuid = uuid.uuid4()
-    response = client.delete(f"/api/cars/{test_uuid}")
+    response = auth_client.delete(f"/api/cars/{test_uuid}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
-def test_create_car(client):
+def test_create_car(auth_client):
     """It should create a new car"""
     new_car = CarFactory()
     new_car.sellerId = new_car.seller.id  # Set the seller id
@@ -252,7 +252,7 @@ def test_create_car(client):
         exclude={"id", "seller"},  # exclude nested seller object
     )
 
-    response = client.post("/api/cars", json=car_data)
+    response = auth_client.post("/api/cars", json=car_data)
     assert response.status_code == status.HTTP_201_CREATED
 
     responseJson = response.json
@@ -262,9 +262,9 @@ def test_create_car(client):
     assert responseJson["data"]["car"]["model"] == new_car.model
 
 
-def test_create_car_with_invalid_data(client):
+def test_create_car_with_invalid_data(auth_client):
     """It should return a 400 if the car data is invalid"""
-    response = client.post("/api/cars", json={"invalid": "data"})
+    response = auth_client.post("/api/cars", json={"invalid": "data"})
     responseJson = response.json
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert responseJson["status"] == "fail"

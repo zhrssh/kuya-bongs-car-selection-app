@@ -107,6 +107,7 @@ services:
       - traefik
     volumes:
       - ../src/server/instance:/app/instance:rw
+      - ../src/server/public/images:/app/public/images:rw
 
 networks:
   proxy:

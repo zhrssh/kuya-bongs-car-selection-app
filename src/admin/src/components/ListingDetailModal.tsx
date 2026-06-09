@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarStatus, CarStatusLabel, CarTransmissionLabel } from "../enums";
+import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarStatus, CarStatusLabel, CarTransmissionLabel } from "@repo/shared";
 import { Car } from "../types";
 
 interface ListingDetailModalProps {
@@ -30,13 +30,6 @@ export default function ListingDetailModal({
 }: ListingDetailModalProps) {
   if (!car) return null;
 
-  const [message, setMessage] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userPhone, setUserPhone] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [interestType, setInterestType] = useState("questions"); // 'questions' | 'test-drive' | 'finance'
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [revealContact, setRevealContact] = useState<
     "none" | "phone" | "email"
   >("none");
@@ -83,26 +76,6 @@ export default function ListingDetailModal({
   }).format(car.price);
 
   const formattedMileage = new Intl.NumberFormat("en-US").format(car.mileage);
-
-  const handleSubmitMessage = (e: any) => {
-    e.preventDefault();
-    if (!userName || !userEmail) return;
-
-    setIsSubmitting(true);
-    // Simulate API request
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-      // Reset form fields after delay
-      setTimeout(() => {
-        setMessage("");
-        setUserName("");
-        setUserPhone("");
-        setUserEmail("");
-        setSubmitSuccess(false);
-      }, 5000);
-    }, 1200);
-  };
 
   return (
     <div

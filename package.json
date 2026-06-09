@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "build:shared": "pnpm --filter @repo/shared build",
+    "build:admin": "pnpm --filter react-example build",
+    "build:web": "pnpm --filter react-example build",
+    "lint:admin": "pnpm --filter react-example lint",
+    "lint:web": "pnpm --filter react-example lint"
+  }
+}

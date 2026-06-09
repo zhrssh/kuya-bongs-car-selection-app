@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Car } from '../types';
-import { CarCondition, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from '../enums';
+import { CarCondition, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from '@repo/shared';
 import { SlidersHorizontal, X } from 'lucide-react';
 
 interface ComparePanelProps {
