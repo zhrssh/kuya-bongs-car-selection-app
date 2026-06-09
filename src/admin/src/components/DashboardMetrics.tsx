@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Car, DailyMetricData } from '../types';
 import { CarStatus } from '@repo/shared';
+import { useCarStore } from '../stores/carStore';
 import { TrendingUp, DollarSign, CarFront, MessageSquare, Archive } from 'lucide-react';
 
 // Register ChartJS modules
@@ -28,13 +29,13 @@ ChartJS.register(
 );
 
 interface DashboardMetricsProps {
-  cars: Car[];
   dailyMetrics: DailyMetricData[];
   totalLeads: number;
   totalViews: number;
 }
 
-export default function DashboardMetrics({ cars, dailyMetrics, totalLeads, totalViews }: DashboardMetricsProps) {
+export default function DashboardMetrics({ dailyMetrics, totalLeads, totalViews }: DashboardMetricsProps) {
+  const cars = useCarStore((s) => s.cars);
    // Memoized KPIs
    const stats = useMemo(() => {
      const availableCars = cars.filter(c => !c.status || c.status === CarStatus.Available);

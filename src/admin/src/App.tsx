@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { CarStatus } from "@repo/shared";
 import {
   BarChart3,
   Cpu,
@@ -19,7 +20,6 @@ import EventLogs from "./components/EventLogs";
 import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
 import SellersTab from "./components/SellersTab";
-import { CarStatus } from "@repo/shared";
 import {
   INITIAL_LOGS,
   INITIAL_METRICS,
@@ -27,6 +27,7 @@ import {
   US_LOCATIONS,
 } from "./initialData";
 import { ActivityLog, Car, DailyMetricData, SellerContact } from "./types";
+import { useCarStore } from "./stores/carStore";
 
 export default function App() {
   // Routing paths: / or /dashboard, /inventory, /login
@@ -96,8 +97,9 @@ export default function App() {
     useState<DailyMetricData[]>(INITIAL_METRICS);
   const [logs, setLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
 
-  // Single detail state
-  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  // Single detail state (from store)
+  const selectedCar = useCarStore((s) => s.selectedCar);
+  const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
 
   // Deriving cumulative KPIs
   const totalViews = dailyMetrics.reduce((sum, m) => sum + m.views, 0);
@@ -177,8 +179,10 @@ export default function App() {
     setLogs([]);
   }, []);
 
-  // GET CAR Listing
-  const [cars, setCars] = useState<Car[]>([]);
+  // GET CAR Listing (from store)
+  const cars = useCarStore((s) => s.cars);
+  const addCarToStore = useCarStore((s) => s.addCar);
+  const updateCarInStore = useCarStore((s) => s.updateCar);
   const [refreshKey, setRefreshKey] = useState(0);
 
   // ADD CAR Listing
@@ -195,7 +199,7 @@ export default function App() {
       .then((data) => {
         if (data.status === "success") {
           const savedCar = data.data.car;
-          setCars((prev) => [savedCar, ...prev]);
+          addCarToStore(savedCar);
           addLog(
             "create",
             `${savedCar.make} ${savedCar.model}`,
@@ -238,9 +242,7 @@ export default function App() {
       .then((data) => {
         if (data.status === "success") {
           const savedCar = data.data.car;
-          setCars((prev) =>
-            prev.map((c) => (c.id === savedCar.id ? savedCar : c)),
-          );
+          updateCarInStore(savedCar);
           addLog(
             "update",
             `${savedCar.make} ${savedCar.model}`,
@@ -251,46 +253,12 @@ export default function App() {
 
           // Mirror update in detail modal if active
           if (selectedCar?.id === savedCar.id) {
-            setSelectedCar(savedCar);
+            setStoreSelectedCar(savedCar);
           }
           setRefreshKey((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error updating car:", err));
-  };
-
-  // DELETE CAR Listing
-  const handleDeleteCar = (id: string) => {
-    const target = cars.find((c) => c.id === id);
-    if (!target) return;
-
-    if (
-      confirm(
-        `Administrate CMS: Are you sure you want to permanently delete the listing for the ${target.make} ${target.model}?`,
-      )
-    ) {
-      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-        .then((res) => {
-          if (res.ok) {
-            setCars((prev) => prev.filter((c) => c.id !== id));
-            addLog(
-              "delete",
-              `${target.make} ${target.model}`,
-              `CMS: Revoked and unlisted vehicle ${target.make} ${target.model} from database pool`,
-              target.seller?.location,
-              target.id,
-            );
-
-            if (selectedCar?.id === id) {
-              setSelectedCar(null);
-            }
-          }
-        })
-        .catch((err) => console.error("Error deleting car:", err));
-    }
   };
 
   // GET SELLERS List
@@ -625,7 +593,6 @@ export default function App() {
             (isAdmin ? (
               <div className="space-y-8 animate-in fade-in duration-350">
                 <DashboardMetrics
-                  cars={cars}
                   dailyMetrics={dailyMetrics}
                   totalLeads={totalLeads}
                   totalViews={totalViews}
@@ -661,9 +628,6 @@ export default function App() {
                 sellers={sellers}
                 onAddCar={handleAddCar}
                 onUpdateCar={handleUpdateCar}
-                onDeleteCar={handleDeleteCar}
-                onSelectCar={(car) => setSelectedCar(car)}
-                onSimulateView={handleSimulateView}
               />
             ) : (
               <div className="max-w-md w-full mx-auto my-12 p-8 text-center bg-white border border-zinc-200 shadow-md rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -688,7 +652,6 @@ export default function App() {
             (isAdmin ? (
               <SellersTab
                 sellers={sellers}
-                cars={cars}
                 onAddSeller={handleAddSeller}
                 onUpdateSeller={handleUpdateSeller}
                 onDeleteSeller={handleDeleteSeller}
@@ -767,7 +730,7 @@ export default function App() {
       {selectedCar && (
         <ListingDetailModal
           car={selectedCar}
-          onClose={() => setSelectedCar(null)}
+          onClose={() => setStoreSelectedCar(null)}
           onUpdateStatus={handleUpdateCarStatus}
         />
       )}

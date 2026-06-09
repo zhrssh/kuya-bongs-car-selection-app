@@ -11,6 +11,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@repo/shared": "workspace:*",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
     "chart.js": "^4.5.1",
@@ -21,7 +22,7 @@
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.0.1",
     "vite": "^6.2.3",
-    "@repo/shared": "workspace:*"
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
