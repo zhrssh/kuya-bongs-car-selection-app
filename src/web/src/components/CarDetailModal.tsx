@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { sendEmail } from "../apiClient";
+import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from "../enums";
 import { Car } from "../types";
 
 interface CarDetailModalProps {
@@ -162,7 +163,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             {/* Condition badge overlay */}
             <div className="absolute bottom-4 left-4">
               <span className="bg-blue-600 text-white rounded-full px-3 py-1 text-xs font-semibold shadow-xs">
-                {car.condition} Condition
+                {CarConditionLabel[car.condition] || car.condition} Condition
               </span>
             </div>
 
@@ -194,31 +195,31 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             {/* Structured Specifications Grid */}
             <div className="grid grid-cols-2 gap-4 bg-slate-50 border border-slate-200/60 rounded-2xl p-4 text-xs">
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Body Type</span>
+                <span className="text-gray-400 font-medium uppercase tracking-wider">Body Type</span>
                 <span className="font-semibold text-gray-800">
-                  {car.bodyType}
+                  {CarBodyTypeLabel[car.bodyType] || car.bodyType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Fuel Type</span>
+                <span className="text-gray-400 font-medium uppercase tracking-wider">Fuel Type</span>
                 <span className="font-semibold text-gray-800">
-                  {car.fuelType}
+                  {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Transmission</span>
+                <span className="text-gray-400 font-medium uppercase tracking-wider">Transmission</span>
                 <span className="font-semibold text-gray-800">
-                  {car.transmission}
+                  {CarTransmissionLabel[car.transmission] || car.transmission}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Drivetrain</span>
+                <span className="text-gray-400 font-medium uppercase tracking-wider">Drivetrain</span>
                 <span className="font-semibold text-gray-800">
                   {car.drivetrain}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5 col-span-2 border-t border-gray-100 pt-2 mt-1">
-                <span className="text-gray-400 font-medium font-sans">
+                <span className="text-gray-400 font-medium font-sans uppercase tracking-wider">
                   Engine Powertrain
                 </span>
                 <span className="font-bold text-gray-800 text-xs">
@@ -226,7 +227,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 </span>
               </div>
               <div className="flex flex-col gap-0.5 col-span-2 border-t border-gray-100 pt-2 mt-1">
-                <span className="text-gray-400 font-medium font-sans">
+                <span className="text-gray-400 font-medium font-sans uppercase tracking-wider">
                   Colors
                 </span>
                 <span className="font-medium text-gray-800">
@@ -290,7 +291,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             {/* Quick Contact buttons block */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.01)] flex flex-col gap-4">
               <h4 className="font-display font-semibold text-sm text-slate-900 leading-none">
-                Dealer Contact Info
+                Dealer contact info
               </h4>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 shrink-0">
@@ -319,12 +320,12 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                   className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-250 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
                   <Phone className="h-4 w-4 mb-1" />
                   <span className="text-[11px] leading-tight text-slate-600 font-normal">
-                    Call Agent
+                    Call agent
                   </span>
                   <span className="text-xs font-bold leading-tight select-all">
                     {revealContact === "phone"
                       ? car.seller.phone
-                      : "Click to View"}
+                      : "Click to view"}
                   </span>
                 </button>
 
@@ -338,12 +339,12 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                   className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-250 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
                   <Mail className="h-4 w-4 mb-1" />
                   <span className="text-[11px] leading-tight text-slate-600 font-normal">
-                    Email Agent
+                    Email agent
                   </span>
                   <span className="text-xs font-bold leading-tight select-all">
                     {revealContact === "email"
                       ? car.seller.email.split("@")[0] + "..."
-                      : "Click to View"}
+                      : "Click to view"}
                   </span>
                 </button>
               </div>

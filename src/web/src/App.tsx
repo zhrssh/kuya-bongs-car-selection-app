@@ -391,7 +391,7 @@ export default function App() {
                   onClick={handleResetFilters}
                   className="text-xs text-blue-650 hover:text-blue-700 font-semibold ml-auto px-2 py-1 rounded cursor-pointer transition-colors focus:outline-none"
                 >
-                  Reset all
+                  Reset All
                 </button>
               </div>
             )}

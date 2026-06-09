@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Car } from '../types';
-import { CarCondition } from '../enums';
+import { CarCondition, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from '../enums';
 import { SlidersHorizontal, X } from 'lucide-react';
 
 interface ComparePanelProps {
@@ -161,7 +161,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
                         <th key={`empty-col-${idx}`} className="py-4 px-4 w-1/4 text-center text-slate-300 font-normal italic border-l border-zinc-50">
-                          Slot Available
+                          Empty Slot
                         </th>
                       ))}
                   </tr>
@@ -188,7 +188,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                   </tr>
                   <tr className="hover:bg-zinc-50/40 transition">
                     <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                      Odometer Mileage
+                      Mileage
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-705 font-mono">
@@ -213,7 +213,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                             car.condition
                           )}`}
                         >
-                          {car.condition}
+                          {CarConditionLabel[car.condition] || car.condition}
                         </span>
                       </td>
                     ))}
@@ -226,7 +226,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                   </tr>
                   <tr className="hover:bg-zinc-50/40 transition">
                     <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                      Engine / Powertrain
+                      Engine Powertrain
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
@@ -242,11 +242,11 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                   </tr>
                   <tr className="hover:bg-zinc-50/40 transition">
                     <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                      Fuel Mechanism
+                      Fuel Type
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
-                        {car.fuelType}
+                        {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
@@ -258,11 +258,11 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                   </tr>
                   <tr className="hover:bg-zinc-50/40 transition">
                     <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                      Gearbox Mechanism
+                      Transmission
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
-                        {car.transmission}
+                        {CarTransmissionLabel[car.transmission] || car.transmission}
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
@@ -274,7 +274,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                   </tr>
                   <tr className="hover:bg-zinc-50/40 transition">
                     <td className="py-3.5 px-4 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                      Drivetrain Wheelbase
+                      Drivetrain
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
@@ -321,7 +321,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                           }}
                           className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition-all cursor-pointer focus:outline-none shadow-xs"
                         >
-                          Inspect Detail
+                          View Details
                         </button>
                       </td>
                     ))}
