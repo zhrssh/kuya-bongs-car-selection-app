@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 from ..db import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, DateTime, Uuid, ForeignKey, func
+from sqlalchemy import Integer, String, Text, DateTime, Uuid, ForeignKey, func
 
 from datetime import datetime
 
@@ -43,8 +43,8 @@ class Car(db.Model):
     drivetrain: Mapped[str] = mapped_column(String(80), nullable=True)
     features: Mapped[str] = mapped_column(String(255), nullable=True)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
-    imageUrl: Mapped[str] = mapped_column(String(80), nullable=False)
-    images: Mapped[str] = mapped_column(String(255), nullable=True)
+    imageUrl: Mapped[str] = mapped_column(String(255), nullable=False)
+    images: Mapped[str] = mapped_column(Text, nullable=True)
     condition: Mapped[CarCondition] = mapped_column(nullable=False)
     sellerId: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("seller.id", name="fk_car_seller_id"), nullable=False

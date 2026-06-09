@@ -13,6 +13,7 @@ import {
   Sparkles,
   Table,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -173,6 +174,49 @@ export default function InventoryCMS({
   const [formData, setFormData] = useState<Partial<Car>>({});
   const [formError, setFormError] = useState("");
   const [imageInputUrl, setImageInputUrl] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+
+  const API_URL = import.meta.env.VITE_FLASK_APP_API_URL;
+
+  const isUploadedUrl = (url: string) =>
+    url.startsWith(window.location.origin + "/public/images/");
+
+  const deleteUploadedFile = async (url: string) => {
+    if (!isUploadedUrl(url)) return;
+    const filename = url.split("/").pop();
+    await fetch(`${API_URL}/api/uploads/${filename}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+  };
+
+  const uploadFiles = async (files: File[]): Promise<string[]> => {
+    setUploadError("");
+    const fd = new FormData();
+    files.forEach((f) => fd.append("files", f));
+
+    const res = await fetch(`${API_URL}/api/uploads`, {
+      method: "POST",
+      body: fd,
+      credentials: "include",
+    });
+    const data = await res.json();
+    if (data.status !== "success") {
+      const msgs = data.errors ? Object.values(data.errors).join("; ") : "Upload failed";
+      throw new Error(msgs);
+    }
+    return data.data.urls;
+  };
+
+  const handleCancel = async () => {
+    for (const url of uploadedFiles) {
+      await deleteUploadedFile(url);
+    }
+    setUploadedFiles([]);
+    setUploadError("");
+    setIsFormOpen(false);
+  };
 
   // Dropdown lists derived from current stock to avoid duplicates
   const uniqueMakes = useMemo(
@@ -281,6 +325,7 @@ export default function InventoryCMS({
       exteriorColor,
       description,
       condition,
+      imageUrl,
     } = formData;
 
     if (
@@ -290,10 +335,11 @@ export default function InventoryCMS({
       !price ||
       !mileage ||
       !exteriorColor ||
-      !description
+      !description ||
+      !imageUrl
     ) {
       setFormError(
-        "Please fill out all required fields (Brand, Model, Year, Price, Mileage, Exterior, and Description).",
+        "Please fill out all required fields (Brand, Model, Year, Price, Mileage, Exterior, Description, and at least one image).",
       );
       return;
     }
@@ -307,12 +353,12 @@ export default function InventoryCMS({
       features: features,
       condition: condition || CarCondition.Excellent,
       status: formData.status || CarStatus.Available,
-      // images:
-      //   formData.images && formData.images.length > 0
-      //     ? formData.images
-      //     : formData.imageUrl
-      //       ? [formData.imageUrl]
-      //       : [], // NOTE: REMOVED UNTIL BACKEND IS FIXED
+      images:
+        formData.images && formData.images.length > 0
+          ? formData.images
+          : formData.imageUrl
+            ? [formData.imageUrl]
+            : [],
       seller: {
         ...(formData.seller as SellerContact),
         id: (formData.seller as SellerContact).id || "",
@@ -328,6 +374,8 @@ export default function InventoryCMS({
       await onAddCar(readyCar);
     }
 
+    setUploadedFiles([]); // files are now associated with the saved car
+    setUploadError("");
     setIsFormOpen(false);
     await fetchCars(pagination.page, statusTab, filters, sortKey);
   };
@@ -1474,6 +1522,11 @@ export default function InventoryCMS({
                   {formError}
                 </div>
               )}
+              {uploadError && (
+                <div className="p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-xs font-mono">
+                  {uploadError}
+                </div>
+              )}
               {/* Brand and Model row */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1772,13 +1825,17 @@ export default function InventoryCMS({
                     {formData.imageUrl && (
                       <button
                         type="button"
-                        onClick={() =>
+                        onClick={async () => {
+                          for (const url of formData.images || []) {
+                            await deleteUploadedFile(url);
+                          }
                           setFormData((p) => ({
                             ...p,
                             imageUrl: "",
                             images: [],
-                          }))
-                        }
+                          }));
+                          setUploadedFiles([]);
+                        }}
                         className="text-[10px] font-bold text-rose-600 hover:underline cursor-pointer">
                         Reset All Images
                       </button>
@@ -1786,48 +1843,39 @@ export default function InventoryCMS({
                   </div>
 
                   {/* Drag and Drop Zone / File upload */}
-                  {/* NOTE: REMOVED UNTIL BACKEND IS FIXED */}
-                  {/* <div
+                  <div
                     onDragOver={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
-                    onDrop={(e) => {
+                    onDrop={async (e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      const files = Array.from(e.dataTransfer.files) as File[];
-                      const imageFiles = files.filter((f) =>
-                        f.type.startsWith("image/"),
+                      const files = Array.from(e.dataTransfer.files).filter(
+                        (f) => f.type.startsWith("image/"),
                       );
-                      if (imageFiles.length > 0) {
-                        const promises = imageFiles.map((file) => {
-                          return new Promise<string>((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              resolve((event.target?.result as string) || "");
-                            };
-                            reader.readAsDataURL(file);
-                          });
+                      if (files.length === 0) return;
+                      try {
+                        const urls = await uploadFiles(files);
+                        setFormData((p) => {
+                          const currentImages =
+                            p.images && p.images.length > 0
+                              ? [...p.images]
+                              : p.imageUrl
+                                ? [p.imageUrl]
+                                : [];
+                          const newImages = [...currentImages, ...urls];
+                          return {
+                            ...p,
+                            images: newImages,
+                            imageUrl: p.imageUrl || newImages[0],
+                          };
                         });
-                        Promise.all(promises).then((uploadedUrls) => {
-                          const validUrls = uploadedUrls.filter(
-                            (url) => url !== "",
-                          );
-                          setFormData((p) => {
-                            const currentImages =
-                              p.images && p.images.length > 0
-                                ? [...p.images]
-                                : p.imageUrl
-                                  ? [p.imageUrl]
-                                  : [];
-                            const newImages = [...currentImages, ...validUrls];
-                            return {
-                              ...p,
-                              images: newImages,
-                              imageUrl: p.imageUrl ? p.imageUrl : newImages[0],
-                            };
-                          });
-                        });
+                        setUploadedFiles((prev) => [...prev, ...urls]);
+                      } catch (err: any) {
+                        setUploadError(
+                          err.message || "Upload failed. Please try again.",
+                        );
                       }
                     }}
                     className="border-2 border-dashed border-slate-300 hover:border-blue-400 bg-white rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-all relative overflow-hidden">
@@ -1835,47 +1883,32 @@ export default function InventoryCMS({
                       type="file"
                       accept="image/*"
                       multiple
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const files = Array.from(
                           e.target.files || [],
-                        ) as File[];
-                        const imageFiles = files.filter((f) =>
-                          f.type.startsWith("image/"),
-                        );
-                        if (imageFiles.length > 0) {
-                          const promises = imageFiles.map((file) => {
-                            return new Promise<string>((resolve) => {
-                              const reader = new FileReader();
-                              reader.onload = (event) => {
-                                resolve((event.target?.result as string) || "");
-                              };
-                              reader.readAsDataURL(file);
-                            });
+                        ).filter((f) => f.type.startsWith("image/"));
+                        if (files.length === 0) return;
+                        try {
+                          const urls = await uploadFiles(files);
+                          setFormData((p) => {
+                            const currentImages =
+                              p.images && p.images.length > 0
+                                ? [...p.images]
+                                : p.imageUrl
+                                  ? [p.imageUrl]
+                                  : [];
+                            const newImages = [...currentImages, ...urls];
+                            return {
+                              ...p,
+                              images: newImages,
+                              imageUrl: p.imageUrl || newImages[0],
+                            };
                           });
-                          Promise.all(promises).then((uploadedUrls) => {
-                            const validUrls = uploadedUrls.filter(
-                              (url) => url !== "",
-                            );
-                            setFormData((p) => {
-                              const currentImages =
-                                p.images && p.images.length > 0
-                                  ? [...p.images]
-                                  : p.imageUrl
-                                    ? [p.imageUrl]
-                                    : [];
-                              const newImages = [
-                                ...currentImages,
-                                ...validUrls,
-                              ];
-                              return {
-                                ...p,
-                                images: newImages,
-                                imageUrl: p.imageUrl
-                                  ? p.imageUrl
-                                  : newImages[0],
-                              };
-                            });
-                          });
+                          setUploadedFiles((prev) => [...prev, ...urls]);
+                        } catch (err: any) {
+                          setUploadError(
+                            err.message || "Upload failed. Please try again.",
+                          );
                         }
                       }}
                       className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
@@ -1897,7 +1930,7 @@ export default function InventoryCMS({
                     <span className="text-[10px] text-zinc-400">
                       Multiple image uploads supported (PNG, JPG, WebP)
                     </span>
-                  </div> */}
+                  </div>
 
                   {/* Direct text input option */}
                   <div className="space-y-1.5 mt-2">
@@ -1987,13 +2020,14 @@ export default function InventoryCMS({
                                   )}
                                   <button
                                     type="button"
-                                    onClick={() => {
+                                    onClick={async () => {
+                                      const deletingUrl = items[index];
+                                      await deleteUploadedFile(deletingUrl);
                                       setFormData((p) => {
                                         const filtered = items.filter(
                                           (_, idx) => idx !== index,
                                         );
                                         let nextMain = p.imageUrl;
-                                        // If we deleted the main image, change main image to first remaining or empty
                                         if (isMain) {
                                           nextMain =
                                             filtered.length > 0
@@ -2006,6 +2040,11 @@ export default function InventoryCMS({
                                           imageUrl: nextMain,
                                         };
                                       });
+                                      setUploadedFiles((prev) =>
+                                        prev.filter(
+                                          (u) => u !== deletingUrl,
+                                        ),
+                                      );
                                     }}
                                     className="bg-rose-600 hover:bg-rose-500 text-white text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
                                     Delete
@@ -2136,7 +2175,7 @@ export default function InventoryCMS({
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-150">
                 <button
                   type="button"
-                  onClick={() => setIsFormOpen(false)}
+                  onClick={handleCancel}
                   className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-205/50 rounded-lg text-xs text-zinc-700 font-semibold cursor-pointer transition font-sans"
                   id="form_btn_cancel">
                   Cancel

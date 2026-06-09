@@ -1,11 +1,12 @@
 import os
 import uuid
+import json
 from typing import Dict
 
 from .db import db
 from .models.user import User
 from .utils.db import init_db_command, add_car_command, add_seller_command
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -39,6 +40,8 @@ def create_app(test_config=None) -> Flask:
     )
     app.config["CORS_HEADERS"] = "Content-Type"
 
+    upload_folder = os.path.join(app.root_path, os.pardir, "public", "images")
+
     # setup additional config
     app.config.from_mapping(
         FLASK_ENV=os.getenv("FLASK_ENV", "development"),
@@ -46,6 +49,8 @@ def create_app(test_config=None) -> Flask:
         SESSION_COOKIE_DOMAIN=".docker.localhost",
         SQLALCHEMY_DATABASE_URI=f"sqlite:///{os.path.join(app.instance_path, 'flaskr.sqlite')}",
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        UPLOAD_FOLDER=upload_folder,
+        MAX_CONTENT_LENGTH=16 * 1024 * 1024,
     )
 
     if test_config is not None:
@@ -55,6 +60,12 @@ def create_app(test_config=None) -> Flask:
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
+    except OSError:
+        pass
+
+    # ensure the upload folder exists
+    try:
+        os.makedirs(upload_folder)
     except OSError:
         pass
 
@@ -93,15 +104,54 @@ def create_app(test_config=None) -> Flask:
         """Used for health checking the app. Returns 200 if the app is healthy."""
         return "OK", 200
 
+    @app.cli.command("cleanup-orphan-uploads")
+    def cleanup_orphan_uploads():
+        """Remove uploaded image files not referenced by any car record."""
+        from .models.car import Car
+
+        upload_folder = app.config["UPLOAD_FOLDER"]
+        if not os.path.exists(upload_folder):
+            print("Upload folder does not exist. Nothing to clean.")
+            return
+
+        all_cars = Car.query.with_entities(Car.imageUrl, Car.images).all()
+        referenced = set()
+        for image_url, images_json in all_cars:
+            if image_url:
+                referenced.add(os.path.basename(image_url))
+            if images_json:
+                try:
+                    for url in json.loads(images_json):
+                        referenced.add(os.path.basename(url))
+                except (json.JSONDecodeError, TypeError):
+                    pass
+
+        removed = 0
+        for filename in os.listdir(upload_folder):
+            filepath = os.path.join(upload_folder, filename)
+            if not os.path.isfile(filepath):
+                continue
+            if filename not in referenced:
+                os.remove(filepath)
+                removed += 1
+                print(f"Deleted orphan: {filename}")
+
+        print(f"Cleanup complete. Removed {removed} orphan file(s).")
+
     from . import admin
 
     app.register_blueprint(admin.bp)
 
-    from .api import cars, sellers, inquiries
+    from .api import cars, sellers, inquiries, uploads
 
     app.register_blueprint(cars.bp)
     app.register_blueprint(sellers.bp)
     app.register_blueprint(inquiries.bp)
+    app.register_blueprint(uploads.bp)
+
+    @app.route("/public/images/<path:filename>")
+    def uploaded_file(filename):
+        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
     # Initialize the database
