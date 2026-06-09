@@ -37,7 +37,7 @@ class CarSchema(BaseModel):
     imageUrl: str
     images: list[str] | None = None
     condition: str
-    sellerId: uuid.UUID
+    sellerId: uuid.UUID | None = None
     seller: SellerSchema | None = None
 
     @field_validator("images", mode="before")

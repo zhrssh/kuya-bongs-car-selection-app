@@ -14,7 +14,8 @@ class CarRepository:
         self.db = database or db
 
     def get_paginated(self, filters, page, per_page):
-        query = self.db.select(Car).options(joinedload(Car.seller)).order_by(Car.id)
+        query = self.db.select(Car).options(joinedload(Car.seller))
+        query = self._apply_sorting(query, filters.get("sort"))
 
         if status_filter := filters.get("status"):
             query = query.filter(Car.status == status_filter)
@@ -51,6 +52,19 @@ class CarRepository:
             )
 
         return self.db.paginate(query, page=page, per_page=per_page)
+
+    @staticmethod
+    def _apply_sorting(query, sort_key):
+        sort_map = {
+            "price-asc": Car.price.asc(),
+            "price-desc": Car.price.desc(),
+            "year-desc": Car.year.desc(),
+            "year-asc": Car.year.asc(),
+            "mileage-asc": Car.mileage.asc(),
+        }
+        if sort_key in sort_map:
+            return query.order_by(sort_map[sort_key])
+        return query.order_by(Car.id)
 
     def get_by_id(self, car_id: uuid.UUID) -> Car | None:
         return (

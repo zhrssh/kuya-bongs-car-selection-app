@@ -150,4 +150,7 @@ class CarService:
         if search := params.get("search"):
             filters["search"] = search.strip()
 
+        if sort := params.get("sort"):
+            filters["sort"] = sort
+
         return filters

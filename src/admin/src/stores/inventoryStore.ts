@@ -127,6 +127,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
     if (filters.yearMin) url += `&yearMin=${filters.yearMin}`;
     if (filters.yearMax) url += `&yearMax=${filters.yearMax}`;
     if (filters.searchQuery) url += `&search=${filters.searchQuery}`;
+    if (sort) url += `&sort=${sort}`;
 
     try {
       const response = await fetch(url, { credentials: "include" });
