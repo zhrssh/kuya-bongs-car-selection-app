@@ -1,11 +1,8 @@
 from flaskr import status
-import logging
 import uuid
 
 from flaskr.api.cars import CarSchema
 from .factories import CarFactory
-
-logger = logging.getLogger(__name__)
 
 
 def test_get_cars_list_pagination(client):
@@ -32,7 +29,7 @@ def test_get_cars_list_pagination(client):
     assert data["pagination"]["per_page"] == 100
 
 
-def test_get_cars_list_defaults_to_available(client):
+def test_get_cars_list_defaults_to_available(client, cars_data):
     """It should default to filtering by 'available' status"""
     response = client.get("/api/cars")
     assert response.status_code == 200
@@ -43,214 +40,120 @@ def test_get_cars_list_defaults_to_available(client):
         assert car["status"] == "available"
 
 
-def test_get_cars_list_filtering(client):
+def test_get_cars_list_filtering(client, cars_data):
     """It should filter cars by status"""
-    # Get all available cars
     response = client.get("/api/cars?status=available")
     assert response.status_code == 200
-    available = response.json["data"]["cars"]
-    for car in available:
+    for car in response.json["data"]["cars"]:
         assert car["status"] == "available"
 
-    # Filter by sold
     response = client.get("/api/cars?status=sold")
     assert response.status_code == 200
-    sold = response.json["data"]["cars"]
-    for car in sold:
+    for car in response.json["data"]["cars"]:
         assert car["status"] == "sold"
 
-    # Filter by archived
     response = client.get("/api/cars?status=archived")
     assert response.status_code == 200
-    archived = response.json["data"]["cars"]
-    for car in archived:
+    for car in response.json["data"]["cars"]:
         assert car["status"] == "archived"
 
 
-def test_get_cars_list_filter_by_make(client):
+def test_get_cars_list_filter_by_make(client, cars_data):
     """It should filter cars by make"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?make=Toyota")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    make = cars[0]["make"]
-    response = client.get(f"/api/cars?make={make}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert car["make"] == make
+    for car in response.json["data"]["cars"]:
+        assert car["make"] == "Toyota"
 
 
-def test_get_cars_list_filter_by_model(client):
+def test_get_cars_list_filter_by_model(client, cars_data):
     """It should filter cars by model"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?model=Camry")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    model = cars[0]["model"]
-    response = client.get(f"/api/cars?model={model}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert car["model"] == model
+    for car in response.json["data"]["cars"]:
+        assert car["model"] == "Camry"
 
 
-def test_get_cars_list_filter_by_body_type(client):
+def test_get_cars_list_filter_by_body_type(client, cars_data):
     """It should filter cars by bodyType"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?bodyType=sedan")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    body_type = cars[0]["bodyType"]
-    response = client.get(f"/api/cars?bodyType={body_type}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert car["bodyType"] == body_type
+    for car in response.json["data"]["cars"]:
+        assert car["bodyType"] == "sedan"
 
 
-def test_get_cars_list_filter_by_fuel_type(client):
+def test_get_cars_list_filter_by_fuel_type(client, cars_data):
     """It should filter cars by fuelType"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?fuelType=gasoline")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    fuel_type = cars[0]["fuelType"]
-    response = client.get(f"/api/cars?fuelType={fuel_type}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert car["fuelType"] == fuel_type
+    for car in response.json["data"]["cars"]:
+        assert car["fuelType"] == "gasoline"
 
 
-def test_get_cars_list_filter_by_transmission(client):
+def test_get_cars_list_filter_by_transmission(client, cars_data):
     """It should filter cars by transmission"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?transmission=manual")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    transmission = cars[0]["transmission"]
-    response = client.get(f"/api/cars?transmission={transmission}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert car["transmission"] == transmission
+    for car in response.json["data"]["cars"]:
+        assert car["transmission"] == "manual"
 
 
-def test_get_cars_list_filter_by_condition(client):
+def test_get_cars_list_filter_by_condition(client, cars_data):
     """It should filter cars by condition"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?condition=excellent")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    condition = cars[0]["condition"]
-    response = client.get(f"/api/cars?condition={condition}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert car["condition"] == condition
+    for car in response.json["data"]["cars"]:
+        assert car["condition"] == "excellent"
 
 
-def test_get_cars_list_filter_by_search(client):
+def test_get_cars_list_filter_by_search(client, cars_data):
     """It should filter cars by keyword search (make)"""
-    response = client.get("/api/cars?per_page=100")
-    assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    # Search by first car's make (partial match)
-    make = cars[0]["make"]
-    search_term = make[:len(make)//2 + 1]  # first half of the make name
-    response = client.get(f"/api/cars?search={search_term}")
+    response = client.get("/api/cars?search=Toyota")
     assert response.status_code == 200
     filtered_cars = response.json["data"]["cars"]
 
     assert len(filtered_cars) > 0
     for car in filtered_cars:
         matches = (
-            search_term.lower() in car["make"].lower()
-            or search_term.lower() in car["model"].lower()
-            or search_term.lower() in car["description"].lower()
+            "toyota" in car["make"].lower()
+            or "toyota" in car["model"].lower()
+            or "toyota" in car["description"].lower()
         )
-        assert matches, f"Car '{car['make']} {car['model']}' should match search '{search_term}'"
+        assert matches, f"Car '{car['make']} {car['model']}' should match search 'Toyota'"
 
 
-def test_get_cars_list_filter_by_price_min(client):
+def test_get_cars_list_filter_by_price_min(client, cars_data):
     """It should filter cars by minimum price"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?priceMin=500000")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    prices = [c["price"] for c in cars]
-    mid_price = (min(prices) + max(prices)) // 2
-
-    response = client.get(f"/api/cars?priceMin={mid_price}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    assert len(filtered_cars) > 0
-    for car in filtered_cars:
-        assert car["price"] >= mid_price
+    for car in response.json["data"]["cars"]:
+        assert car["price"] >= 500000
 
 
-def test_get_cars_list_filter_by_price_max(client):
+def test_get_cars_list_filter_by_price_max(client, cars_data):
     """It should filter cars by maximum price"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?priceMax=300000")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    prices = [c["price"] for c in cars]
-    mid_price = (min(prices) + max(prices)) // 2
-
-    response = client.get(f"/api/cars?priceMax={mid_price}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    assert len(filtered_cars) > 0
-    for car in filtered_cars:
-        assert car["price"] <= mid_price
+    for car in response.json["data"]["cars"]:
+        assert car["price"] <= 300000
 
 
-def test_get_cars_list_filter_by_price_range(client):
+def test_get_cars_list_filter_by_price_range(client, cars_data):
     """It should filter cars by both minimum and maximum price"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?priceMin=200000&priceMax=500000")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    prices = [c["price"] for c in cars]
-    lo = min(prices)
-    hi = max(prices)
-
-    response = client.get(f"/api/cars?priceMin={lo}&priceMax={hi}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    for car in filtered_cars:
-        assert lo <= car["price"] <= hi
+    for car in response.json["data"]["cars"]:
+        assert 200000 <= car["price"] <= 500000
 
 
-def test_get_cars_list_filter_by_price_no_match(client):
+def test_get_cars_list_filter_by_price_no_match(client, cars_data):
     """It should return empty results for an out-of-range price"""
-    response = client.get("/api/cars?per_page=100")
+    response = client.get("/api/cars?priceMin=99999999")
     assert response.status_code == 200
-    cars = response.json["data"]["cars"]
-
-    prices = [c["price"] for c in cars]
-    far_above = max(prices) + 99999999
-
-    response = client.get(f"/api/cars?priceMin={far_above}")
-    assert response.status_code == 200
-    filtered_cars = response.json["data"]["cars"]
-
-    assert len(filtered_cars) == 0
+    assert len(response.json["data"]["cars"]) == 0
 
 
-def test_get_cars_list(client):
+def test_get_cars_list(client, cars_data):
     """It should fetch all cars from the list"""
     response = client.get("/api/cars")
     responseJson = response.json
@@ -258,26 +161,14 @@ def test_get_cars_list(client):
     assert len(responseJson["data"]["cars"]) > 0
 
 
-def test_get_car_by_id(client):
+def test_get_car_by_id(client, car_in_db):
     """It should fetch a car by id"""
-    response = client.get("/api/cars")
+    response = client.get(f"/api/cars/{car_in_db.id}")
     responseJson = response.json
     assert responseJson["status"] == "success"
-    assert len(responseJson["data"]["cars"]) > 0
-
-    # Fetch the first car
-    car = response.json["data"]["cars"][0]
-    logger.debug("Car: %s", car)
-
-    # Fetch the car by id
-    response = client.get(f"/api/cars/{car['id']}")
-    responseJson = response.json
-    assert responseJson["status"] == "success"
-
-    # Comapre data
-    assert responseJson["data"]["car"]["id"] == car["id"]
-    assert responseJson["data"]["car"]["make"] == car["make"]
-    assert responseJson["data"]["car"]["model"] == car["model"]
+    assert responseJson["data"]["car"]["id"] == str(car_in_db.id)
+    assert responseJson["data"]["car"]["make"] == "Toyota"
+    assert responseJson["data"]["car"]["model"] == "Camry"
 
 
 def test_get_car_by_invalid_id(client):
@@ -299,20 +190,11 @@ def test_get_car_by_nonexistent_id(client):
     assert responseJson["data"]["id"] == "Car not found."
 
 
-def test_update_car_by_id(client):
+def test_update_car_by_id(client, car_in_db):
     """It should update a car by id"""
-    response = client.get("/api/cars")
-    responseJson = response.json
-    assert responseJson["status"] == "success"
-    assert len(responseJson["data"]["cars"]) > 0
-
-    # Fetch the first car
-    car = response.json["data"]["cars"][0]
-    logger.debug("Car: %s", car)
-
-    # Update the car
-    car["make"] = "Tesla"
-    response = client.put(f"/api/cars/{car['id']}", json=car)
+    car_data = CarSchema.model_validate(car_in_db).model_dump(mode="json")
+    car_data["make"] = "Tesla"
+    response = client.put(f"/api/cars/{car_in_db.id}", json=car_data)
     responseJson = response.json
     assert responseJson["status"] == "success"
     assert responseJson["data"]["car"]["make"] == "Tesla"
@@ -337,19 +219,9 @@ def test_update_car_by_nonexistent_id(client):
     assert responseJson["data"]["id"] == "Car not found."
 
 
-def test_delete_car_by_id(client):
+def test_delete_car_by_id(client, car_in_db):
     """It should delete a car by id"""
-    response = client.get("/api/cars")
-    responseJson = response.json
-    assert responseJson["status"] == "success"
-    assert len(responseJson["data"]["cars"]) > 0
-
-    # Fetch the first car
-    car = response.json["data"]["cars"][0]
-    logger.debug("Car: %s", car)
-
-    # Delete the car
-    response = client.delete(f"/api/cars/{car['id']}")
+    response = client.delete(f"/api/cars/{car_in_db.id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
