@@ -158,6 +158,7 @@ def get_car_by_id(car_id):
 
 
 @bp.route("/cars/<car_id>", methods=["PUT"])
+@login_required
 def update_car_by_id(car_id):
     """Update a car by id."""
     logger.info("Request to update car by id: %s", car_id)
@@ -203,6 +204,7 @@ def update_car_by_id(car_id):
 
 
 @bp.route("/cars/<car_id>", methods=["DELETE"])
+@login_required
 def delete_car_by_id(car_id):
     """Delete a car by id."""
     logger.info("Request to delete car by id: %s", car_id)
@@ -236,6 +238,7 @@ def delete_car_by_id(car_id):
 
 
 @bp.route("/cars", methods=["POST"])
+@login_required
 def create_car():
     """Create a new car."""
     logger.info("Request to create a new car")

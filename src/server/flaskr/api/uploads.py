@@ -24,16 +24,10 @@ def _get_upload_folder():
 
 
 @bp.route("", methods=["POST"])
+@login_required
 def upload_files():
     """Upload image files. Returns absolute URLs for saved files."""
     logger.info("Request to upload files")
-
-    # TODO: uncomment before going live
-    # if not current_user.is_authenticated:
-    #     return (
-    #         jsonify({"status": "fail", "message": "Authentication required."}),
-    #         status.HTTP_401_UNAUTHORIZED,
-    #     )
 
     if "files" not in request.files:
         return (
@@ -104,16 +98,10 @@ def upload_files():
 
 
 @bp.route("/<path:filename>", methods=["DELETE"])
+@login_required
 def delete_file(filename):
     """Delete an uploaded image file."""
     logger.info("Request to delete file: %s", filename)
-
-    # TODO: uncomment before going live
-    # if not current_user.is_authenticated:
-    #     return (
-    #         jsonify({"status": "fail", "message": "Authentication required."}),
-    #         status.HTTP_401_UNAUTHORIZED,
-    #     )
 
     if ".." in filename or "/" in filename:
         return (

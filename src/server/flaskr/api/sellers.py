@@ -71,6 +71,7 @@ def get_seller_by_id(seller_id):
 
 
 @bp.route("/sellers", methods=["POST"])
+@login_required
 def create_seller():
     """Create a new seller."""
     logger.info("Request to create a new seller")
@@ -119,6 +120,7 @@ def create_seller():
 
 
 @bp.route("/sellers/<seller_id>/status", methods=["PUT"])
+@login_required
 def update_seller_status(seller_id):
     """Update a seller status by id."""
     logger.info("Request to update seller status by id: %s", seller_id)
@@ -183,6 +185,7 @@ def update_seller_status(seller_id):
 
 
 @bp.route("/sellers/<seller_id>", methods=["PUT"])
+@login_required
 def update_seller_by_id(seller_id):
     """Update a seller by id."""
     logger.info("Request to update seller by id: %s", seller_id)
@@ -251,6 +254,7 @@ def update_seller_by_id(seller_id):
 
 
 @bp.route("/sellers/<seller_id>", methods=["DELETE"])
+@login_required
 def delete_seller_by_id(seller_id):
     """Delete a seller by id."""
     logger.info("Request to delete seller by id: %s", seller_id)
