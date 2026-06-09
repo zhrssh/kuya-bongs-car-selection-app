@@ -49,9 +49,4 @@ export interface ActivityLog {
   userLocation: string;
 }
 
-export interface DailyMetricData {
-  date: string;
-  views: number;
-  leads: number;
-  searches: number;
-}
+
