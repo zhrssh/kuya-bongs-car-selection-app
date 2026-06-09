@@ -1,3 +1,4 @@
+import json
 import logging
 import uuid
 from flask import Blueprint, jsonify, request
@@ -167,6 +168,8 @@ def update_car_by_id(car_id):
 
     # Update the car fields
     for field, value in update_data.items():
+        if field == "images" and isinstance(value, list):
+            value = json.dumps(value)
         setattr(car, field, value)
     car.update()  # Update the car
 
@@ -240,6 +243,8 @@ def create_car():
     for key, value in request_data.model_dump(
         exclude_unset=True, exclude={"seller"}
     ).items():
+        if key == "images" and isinstance(value, list):
+            value = json.dumps(value)
         setattr(car, key, value)
 
     try:

@@ -1,4 +1,6 @@
-from pydantic import BaseModel, ConfigDict
+import json
+
+from pydantic import BaseModel, ConfigDict, field_validator
 import uuid
 
 from .seller import SellerSchema
@@ -24,7 +26,23 @@ class CarSchema(BaseModel):
     features: str | None = None
     description: str
     imageUrl: str
-    images: str | None = None
+    images: list[str] | None = None
     condition: str
     sellerId: uuid.UUID
     seller: SellerSchema | None = None
+
+    @field_validator("images", mode="before")
+    @classmethod
+    def parse_images(cls, value):
+        if value is None:
+            return None
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str):
+            try:
+                parsed = json.loads(value)
+                if isinstance(parsed, list):
+                    return parsed
+            except (json.JSONDecodeError, TypeError):
+                pass
+        return None
