@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Car, Pagination } from './types';
 import { FilterState, SortKey, CarStatus } from '@repo/shared';
 import { fetchCars } from './apiClient';
-import { useDebounce } from './hooks/useDebounce';
+import { useDebounce } from '@repo/shared';
 import { FilterSidebar } from './components/FilterSidebar';
 import { CarCard } from './components/CarCard';
 import { CarDetailModal } from './components/CarDetailModal';

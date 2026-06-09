@@ -16,6 +16,7 @@ A simple marketplace for browsing, filtering, and comparing pre-owned vehicles. 
 - `src/web/`: public marketplace frontend built with React and TypeScript
 - `src/admin/`: admin dashboard frontend for inventory and event management
 - `src/server/`: backend API and data models, including Flask routes and database utilities
+- `packages/shared/` (`@repo/shared`): shared TypeScript enums, types, and React hooks used by both frontend apps
 
 ## Purpose
 
