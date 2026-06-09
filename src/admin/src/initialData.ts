@@ -5,7 +5,7 @@ import {
   CarStatus,
   CarTransmission,
 } from "@repo/shared";
-import { ActivityLog, Car, DailyMetricData } from "./types";
+import { ActivityLog, Car } from "./types";
 
 export const INITIAL_CARS: Car[] = [
   {
@@ -192,16 +192,6 @@ export const INITIAL_CARS: Car[] = [
       status: "inactive",
     },
   },
-];
-
-export const INITIAL_METRICS: DailyMetricData[] = [
-  { date: "May 20", views: 320, leads: 18, searches: 240 },
-  { date: "May 21", views: 410, leads: 22, searches: 310 },
-  { date: "May 22", views: 380, leads: 15, searches: 290 },
-  { date: "May 23", views: 490, leads: 31, searches: 380 },
-  { date: "May 24", views: 560, leads: 35, searches: 420 },
-  { date: "May 25", views: 610, leads: 42, searches: 490 },
-  { date: "May 26", views: 645, leads: 48, searches: 512 },
 ];
 
 export const INITIAL_LOGS: ActivityLog[] = [

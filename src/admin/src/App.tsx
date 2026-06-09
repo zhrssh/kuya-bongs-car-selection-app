@@ -22,11 +22,9 @@ import ListingDetailModal from "./components/ListingDetailModal";
 import SellersTab from "./components/SellersTab";
 import {
   INITIAL_LOGS,
-  INITIAL_METRICS,
-  RANDOM_NAMES,
   US_LOCATIONS,
 } from "./initialData";
-import { ActivityLog, Car, DailyMetricData, SellerContact } from "./types";
+import { ActivityLog, Car, SellerContact } from "./types";
 import { useCarStore } from "./stores/carStore";
 
 export default function App() {
@@ -92,18 +90,11 @@ export default function App() {
     }
   }, []);
 
-  // Metrics aggregate states
-  const [dailyMetrics, setDailyMetrics] =
-    useState<DailyMetricData[]>(INITIAL_METRICS);
   const [logs, setLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
 
   // Single detail state (from store)
   const selectedCar = useCarStore((s) => s.selectedCar);
   const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
-
-  // Deriving cumulative KPIs
-  const totalViews = dailyMetrics.reduce((sum, m) => sum + m.views, 0);
-  const totalLeads = dailyMetrics.reduce((sum, m) => sum + m.leads, 0);
 
   // Time generator helper for logs
   const getFormattedTime = () => {
@@ -208,18 +199,6 @@ export default function App() {
             savedCar.id,
           );
 
-          // Auto simulate some baseline queries due to listing alert notifications
-          setDailyMetrics((prev) => {
-            const copy = [...prev];
-            if (copy.length > 0) {
-              copy[copy.length - 1] = {
-                ...copy[copy.length - 1],
-                searches: copy[copy.length - 1].searches + 15,
-                views: copy[copy.length - 1].views + 12,
-              };
-            }
-            return copy;
-          });
         }
       })
       .catch((err) => console.error("Error adding car:", err));
@@ -408,61 +387,6 @@ export default function App() {
       .catch((err) => console.error("Error toggling seller status:", err));
   };
 
-  // SIMULATE CAR VIEW
-  const handleSimulateView = (id: string) => {
-    const car = cars.find((c) => c.id === id);
-    if (!car) return;
-
-    // Increment current day views inside the metrics tracking list
-    setDailyMetrics((prev) => {
-      const copy = [...prev];
-      if (copy.length > 0) {
-        copy[copy.length - 1] = {
-          ...copy[copy.length - 1],
-          views: copy[copy.length - 1].views + 1,
-        };
-      }
-      return copy;
-    });
-
-    const loc = US_LOCATIONS[Math.floor(Math.random() * US_LOCATIONS.length)];
-    addLog(
-      "view",
-      `${car.make} ${car.model}`,
-      `Anonymous buyer from ${loc} viewed full layout config specs of ${car.make} ${car.model}`,
-      loc,
-      car.id,
-    );
-  };
-
-  // SIMULATE CLIENT LEAD ENQUIRY
-  const handleSimulateEnquiry = (id: string) => {
-    const car = cars.find((c) => c.id === id);
-    if (!car) return;
-
-    // Increment current day leads inside the metrics tracking list
-    setDailyMetrics((prev) => {
-      const copy = [...prev];
-      if (copy.length > 0) {
-        copy[copy.length - 1] = {
-          ...copy[copy.length - 1],
-          leads: copy[copy.length - 1].leads + 1,
-        };
-      }
-      return copy;
-    });
-
-    const name = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
-    const loc = US_LOCATIONS[Math.floor(Math.random() * US_LOCATIONS.length)];
-    addLog(
-      "enquiry",
-      `${car.make} ${car.model}`,
-      `Sales Lead: ${name} sent buy enquiry to ${car.seller?.name} for the ${car.make} ${car.model}`,
-      loc,
-      car.id,
-    );
-  };
-
   // UPDATE CAR STATUS
   const handleUpdateCarStatus = (id: string, status: CarStatus) => {
     if (!selectedCar || selectedCar.id !== id) return;
@@ -592,11 +516,7 @@ export default function App() {
             currentPath === "") &&
             (isAdmin ? (
               <div className="space-y-8 animate-in fade-in duration-350">
-                <DashboardMetrics
-                  dailyMetrics={dailyMetrics}
-                  totalLeads={totalLeads}
-                  totalViews={totalViews}
-                />
+                <DashboardMetrics />
                 <div className="border-t border-zinc-200/60 pt-8 mt-8">
                   <EventLogs logs={logs} onClearLogs={handleClearLogs} />
                 </div>
