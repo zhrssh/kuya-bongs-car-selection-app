@@ -15,6 +15,7 @@ class SellerSchema(BaseModel):
     email: str
     location: str
     status: str
+    stock: int = 0
 
     @field_validator("status", "phone", "email", mode="before")
     @classmethod

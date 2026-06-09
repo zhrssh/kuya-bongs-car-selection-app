@@ -3,6 +3,7 @@ import json
 import uuid
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
+from sqlalchemy.orm import joinedload
 
 from flaskr import status
 from ..db import db
@@ -20,7 +21,7 @@ def get_sellers_list():
     """Get a list of sellers."""
     logger.info("Request to get all sellers")
 
-    sellers = Seller.query.all()
+    sellers = Seller.query.options(joinedload(Seller.cars)).all()
 
     return (
         jsonify(
@@ -52,7 +53,7 @@ def get_seller_by_id(seller_id):
             status.HTTP_400_BAD_REQUEST,
         )
 
-    seller = db.session.get(Seller, seller_id)
+    seller = db.session.query(Seller).options(joinedload(Seller.cars)).filter(Seller.id == seller_id).first()
     if not seller:
         return (
             jsonify({"status": "fail", "data": {"id": "Seller not found."}}),
@@ -92,7 +93,7 @@ def create_seller():
         )
 
     # Create the seller
-    seller = Seller(**request_data.model_dump(exclude_unset=True, exclude={"id"}))
+    seller = Seller(**request_data.model_dump(exclude_unset=True, exclude={"id", "stock"}))
 
     try:
         db.session.add(seller)
@@ -210,7 +211,7 @@ def update_seller_by_id(seller_id):
     # Fetch the request data
     try:
         request_data = SellerSchema(**request.get_json())
-        update_data = request_data.model_dump(exclude_unset=True, exclude={"id"})
+        update_data = request_data.model_dump(exclude_unset=True, exclude={"id", "stock"})
     except ValidationError as e:
         logger.error("Invalid request data: %s", e)
         return (

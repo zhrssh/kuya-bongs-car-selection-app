@@ -27,6 +27,10 @@ class Seller(db.Model):
     status: Mapped[SellerStatus] = mapped_column(nullable=False, default="active")
     cars: Mapped[List["Car"]] = relationship("Car", back_populates="seller")
 
+    @property
+    def stock(self) -> int:
+        return len(self.cars)
+
     def __repr__(self):
         return "<Seller {}>".format(self.id)
 
