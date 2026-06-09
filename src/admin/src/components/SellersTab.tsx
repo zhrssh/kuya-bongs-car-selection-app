@@ -4,7 +4,6 @@
  */
 
 import {
-  Briefcase,
   CheckCircle,
   Edit,
   Mail,
@@ -19,8 +18,7 @@ import {
   XCircle,
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
-import { Car, SellerContact } from "../types";
-import { useCarStore } from "../stores/carStore";
+import { SellerContact } from "../types";
 
 interface SellersTabProps {
   sellers: SellerContact[];
@@ -39,7 +37,6 @@ export default function SellersTab({
   onToggleStatus,
   isAdmin,
 }: SellersTabProps) {
-  const cars = useCarStore((s) => s.cars);
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -61,17 +58,6 @@ export default function SellersTab({
   const inactiveSellersCount = sellers.filter(
     (s) => s.status === "inactive",
   ).length;
-
-  // Derived listings per seller
-  const listingsPerSeller = useMemo(() => {
-    const counts: Record<string, number> = {};
-    cars.forEach((car) => {
-      if (car.seller && car.seller.name) {
-        counts[car.seller.name] = (counts[car.seller.name] || 0) + 1;
-      }
-    });
-    return counts;
-  }, [cars]);
 
   // Filtered sellers
   const filteredSellers = useMemo(() => {
@@ -252,11 +238,6 @@ export default function SellersTab({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSellers.map((seller, index) => {
-              const activeCount = listingsPerSeller[seller.name] || 0;
-              const sellerCars = cars.filter(
-                (c) => c.seller && c.seller.name === seller.name,
-              );
-
               return (
                 <div
                   key={index}
@@ -290,34 +271,16 @@ export default function SellersTab({
                       </div>
                     </div>
 
-                    {/* Active Listings List */}
-                    <div className="space-y-2 pt-1">
+                    {/* Managed Stock Count */}
+                    <div className="pt-1">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
-                          Managed Stock ({activeCount})
+                          Managed Stock ({seller.stock ?? 0})
                         </span>
                         <span className="text-[10px] text-zinc-400 font-semibold font-mono">
                           Live Active
                         </span>
                       </div>
-
-                      {sellerCars.length > 0 ? (
-                        <div className="flex flex-wrap gap-1 md:max-h-24 overflow-y-auto pr-1">
-                          {sellerCars.map((car) => (
-                            <span
-                              key={car.id}
-                              className="inline-flex items-center gap-1 px-2 py-1 rounded bg-zinc-50 border border-zinc-200 text-[10px] font-semibold text-zinc-700"
-                              title={`${car.year} ${car.make} ${car.model}`}>
-                              <Briefcase className="w-2.5 h-2.5 text-zinc-455" />
-                              {car.make} {car.model}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-zinc-400 italic block">
-                          No active catalog listings assigned yet
-                        </span>
-                      )}
                     </div>
                   </div>
 
