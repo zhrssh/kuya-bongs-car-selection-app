@@ -12,17 +12,12 @@ import {
   SortKey,
 } from "@repo/shared";
 import {
-  Edit,
-  Fuel,
   Grid as GridIcon,
-  MapPin,
-  Milestone,
   Plus,
   Search,
   SlidersHorizontal,
   Sparkles,
   Table,
-  Trash2,
   Upload,
   X,
 } from "lucide-react";
@@ -33,6 +28,9 @@ import { useCarStore } from "../stores/carStore";
 import { useInventoryStore } from "../stores/inventoryStore";
 import CarFilterSidebar from "./CarFilterSidebar";
 import CarPagination from "./CarPagination";
+import CarGrid from "./CarGrid";
+import CarTable from "./CarTable";
+import { getConditionColor } from "../utils/conditionColor";
 
 interface InventoryCMSProps {
   refreshKey: number;
@@ -72,7 +70,6 @@ export default function InventoryCMS({
   const debouncedPriceMax = useDebounce(filters.priceMax, 300);
 
   const cars = useCarStore((s) => s.cars);
-  const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
 
   // Derive effective filters: non-search filters update immediately,
   // but searchQuery is debounced to avoid excessive API calls.
@@ -101,19 +98,6 @@ export default function InventoryCMS({
   useEffect(() => {
     fetchCars(currentPage, statusTab, effectiveFilters, sortKey);
   }, [currentPage, statusTab, effectiveFilters, sortKey, refreshKey]);
-
-  // Get condition color based on condition
-  const getConditionColor = (condition: string) => {
-    switch (condition) {
-      case CarCondition.Excellent:
-        return "bg-emerald-50 text-emerald-700 border-emerald-200/60";
-      case CarCondition.VeryGood:
-        return "bg-blue-50 text-blue-700 border-blue-200/60";
-      case CarCondition.Good:
-      default:
-        return "bg-amber-50 text-amber-700 border-amber-200/60";
-    }
-  };
 
   // Create / Edit modal state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -394,310 +378,9 @@ export default function InventoryCMS({
               </button>
             </div>
           ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedCars.map((car) => {
-                const isComparing = compareIds.includes(car.id!);
-                const canCompare = compareIds.length < 3;
-                const onToggleCompare = (clickedCar: Car) => {
-                  toggleCompareId(clickedCar.id!);
-                };
-                const formattedMileage = car.mileage.toLocaleString();
-                const formattedPrice = `₱${car.price.toLocaleString()}`;
-                const onSelect = setStoreSelectedCar;
-
-                return (
-                  <article
-                    id={`car-card-${car.id}`}
-                    key={car.id}
-                    className="group bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col h-full">
-                    {/* Image Area */}
-                    <div className="relative aspect-4/3 overflow-hidden bg-slate-50">
-                      <img
-                        src={car.imageUrl}
-                        alt={`${car.year} ${car.make} ${car.model}`}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
-                        referrerPolicy="no-referrer"
-                      />
-
-                      {/* Status Overlay Badge */}
-                      {car.status && car.status !== CarStatus.Available && (
-                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center pointer-events-none transition-all duration-300">
-                          <span
-                            className={`px-4 py-2 rounded-xl text-xs font-bold font-mono tracking-wider uppercase border shadow-md transform -skew-x-6 scale-110 select-none ${
-                              car.status === CarStatus.Sold
-                                ? "bg-emerald-600 border-emerald-500 text-white"
-                                : "bg-amber-605 border-amber-550 text-white"
-                            }`}>
-                            {car.status}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Top Badges overlay */}
-                      <div className="absolute top-3 left-3 right-3 flex justify-between items-start pointer-events-none">
-                        <span
-                          className={`pointer-events-auto border px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase shadow-xs ${getConditionColor(
-                            car.condition,
-                          )}`}>
-                          {car.condition}
-                        </span>
-
-                        {/* Compare Checkbox */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleCompare(car);
-                          }}
-                          disabled={!isComparing && !canCompare}
-                          className={`pointer-events-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
-                            isComparing
-                              ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                              : "bg-white/90 text-slate-700 border-slate-200 hover:bg-white disabled:opacity-40"
-                          }`}>
-                          <div
-                            className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-all ${
-                              isComparing
-                                ? "border-white bg-blue-600"
-                                : "border-slate-400 bg-white"
-                            }`}>
-                            {isComparing && (
-                              <svg
-                                className="w-2.5 h-2.5 text-white"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="3.5"
-                                viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                            )}
-                          </div>
-                          <span>Compare</span>
-                        </button>
-                      </div>
-
-                      {/* Lower Overlay for badges or attributes */}
-                      <div className="absolute bottom-3 left-3">
-                        <div className="flex gap-1.5">
-                          {car.year >= 2022 && (
-                            <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider bg-slate-900/80 text-white font-bold px-2 py-1 rounded-full backdrop-blur-xs">
-                              <Sparkles className="h-2.5 w-2.5 text-amber-400" />
-                              Recent
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Content Area */}
-                    <div className="p-5 flex flex-col flex-1 gap-4">
-                      {/* Title, Year, Make, Model */}
-                      <div>
-                        <div className="flex items-center justify-between gap-1 mb-1.5">
-                          <span className="text-xs text-slate-400 font-semibold">
-                            {car.year}
-                          </span>
-                          <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
-                            <MapPin className="h-3 w-3 shrink-0" />
-                            {car.seller!.location.split(",")[0]}
-                          </span>
-                        </div>
-                        <h3 className="font-display font-semibold text-base text-slate-905 text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
-                          {car.make} {car.model}
-                        </h3>
-                      </div>
-
-                      {/* Brief highlights grid */}
-                      <div className="grid grid-cols-2 gap-y-2 border-t border-b border-slate-100 py-3 text-xs text-slate-650">
-                        <div className="flex items-center gap-2">
-                          <Milestone className="h-4 w-4 text-slate-400 shrink-0" />
-                          <span className="font-medium text-slate-600">
-                            {formattedMileage} km
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Fuel className="h-4 w-4 text-slate-400 shrink-0" />
-                          <span className="font-medium text-slate-600 line-clamp-1">
-                            {CarFuelTypeLabel[car.fuelType] || car.fuelType}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 col-span-2 text-[11px] text-slate-500">
-                          <span className="font-normal">Transmission:</span>
-                          <span className="font-semibold text-slate-700 ml-1">
-                            {CarTransmissionLabel[car.transmission] ||
-                              car.transmission}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Pricing tag & Action buttons */}
-                      <div className="flex items-center justify-between mt-auto">
-                        <div>
-                          <span className="text-[9px] text-slate-400 uppercase tracking-widest block font-bold">
-                            Sale Price
-                          </span>
-                          <span className="font-display font-semibold text-lg text-slate-950">
-                            {formattedPrice}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 font-sans">
-                          <button
-                            onClick={() => handleOpenEdit(car)}
-                            className="p-2 bg-slate-50 hover:bg-blue-50 text-slate-500 hover:text-blue-600 border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
-                            title="Edit details"
-                            id={`btn_edit_grid_${car.id}`}>
-                            <Edit className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(car)}
-                            className="p-2 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
-                            title="Delete stock"
-                            id={`btn_del_grid_${car.id}`}>
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => onSelect(car)}
-                            className="px-4 py-2 rounded-full bg-blue-50/70 hover:bg-blue-600 text-blue-700 hover:text-white text-xs font-semibold tracking-wide transition-all cursor-pointer focus:outline-none">
-                            Details
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+            <CarGrid onOpenEdit={handleOpenEdit} onDelete={handleDelete} />
           ) : (
-            <div className="bg-white border border-zinc-200/80 rounded-xl overflow-hidden shadow-xs">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse font-sans">
-                  <thead className="bg-zinc-50/80 text-[10px] text-zinc-500 uppercase tracking-wider font-semibold font-mono border-b border-zinc-200/80">
-                    <tr>
-                      <th className="p-4">Vehicle Specs</th>
-                      <th className="p-4">Body Style</th>
-                      <th className="p-4">Condition</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Fuel Mechanism</th>
-                      <th className="p-4">Mileage</th>
-                      <th className="p-4">Price</th>
-                      <th className="p-4 text-right">Administrate</th>
-                    </tr>
-                  </thead>
-
-                  <tbody className="divide-y divide-zinc-100 text-sm text-zinc-700">
-                    {paginatedCars.map((car) => (
-                      <tr
-                        key={car.id}
-                        className="hover:bg-zinc-50/40 transition">
-                        {/* Brand and Model */}
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={car.imageUrl}
-                              alt="thumbnail"
-                              className="w-10 h-7 rounded object-cover bg-zinc-100 border border-zinc-200/50"
-                              referrerPolicy="no-referrer"
-                            />
-                            <div>
-                              <div className="font-semibold text-zinc-900">
-                                {car.make} {car.model}
-                              </div>
-                              <div className="text-[11px] text-zinc-500 font-mono">
-                                Mfg: {car.year} &bull;{" "}
-                                {CarTransmissionLabel[car.transmission] ||
-                                  car.transmission}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Body Style */}
-                        <td className="p-4">
-                          <span className="text-xs font-mono text-zinc-650">
-                            {CarBodyTypeLabel[car.bodyType] || car.bodyType}
-                          </span>
-                        </td>
-
-                        {/* Condition */}
-                        <td className="p-4">
-                          <span
-                            className={`text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded font-mono uppercase ${
-                              car.condition === CarCondition.Excellent
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                                : car.condition === CarCondition.VeryGood
-                                  ? "bg-blue-50 text-blue-700 border border-blue-200/60"
-                                  : "bg-amber-50 text-amber-700 border border-amber-200/60"
-                            }`}>
-                            {car.condition}
-                          </span>
-                        </td>
-
-                        {/* Status */}
-                        <td className="p-4">
-                          <span
-                            className={`text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full font-mono uppercase border ${
-                              !car.status || car.status === CarStatus.Available
-                                ? "bg-blue-50/60 text-blue-700 border-blue-200"
-                                : car.status === CarStatus.Sold
-                                  ? "bg-emerald-50/60 text-emerald-700 border-emerald-200"
-                                  : "bg-amber-50/60 text-amber-700 border-amber-200"
-                            }`}>
-                            {car.status || CarStatus.Available}
-                          </span>
-                        </td>
-
-                        {/* Fuel Mechanism */}
-                        <td className="p-4">
-                          <span className="text-xs text-zinc-600 font-mono">
-                            {CarFuelTypeLabel[car.fuelType] || car.fuelType}
-                          </span>
-                        </td>
-
-                        {/* Mileage */}
-                        <td className="p-4 font-mono text-xs text-zinc-650">
-                          {car.mileage.toLocaleString()} km
-                        </td>
-
-                        {/* Price */}
-                        <td className="p-4 font-bold font-mono text-blue-605">
-                          ₱{car.price.toLocaleString()}
-                        </td>
-
-                        {/* CMS Actions */}
-                        <td className="p-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5 font-sans">
-                            <button
-                              onClick={() => setStoreSelectedCar(car)}
-                              className="px-2.5 py-1 bg-zinc-50 hover:bg-zinc-100 text-xs border border-zinc-200/70 text-zinc-700 rounded transition font-medium cursor-pointer"
-                              id={`btn_detail_tbl_${car.id}`}>
-                              View
-                            </button>
-                            <button
-                              onClick={() => handleOpenEdit(car)}
-                              className="p-1 px-1.5 bg-zinc-50 hover:bg-zinc-105 border border-zinc-200/70 text-zinc-700 rounded transition cursor-pointer"
-                              title="Edit vehicle listing"
-                              id={`btn_edit_tbl_${car.id}`}>
-                              <Edit className="w-3.5 h-3.5 text-zinc-500" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(car)}
-                              className="p-1 px-1.5 bg-zinc-50 hover:bg-rose-50 border border-zinc-200/70 text-rose-650 rounded transition cursor-pointer"
-                              title="Delete vehicle listing"
-                              id={`btn_del_tbl_${car.id}`}>
-                              <Trash2 className="w-3.5 h-3.5 text-rose-605" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <CarTable cars={paginatedCars} onOpenEdit={handleOpenEdit} onDelete={handleDelete} />
           )}
 
           <CarPagination />
