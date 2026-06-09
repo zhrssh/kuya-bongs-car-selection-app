@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Car } from '../types';
-import { CarCondition } from '../enums';
+import { CarCondition, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel } from '../enums';
 import { Fuel, ShieldCheck, MapPin, Milestone, Sparkles } from 'lucide-react';
 
 interface CarCardProps {
@@ -65,7 +65,7 @@ export const CarCard: React.FC<CarCardProps> = ({
               car.condition
             )}`}
           >
-            {car.condition}
+            {CarConditionLabel[car.condition] || car.condition}
           </span>
 
           {/* Compare Checkbox */}
@@ -141,18 +141,18 @@ export const CarCard: React.FC<CarCardProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <Fuel className="h-4 w-4 text-slate-400 flex-shrink-0" />
-            <span className="font-medium text-slate-600 line-clamp-1">{car.fuelType}</span>
+            <span className="font-medium text-slate-600 line-clamp-1">{CarFuelTypeLabel[car.fuelType] || car.fuelType}</span>
           </div>
           <div className="flex items-center gap-2 col-span-2 text-[11px] text-slate-500">
             <span className="font-normal">Transmission:</span>
-            <span className="font-semibold text-slate-700 ml-1">{car.transmission}</span>
+            <span className="font-semibold text-slate-700 ml-1">{CarTransmissionLabel[car.transmission] || car.transmission}</span>
           </div>
         </div>
 
         {/* Pricing tag & Action buttons */}
         <div className="flex items-center justify-between mt-auto">
           <div>
-            <span className="text-[9px] text-slate-400 uppercase tracking-widest block font-bold">
+            <span className="text-[9px] text-slate-400 block font-bold">
               Sale Price
             </span>
             <span className="font-display font-semibold text-lg text-slate-950">

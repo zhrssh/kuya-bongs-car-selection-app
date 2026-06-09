@@ -32,5 +32,5 @@ class CarBodyType(StrEnum):
 
 class CarCondition(StrEnum):
     excellent = "excellent"
-    very_good = "very Good"
+    very_good = "very good"
     good = "good"

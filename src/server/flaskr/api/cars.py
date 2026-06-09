@@ -37,6 +37,22 @@ def get_cars_list():
     year_max = request.args.get("yearMax", type=int)
     search_query = request.args.get("search")
 
+    # Normalize string filters to lowercase to match stored data
+    if status_filter:
+        status_filter = status_filter.strip().lower()
+    if make_filter:
+        make_filter = make_filter.strip().lower()
+    if model_filter:
+        model_filter = model_filter.strip().lower()
+    if body_type_filter:
+        body_type_filter = body_type_filter.strip().lower()
+    if fuel_type_filter:
+        fuel_type_filter = fuel_type_filter.strip().lower()
+    if transmission_filter:
+        transmission_filter = transmission_filter.strip().lower()
+    if condition_filter:
+        condition_filter = condition_filter.strip().lower()
+
     # Safety limits
     page = max(1, page)
     per_page = min(max(1, per_page), 100)
@@ -46,9 +62,9 @@ def get_cars_list():
     if status_filter:
         query = query.filter(Car.status == status_filter)
     if make_filter:
-        query = query.filter(Car.make == make_filter)
+        query = query.filter(Car.make.ilike(make_filter))
     if model_filter:
-        query = query.filter(Car.model == model_filter)
+        query = query.filter(Car.model.ilike(model_filter))
     if body_type_filter:
         query = query.filter(Car.bodyType == body_type_filter)
     if fuel_type_filter:
@@ -71,6 +87,8 @@ def get_cars_list():
             db.or_(
                 Car.make.ilike(search_term),
                 Car.model.ilike(search_term),
+                Car.exteriorColor.ilike(search_term),
+                Car.interiorColor.ilike(search_term),
                 Car.description.ilike(search_term),
             )
         )

@@ -141,10 +141,9 @@ def update_seller_status(seller_id):
 
     # Fetch the request data
     try:
-        status_field_type = SellerSchema.model_fields["status"].annotation
-        adapter = TypeAdapter(status_field_type)
-        validated_data = adapter.validate_python(SellerStatus(request.json["status"]))
-    except ValidationError as e:
+        raw_status = request.json.get("status", "").strip().lower()
+        validated_data = SellerStatus(raw_status)
+    except (ValueError, AttributeError) as e:
         logger.error("Invalid request data: %s", e)
         return (
             jsonify(

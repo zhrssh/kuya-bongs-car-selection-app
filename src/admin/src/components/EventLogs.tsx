@@ -84,7 +84,7 @@ export default function EventLogs({ logs, onClearLogs }: EventLogsProps) {
                   : 'text-zinc-500 hover:text-zinc-800'
               }`}
             >
-              All logs
+              All Logs
             </button>
             <button
               onClick={() => setFilterType('cms')}
