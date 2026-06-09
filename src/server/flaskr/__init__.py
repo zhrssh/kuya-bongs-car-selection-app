@@ -1,6 +1,9 @@
 import os
 import uuid
 import json
+import logging
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
 
 from .db import db
 from .models.user import User
@@ -72,6 +75,30 @@ def create_app(test_config=None) -> Flask:
     except OSError:
         pass
 
+    # configure file-based logging for production
+    if not app.testing:
+        log_dir = os.getenv("LOG_DIR", "logs")
+        log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+        log_max_bytes = int(os.getenv("LOG_MAX_BYTES", str(10 * 1024 * 1024)))
+        log_backup_count = int(os.getenv("LOG_BACKUP_COUNT", "5"))
+
+        os.makedirs(log_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
+        log_file = os.path.join(log_dir, f"app-{timestamp}.log")
+
+        handler = RotatingFileHandler(
+            log_file, maxBytes=log_max_bytes, backupCount=log_backup_count
+        )
+        handler.setFormatter(
+            logging.Formatter(
+                "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+            )
+        )
+
+        root_logger = logging.getLogger()
+        root_logger.setLevel(log_level)
+        root_logger.addHandler(handler)
+
     # setup sqlalchemy
     db.init_app(app)
     migrate.init_app(app, db)
@@ -142,9 +169,10 @@ def create_app(test_config=None) -> Flask:
 
     app.register_blueprint(admin.bp)
 
-    from .api import cars, metrics, sellers, inquiries, uploads
+    from .api import cars, logs, metrics, sellers, inquiries, uploads
 
     app.register_blueprint(cars.bp)
+    app.register_blueprint(logs.bp)
     app.register_blueprint(metrics.bp)
     app.register_blueprint(sellers.bp)
     app.register_blueprint(inquiries.bp)

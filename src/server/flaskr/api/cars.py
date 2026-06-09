@@ -4,6 +4,8 @@ from flask import Blueprint, jsonify, request
 from flask_login import login_required
 
 from flaskr import status
+from ..db import db
+from ..models.event_log import EventLog
 from flaskr.repositories.car_repository import CarRepository
 from flaskr.services.car_service import CarService
 from flaskr.services.exceptions import (
@@ -57,6 +59,12 @@ def update_car_by_id(car_id):
     service = _build_service()
     try:
         car = service.update_car(car_id, request.get_json())
+        EventLog.safe_log(
+            type="update",
+            car_id=str(car_id),
+            car_name=f"{car['make']} {car['model']}",
+            message=f"Listing updated: {car['make']} {car['model']} ({car.get('year', '')}) — details revised",
+        )
         return (
             jsonify({"status": "success", "data": {"car": car}}),
             status.HTTP_200_OK,
@@ -79,7 +87,19 @@ def delete_car_by_id(car_id):
     logger.info("Request to delete car by id: %s", car_id)
     service = _build_service()
     try:
+        car = service.get_car_by_id(car_id)
+        car_name = f"{car['make']} {car['model']}"
+    except (InvalidCarIdError, CarNotFoundError):
+        car_name = "Unknown"
+
+    try:
         service.delete_car(car_id)
+        EventLog.safe_log(
+            type="delete",
+            car_id=str(car_id),
+            car_name=car_name,
+            message=f"Listing removed: {car_name} deleted from inventory",
+        )
     except InvalidCarIdError:
         return (
             jsonify({"status": "fail", "data": {"id": "Invalid car id."}}),
@@ -98,6 +118,12 @@ def create_car():
     service = _build_service()
     try:
         car = service.create_car(request.get_json())
+        EventLog.safe_log(
+            type="create",
+            car_id=str(car["id"]),
+            car_name=f"{car['make']} {car['model']}",
+            message=f"Published new listing: {car['make']} {car['model']} ({car.get('year', '')}) added to inventory",
+        )
         return (
             jsonify({"status": "success", "data": {"car": car}}),
             status.HTTP_201_CREATED,
