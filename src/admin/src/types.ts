@@ -13,6 +13,7 @@ export interface SellerContact {
   email: string;
   location: string;
   status?: "active" | "inactive";
+  stock?: number;
 }
 export interface Car {
   id?: string;

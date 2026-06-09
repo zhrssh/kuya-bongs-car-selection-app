@@ -2,20 +2,31 @@ from flaskr import status
 import uuid
 
 from flaskr.api.schemas.seller import SellerSchema
-from .factories import SellerFactory
+from flaskr.db import db
+from flaskr.models.enums.car import (
+    CarBodyType,
+    CarCondition,
+    CarFuelType,
+    CarStatus,
+    CarTransmission,
+)
+from .factories import CarFactory, SellerFactory
 
 
-def test_get_sellers_list(client):
-    """It should fetch all sellers from the list"""
+def test_get_sellers_list(client, seller_in_db):
+    """It should fetch all sellers from the list including stock count"""
     response = client.get("/api/sellers")
     response_json = response.json
     assert response_json["status"] == "success"
     assert "sellers" in response_json["data"]
     assert isinstance(response_json["data"]["sellers"], list)
+    for seller_data in response_json["data"]["sellers"]:
+        assert "stock" in seller_data
+        assert isinstance(seller_data["stock"], int)
 
 
 def test_get_seller_by_id(client, create_seller):
-    """It should fetch a seller by id"""
+    """It should fetch a seller by id including stock count"""
     seller = create_seller()
 
     response = client.get(f"/api/sellers/{seller.id}")
@@ -24,6 +35,73 @@ def test_get_seller_by_id(client, create_seller):
     assert response_json["status"] == "success"
     assert response_json["data"]["seller"]["id"] == str(seller.id)
     assert response_json["data"]["seller"]["name"] == seller.name
+    assert "stock" in response_json["data"]["seller"]
+    assert response_json["data"]["seller"]["stock"] == 0
+
+
+def test_get_seller_stock_count_with_cars(client, app):
+    """It should return the correct stock count when a seller has cars"""
+    seller = SellerFactory()
+    db.session.add(seller)
+    db.session.commit()
+
+    cars = CarFactory.create_batch(
+        3,
+        seller=seller,
+        status=CarStatus.available,
+        make="Toyota",
+        model="Camry",
+        price=500000,
+        fuelType=CarFuelType.gasoline,
+        transmission=CarTransmission.automatic,
+        bodyType=CarBodyType.sedan,
+        condition=CarCondition.excellent,
+        description="A reliable sedan",
+    )
+    for car in cars:
+        db.session.add(car)
+    db.session.commit()
+
+    response = client.get(f"/api/sellers/{seller.id}")
+    response_json = response.json
+    assert response.status_code == status.HTTP_200_OK
+    assert response_json["data"]["seller"]["stock"] == 3
+
+
+def test_get_sellers_list_stock_counts(client, app):
+    """It should return correct stock counts for multiple sellers"""
+    seller_a = SellerFactory()
+    db.session.add(seller_a)
+    seller_b = SellerFactory()
+    db.session.add(seller_b)
+    db.session.commit()
+
+    cars_a = CarFactory.create_batch(2, seller=seller_a, price=100000,
+                                     fuelType=CarFuelType.gasoline,
+                                     transmission=CarTransmission.automatic,
+                                     bodyType=CarBodyType.sedan,
+                                     condition=CarCondition.good,
+                                     description="Car")
+    cars_b = CarFactory.create_batch(1, seller=seller_b, price=200000,
+                                     fuelType=CarFuelType.gasoline,
+                                     transmission=CarTransmission.automatic,
+                                     bodyType=CarBodyType.sedan,
+                                     condition=CarCondition.good,
+                                     description="Car")
+    for car in cars_a + cars_b:
+        db.session.add(car)
+    db.session.commit()
+
+    response = client.get("/api/sellers")
+    response_json = response.json
+    assert response.status_code == status.HTTP_200_OK
+
+    stocks = {
+        s["id"]: s["stock"]
+        for s in response_json["data"]["sellers"]
+    }
+    assert stocks[str(seller_a.id)] == 2
+    assert stocks[str(seller_b.id)] == 1
 
 
 def test_get_seller_by_invalid_id(client):
