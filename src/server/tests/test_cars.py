@@ -1,7 +1,7 @@
 from flaskr import status
 import uuid
 
-from flaskr.api.cars import CarSchema
+from flaskr.api.schemas.car import CarSchema
 from .factories import CarFactory
 
 

@@ -1,6 +1,5 @@
-import logging
 import uuid
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..db import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,8 +17,6 @@ from .enums.car import (
 
 if TYPE_CHECKING:
     from .seller import Seller
-
-logger = logging.getLogger(__name__)
 
 
 class Car(db.Model):
@@ -57,26 +54,3 @@ class Car(db.Model):
 
     def __repr__(self):
         return "<Car {}>".format(self.id)
-
-    def create(self) -> None:
-        """Create the car in the database."""
-        logger.info("Creating car: %s", self.id)
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self) -> None:
-        """Update the car in the database."""
-        logger.info("Updating car: %s", self.id)
-        if not self.id:
-            raise ValueError("Car id is not set.")
-
-        db.session.commit()
-
-    def delete(self) -> None:
-        """Delete the car from the database."""
-        logger.info("Deleting car: %s", self.id)
-        if not self.id:
-            raise ValueError("Car id is not set.")
-
-        db.session.delete(self)
-        db.session.commit()
