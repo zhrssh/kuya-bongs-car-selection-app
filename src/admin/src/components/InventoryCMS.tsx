@@ -19,10 +19,14 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import {
   CarBodyType,
+  CarBodyTypeLabel,
   CarCondition,
+  CarConditionLabel,
   CarFuelType,
+  CarFuelTypeLabel,
   CarStatus,
   CarTransmission,
+  CarTransmissionLabel,
 } from "../enums";
 import { useDebounce } from "../hooks/useDebounce";
 import { Car, FilterState, SellerContact, SortKey } from "../types";
@@ -584,7 +588,7 @@ export default function InventoryCMS({
                               ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
                               : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                           }`}>
-                          {cond}
+                          {CarConditionLabel[cond]}
                         </button>
                       );
                     })}
@@ -767,7 +771,7 @@ export default function InventoryCMS({
                               ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
                               : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                           }`}>
-                          {type}
+                          {CarBodyTypeLabel[type] || type}
                         </button>
                       );
                     })}
@@ -786,7 +790,7 @@ export default function InventoryCMS({
                     <option value="">All Fuel Types</option>
                     {uniqueFuelTypes.map((fuel) => (
                       <option key={fuel} value={fuel}>
-                        {fuel}
+                        {CarFuelTypeLabel[fuel]}
                       </option>
                     ))}
                   </select>
@@ -814,7 +818,7 @@ export default function InventoryCMS({
                               ? "border-blue-500 bg-blue-50/70 text-blue-700 font-semibold"
                               : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                           }`}>
-                          {trans}
+                          {CarTransmissionLabel[trans]}
                         </button>
                       );
                     })}
@@ -995,13 +999,13 @@ export default function InventoryCMS({
                         <div className="flex items-center gap-2">
                           <Fuel className="h-4 w-4 text-slate-400 shrink-0" />
                           <span className="font-medium text-slate-600 line-clamp-1">
-                            {car.fuelType}
+                            {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 col-span-2 text-[11px] text-slate-500">
                           <span className="font-normal">Transmission:</span>
                           <span className="font-semibold text-slate-700 ml-1">
-                            {car.transmission}
+                            {CarTransmissionLabel[car.transmission] || car.transmission}
                           </span>
                         </div>
                       </div>
@@ -1080,7 +1084,7 @@ export default function InventoryCMS({
                                 {car.make} {car.model}
                               </div>
                               <div className="text-[11px] text-zinc-500 font-mono">
-                                Mfg: {car.year} • {car.transmission}
+                                Mfg: {car.year} &bull; {CarTransmissionLabel[car.transmission] || car.transmission}
                               </div>
                             </div>
                           </div>
@@ -1089,7 +1093,7 @@ export default function InventoryCMS({
                         {/* Body Style */}
                         <td className="p-4">
                           <span className="text-xs font-mono text-zinc-650">
-                            {car.bodyType}
+                            {CarBodyTypeLabel[car.bodyType] || car.bodyType}
                           </span>
                         </td>
 
@@ -1124,7 +1128,7 @@ export default function InventoryCMS({
                         {/* Fuel Mechanism */}
                         <td className="p-4">
                           <span className="text-xs text-zinc-600 font-mono">
-                            {car.fuelType}
+                            {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                           </span>
                         </td>
 
@@ -1258,7 +1262,7 @@ export default function InventoryCMS({
                 {compareIds.length}
               </span>
               <h3 className="font-semibold text-sm text-slate-800">
-                Vehicles selected to compare (Max 3)
+                Vehicles selected to compare (max 3)
               </h3>
             </div>
 
@@ -1635,20 +1639,20 @@ export default function InventoryCMS({
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
                     <option value={CarBodyType.Sedan}>
-                      {CarBodyType.Sedan}
+                      {CarBodyTypeLabel[CarBodyType.Sedan]}
                     </option>
-                    <option value={CarBodyType.SUV}>{CarBodyType.SUV}</option>
+                    <option value={CarBodyType.SUV}>{CarBodyTypeLabel[CarBodyType.SUV]}</option>
                     <option value={CarBodyType.Coupe}>
-                      {CarBodyType.Coupe}
+                      {CarBodyTypeLabel[CarBodyType.Coupe]}
                     </option>
                     <option value={CarBodyType.Truck}>
-                      {CarBodyType.Truck}
+                      {CarBodyTypeLabel[CarBodyType.Truck]}
                     </option>
                     <option value={CarBodyType.Hatchback}>
-                      {CarBodyType.Hatchback}
+                      {CarBodyTypeLabel[CarBodyType.Hatchback]}
                     </option>
                     <option value={CarBodyType.Convertible}>
-                      {CarBodyType.Convertible}
+                      {CarBodyTypeLabel[CarBodyType.Convertible]}
                     </option>
                   </select>
                 </div>
@@ -1667,16 +1671,16 @@ export default function InventoryCMS({
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
                     <option value={CarFuelType.Gasoline}>
-                      {CarFuelType.Gasoline}
+                      {CarFuelTypeLabel[CarFuelType.Gasoline]}
                     </option>
                     <option value={CarFuelType.Electric}>
-                      {CarFuelType.Electric}
+                      {CarFuelTypeLabel[CarFuelType.Electric]}
                     </option>
                     <option value={CarFuelType.Hybrid}>
-                      {CarFuelType.Hybrid}
+                      {CarFuelTypeLabel[CarFuelType.Hybrid]}
                     </option>
                     <option value={CarFuelType.Diesel}>
-                      {CarFuelType.Diesel}
+                      {CarFuelTypeLabel[CarFuelType.Diesel]}
                     </option>
                   </select>
                 </div>
@@ -1695,10 +1699,10 @@ export default function InventoryCMS({
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
                     <option value={CarTransmission.Automatic}>
-                      {CarTransmission.Automatic}
+                      {CarTransmissionLabel[CarTransmission.Automatic]}
                     </option>
                     <option value={CarTransmission.Manual}>
-                      {CarTransmission.Manual}
+                      {CarTransmissionLabel[CarTransmission.Manual]}
                     </option>
                   </select>
                 </div>
@@ -1717,13 +1721,13 @@ export default function InventoryCMS({
                     }
                     className="w-full bg-zinc-50 border border-zinc-205 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none">
                     <option value={CarCondition.Excellent}>
-                      {CarCondition.Excellent}
+                      {CarConditionLabel[CarCondition.Excellent]}
                     </option>
                     <option value={CarCondition.VeryGood}>
-                      {CarCondition.VeryGood}
+                      {CarConditionLabel[CarCondition.VeryGood]}
                     </option>
                     <option value={CarCondition.Good}>
-                      {CarCondition.Good}
+                      {CarConditionLabel[CarCondition.Good]}
                     </option>
                   </select>
                 </div>
@@ -1742,11 +1746,11 @@ export default function InventoryCMS({
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none focus:border-blue-300">
                     <option value={CarStatus.Available}>
-                      {CarStatus.Available}
+                      Available
                     </option>
-                    <option value={CarStatus.Sold}>{CarStatus.Sold}</option>
+                    <option value={CarStatus.Sold}>Sold</option>
                     <option value={CarStatus.Archived}>
-                      {CarStatus.Archived}
+                      Archived
                     </option>
                   </select>
                 </div>
@@ -1940,7 +1944,7 @@ export default function InventoryCMS({
                     <div className="flex gap-2">
                       <input
                         type="url"
-                        placeholder="E.g. https://images.unsplash.com/photo-..."
+                        placeholder="e.g. https://images.unsplash.com/photo-..."
                         value={imageInputUrl}
                         onChange={(e) => setImageInputUrl(e.target.value)}
                         className="flex-1 bg-white border border-zinc-200 rounded px-3 py-1.5 text-xs text-zinc-850 placeholder-zinc-400 focus:outline-none focus:border-zinc-300 font-mono"

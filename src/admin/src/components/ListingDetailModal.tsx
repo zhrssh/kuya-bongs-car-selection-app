@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CarStatus } from "../enums";
+import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarStatus, CarStatusLabel, CarTransmissionLabel } from "../enums";
 import { Car } from "../types";
 
 interface ListingDetailModalProps {
@@ -159,7 +159,7 @@ export default function ListingDetailModal({
             {/* Condition badge overlay */}
             <div className="absolute bottom-4 left-4">
               <span className="bg-blue-600 text-white rounded-full px-3 py-1 text-xs font-semibold shadow-xs">
-                {car.condition} Condition
+                {CarConditionLabel[car.condition] || car.condition} Condition
               </span>
             </div>
 
@@ -193,19 +193,19 @@ export default function ListingDetailModal({
               <div className="flex flex-col gap-0.5">
                 <span className="text-gray-400 font-medium">Body Type</span>
                 <span className="font-semibold text-gray-800">
-                  {car.bodyType}
+                  {CarBodyTypeLabel[car.bodyType] || car.bodyType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-gray-400 font-medium">Fuel Type</span>
                 <span className="font-semibold text-gray-800">
-                  {car.fuelType}
+                  {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
                 <span className="text-gray-400 font-medium">Transmission</span>
                 <span className="font-semibold text-gray-800">
-                  {car.transmission}
+                  {CarTransmissionLabel[car.transmission] || car.transmission}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
@@ -287,9 +287,9 @@ export default function ListingDetailModal({
                     id="status_btn_available">
                     <span
                       className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Available ? "bg-blue-600" : "bg-zinc-400"}`}></span>
-                    <span className="text-[10px] tracking-tight">
-                      Available
-                    </span>
+                <span className="text-[10px] tracking-tight">
+                  {CarStatusLabel[CarStatus.Available]}
+                </span>
                   </button>
 
                   <button
@@ -302,9 +302,9 @@ export default function ListingDetailModal({
                     id="status_btn_sold">
                     <span
                       className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Sold ? "bg-emerald-600" : "bg-zinc-400"}`}></span>
-                    <span className="text-[10px] tracking-tight">
-                      Mark Sold
-                    </span>
+                <span className="text-[10px] tracking-tight">
+                  {CarStatusLabel[CarStatus.Sold]}
+                </span>
                   </button>
 
                   <button
@@ -317,7 +317,7 @@ export default function ListingDetailModal({
                     id="status_btn_archived">
                     <span
                       className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Archived ? "bg-amber-600" : "bg-zinc-400"}`}></span>
-                    <span className="text-[10px] tracking-tight">Archive</span>
+                    <span className="text-[10px] tracking-tight">{CarStatusLabel[CarStatus.Archived]}</span>
                   </button>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export default function ListingDetailModal({
             {/* Quick Contact buttons block */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.01)] flex flex-col gap-4">
               <h4 className="font-display font-semibold text-sm text-slate-900 leading-none">
-                Dealer Contact Info
+                Dealer contact info
               </h4>
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 shrink-0">
@@ -355,31 +355,31 @@ export default function ListingDetailModal({
                   className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
                   <Phone className="h-4 w-4 mb-1 text-blue-600" />
                   <span className="text-[11px] leading-tight text-slate-600 font-normal">
-                    Call Agent
-                  </span>
-                  <span className="text-xs font-bold leading-tight select-all text-slate-800">
-                    {revealContact === "phone"
-                      ? car.seller?.phone
-                      : "Click to View"}
-                  </span>
-                </button>
+                    Call agent
+                   </span>
+                   <span className="text-xs font-bold leading-tight select-all text-slate-800">
+                     {revealContact === "phone"
+                       ? car.seller?.phone
+                       : "Click to view"}
+                   </span>
+                 </button>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setRevealContact(
-                      revealContact === "email" ? "none" : "email",
-                    )
-                  }
-                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
-                  <Mail className="h-4 w-4 mb-1 text-blue-600" />
-                  <span className="text-[11px] leading-tight text-slate-600 font-normal">
-                    Email Agent
-                  </span>
-                  <span className="text-xs font-bold leading-tight select-all text-slate-800">
-                    {revealContact === "email"
-                      ? car.seller?.email.split("@")[0] + "..."
-                      : "Click to View"}
+                 <button
+                   type="button"
+                   onClick={() =>
+                     setRevealContact(
+                       revealContact === "email" ? "none" : "email",
+                     )
+                   }
+                   className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
+                   <Mail className="h-4 w-4 mb-1 text-blue-600" />
+                   <span className="text-[11px] leading-tight text-slate-600 font-normal">
+                     Email agent
+                   </span>
+                   <span className="text-xs font-bold leading-tight select-all text-slate-800">
+                     {revealContact === "email"
+                       ? car.seller?.email.split("@")[0] + "..."
+                       : "Click to view"}
                   </span>
                 </button>
               </div>
