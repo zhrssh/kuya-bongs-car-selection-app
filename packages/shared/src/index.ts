@@ -12,3 +12,5 @@ export {
 } from "./enums";
 
 export type { FilterState, SortKey } from "./types";
+
+export { useDebounce } from "./hooks/useDebounce";

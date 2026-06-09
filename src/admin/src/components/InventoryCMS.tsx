@@ -30,7 +30,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useDebounce } from "../hooks/useDebounce";
+import { useDebounce } from "@repo/shared";
 import { Car, SellerContact } from "../types";
 import { useCarStore } from "../stores/carStore";
 

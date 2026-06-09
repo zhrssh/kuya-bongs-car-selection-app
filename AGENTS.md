@@ -14,6 +14,7 @@ A platform for managing used car inventory and sellers (Back-office/Client) and 
   - **Admin Dashboard**: React with Vite (`src/admin`).
   - **Storefront**: React with Vite (`src/web`).
 - **Database**: SQLite.
+- **Shared Package**: `@repo/shared` (`packages/shared/`) — TypeScript enums, types, and shared React hooks.
 - **Deployment**: Single Virtual Machine.
 - **DevOps Priority**: CI/CD Pipelines.
 
@@ -41,4 +42,5 @@ Multi-context layout using CONTEXT-MAP.md. See `docs/agents/domain.md`.
 ## Implementation Protocol
 
 - **TDD**: Always use the `/tdd` skill when implementing code.
+- **Shared code**: Put code shared between frontend apps (hooks, enums, types) in `@repo/shared` (`packages/shared/`).
 
