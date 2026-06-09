@@ -1,15 +1,12 @@
 import os
 import uuid
 import json
-from typing import Dict
 
 from .db import db
 from .models.user import User
 from .utils.db import init_db_command
 from flask import Flask, send_from_directory
-from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
 from flask_talisman import Talisman
 from flask_migrate import Migrate
 
@@ -44,11 +41,16 @@ def create_app(test_config=None) -> Flask:
 
     # setup additional config
     app.config.from_mapping(
-        FLASK_ENV=os.getenv("FLASK_ENV", "development"),
-        SECRET_KEY="dev",
-        SESSION_COOKIE_DOMAIN=".docker.localhost",
-        SQLALCHEMY_DATABASE_URI=f"sqlite:///{os.path.join(app.instance_path, 'flaskr.sqlite')}",
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        TESTING=os.getenv("TESTING", False),
+        SECRET_KEY=os.getenv("SECRET_KEY", "dev"),
+        SESSION_COOKIE_DOMAIN=os.getenv("SESSION_COOKIE_DOMAIN", "localhost"),
+        SQLALCHEMY_DATABASE_URI=os.getenv(
+            "SQLALCHEMY_DATABASE_URI",
+            f"sqlite:///{os.path.join(app.instance_path, 'flaskr.sqlite')}",
+        ),
+        SQLALCHEMY_TRACK_MODIFICATIONS=os.getenv(
+            "SQLALCHEMY_TRACK_MODIFICATIONS", False
+        ),
         UPLOAD_FOLDER=upload_folder,
         MAX_CONTENT_LENGTH=16 * 1024 * 1024,
     )
@@ -149,7 +151,6 @@ def create_app(test_config=None) -> Flask:
     @app.route("/public/images/<path:filename>")
     def uploaded_file(filename):
         return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
-
 
     # Initialize the database
     with app.app_context():
