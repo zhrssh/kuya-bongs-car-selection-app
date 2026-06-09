@@ -144,6 +144,9 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 
   handleDelete: async (car: Car) => {
     const { currentPage, statusTab, filters, sortKey } = get();
+    if (!confirm(`Are you sure you want to permanently delete ${car.make} ${car.model} (${car.year})?`)) {
+      return;
+    }
     try {
       const res = await fetch(
         `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${car.id}`,
