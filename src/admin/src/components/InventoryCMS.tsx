@@ -183,10 +183,7 @@ export default function InventoryCMS({
     [cars],
   );
 
-  const uniqueFuelTypes = useMemo(
-    () => Array.from(new Set(cars.map((c) => c.fuelType))),
-    [cars],
-  );
+  const uniqueFuelTypes = useMemo(() => Object.values(CarFuelType), []);
 
   const uniqueTransmissions = [
     CarTransmission.Automatic,
