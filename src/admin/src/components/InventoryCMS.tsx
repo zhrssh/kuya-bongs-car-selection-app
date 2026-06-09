@@ -12,8 +12,6 @@ import {
   SortKey,
 } from "@repo/shared";
 import {
-  ChevronLeft,
-  ChevronRight,
   Edit,
   Fuel,
   Grid as GridIcon,
@@ -33,6 +31,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "@repo/shared";
 import { Car, SellerContact } from "../types";
 import { useCarStore } from "../stores/carStore";
+import { useInventoryStore } from "../stores/inventoryStore";
+import CarPagination from "./CarPagination";
 
 interface InventoryCMSProps {
   refreshKey: number;
@@ -40,22 +40,6 @@ interface InventoryCMSProps {
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
 }
-
-const INITIAL_FILTER: FilterState = {
-  make: "",
-  model: "",
-  yearMin: "",
-  yearMax: "",
-  priceMin: "",
-  priceMax: "",
-  bodyType: "",
-  fuelType: "",
-  transmission: "",
-  searchQuery: "",
-  condition: "",
-};
-
-const ITEMS_PER_PAGE = 21;
 
 export default function InventoryCMS({
   refreshKey,
@@ -65,29 +49,30 @@ export default function InventoryCMS({
 }: InventoryCMSProps) {
   // Navigation & layout states
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
-  const [filters, setFilters] = useState<FilterState>(INITIAL_FILTER);
-  const [sortKey, setSortKey] = useState<SortKey>("year-desc");
+  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  const filters = useInventoryStore((s) => s.filters);
+  const sortKey = useInventoryStore((s) => s.sortKey);
+  const statusTab = useInventoryStore((s) => s.statusTab);
+  const currentPage = useInventoryStore((s) => s.currentPage);
+  const compareIds = useInventoryStore((s) => s.compareIds);
+  const updateFilter = useInventoryStore((s) => s.updateFilter);
+  const resetFilters = useInventoryStore((s) => s.resetFilters);
+  const setSortKey = useInventoryStore((s) => s.setSortKey);
+  const setStatusTab = useInventoryStore((s) => s.setStatusTab);
+  const setCurrentPage = useInventoryStore((s) => s.setCurrentPage);
+  const toggleCompareId = useInventoryStore((s) => s.toggleCompareId);
+  const clearCompareIds = useInventoryStore((s) => s.clearCompareIds);
+  const fetchCars = useInventoryStore((s) => s.fetchCars);
+  const handleDelete = useInventoryStore((s) => s.handleDelete);
+
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
   const debouncedPriceMin = useDebounce(filters.priceMin, 300);
   const debouncedPriceMax = useDebounce(filters.priceMax, 300);
-  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
-  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
-  const [statusTab, setStatusTab] = useState<CarStatus>(CarStatus.Available);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const cars = useCarStore((s) => s.cars);
-  const setStoreCars = useCarStore((s) => s.setCars);
   const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    per_page: ITEMS_PER_PAGE,
-    total: 0,
-    pages: 1,
-    has_next: false,
-    has_prev: false,
-  });
-  const [isLoading, setIsLoading] = useState(false);
 
   // Derive effective filters: non-search filters update immediately,
   // but searchQuery is debounced to avoid excessive API calls.
@@ -112,46 +97,6 @@ export default function InventoryCMS({
       debouncedPriceMax,
     ],
   );
-
-  // Fetch data from API
-  const fetchCars = async (
-    page: number,
-    status: CarStatus,
-    filters: FilterState,
-    sort: SortKey,
-  ) => {
-    setIsLoading(true);
-    let url = `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars?page=${page}&per_page=${ITEMS_PER_PAGE}`;
-    if (status) url += `&status=${status}`;
-
-    // Add filters
-    if (filters.make) url += `&make=${filters.make}`;
-    if (filters.model) url += `&model=${filters.model}`;
-    if (filters.bodyType) url += `&bodyType=${filters.bodyType}`;
-    if (filters.fuelType) url += `&fuelType=${filters.fuelType}`;
-    if (filters.transmission) url += `&transmission=${filters.transmission}`;
-    if (filters.condition) url += `&condition=${filters.condition}`;
-    if (filters.priceMin) url += `&priceMin=${filters.priceMin}`;
-    if (filters.priceMax) url += `&priceMax=${filters.priceMax}`;
-    if (filters.yearMin) url += `&yearMin=${filters.yearMin}`;
-    if (filters.yearMax) url += `&yearMax=${filters.yearMax}`;
-    if (filters.searchQuery) url += `&search=${filters.searchQuery}`;
-
-    // TODO: Add sort to URL
-
-    try {
-      const response = await fetch(url, { credentials: "include" });
-      const data = await response.json();
-      if (data.status === "success") {
-        setStoreCars(data.data.cars);
-        setPagination(data.data.pagination);
-      }
-    } catch (err) {
-      console.error("Error fetching cars:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchCars(currentPage, statusTab, effectiveFilters, sortKey);
@@ -255,24 +200,17 @@ export default function InventoryCMS({
     key: K,
     value: FilterState[K],
   ) => {
-    setFilters((prev) => {
-      const updated = { ...prev, [key]: value };
-      if (key === "make") {
-        updated.model = ""; // Reset model when make changes
-      }
-      return updated;
-    });
-    setCurrentPage(1);
+    updateFilter(key, value);
   };
 
   const handlePriceQuickSelect = (min: string, max: string) => {
-    setFilters((prev) => ({ ...prev, priceMin: min, priceMax: max }));
-    setCurrentPage(1);
+    updateFilter("priceMin", min);
+    updateFilter("priceMax", max);
   };
 
   const handleYearQuickSelect = (min: string, max: string) => {
-    setFilters((prev) => ({ ...prev, yearMin: min, yearMax: max }));
-    setCurrentPage(1);
+    updateFilter("yearMin", min);
+    updateFilter("yearMax", max);
   };
 
   // Handle open form for new car
@@ -383,30 +321,8 @@ export default function InventoryCMS({
     setUploadedFiles([]); // files are now associated with the saved car
     setUploadError("");
     setIsFormOpen(false);
-    await fetchCars(pagination.page, statusTab, filters, sortKey);
+    await fetchCars(currentPage, statusTab, filters, sortKey);
   };
-
-  const handleDelete = async (car: Car) => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${car.id}`,
-        { method: "DELETE", credentials: "include" },
-      );
-      if (res.ok) {
-        useCarStore.getState().removeCar(car.id!);
-        if (useCarStore.getState().selectedCar?.id === car.id) {
-          useCarStore.getState().setSelectedCar(null);
-        }
-      }
-    } catch (err) {
-      console.error("Error deleting car:", err);
-    }
-    await fetchCars(pagination.page, statusTab, filters, sortKey);
-  };
-
-  // Filter and Sort Logic
-  const totalPages = pagination.pages;
-  const activePage = pagination.page;
 
   const paginatedCars = cars;
 
@@ -444,10 +360,7 @@ export default function InventoryCMS({
           {/* Sorter Selector */}
           <select
             value={sortKey}
-            onChange={(e) => {
-              setSortKey(e.target.value as SortKey);
-              setCurrentPage(1);
-            }}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
             className="bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer"
             id="catalog_sorter">
             <option value="price-asc">Price: Low to High</option>
@@ -503,7 +416,7 @@ export default function InventoryCMS({
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setFilters(INITIAL_FILTER)}
+                    onClick={() => resetFilters()}
                     className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors focus:outline-none"
                     title="Reset all filters">
                     <RotateCcw className="h-3 w-3" />
@@ -854,13 +767,10 @@ export default function InventoryCMS({
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
               Status Filter
             </label>
-            <select
-              value={statusTab}
-              onChange={(e) => {
-                setStatusTab(e.target.value as CarStatus);
-                setCurrentPage(1);
-              }}
-              className="w-full bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer">
+              <select
+                value={statusTab}
+                onChange={(e) => setStatusTab(e.target.value as CarStatus)}
+                className="w-full bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer">
               <option value={CarStatus.Available}>Available</option>
               <option value={CarStatus.Sold}>Sold</option>
               <option value={CarStatus.Archived}>Archived</option>
@@ -874,7 +784,7 @@ export default function InventoryCMS({
                 No vehicles match your active filtering variables.
               </p>
               <button
-                onClick={() => setFilters(INITIAL_FILTER)}
+                onClick={() => resetFilters()}
                 className="mt-4 text-xs bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer font-medium"
                 id="reset_empty_state">
                 Clear Filters
@@ -886,13 +796,7 @@ export default function InventoryCMS({
                 const isComparing = compareIds.includes(car.id!);
                 const canCompare = compareIds.length < 3;
                 const onToggleCompare = (clickedCar: Car) => {
-                  setCompareIds((prev) =>
-                    prev.includes(clickedCar.id!)
-                      ? prev.filter((id) => id !== clickedCar.id!)
-                      : prev.length < 3
-                        ? [...prev, clickedCar.id!]
-                        : prev,
-                  );
+                  toggleCompareId(clickedCar.id!);
                 };
                 const formattedMileage = car.mileage.toLocaleString();
                 const formattedPrice = `₱${car.price.toLocaleString()}`;
@@ -1193,80 +1097,7 @@ export default function InventoryCMS({
             </div>
           )}
 
-          {/* Pagination Controls */}
-          {pagination.total > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-8 border-t border-zinc-200">
-              <div className="text-xs text-zinc-500 font-sans">
-                Showing{" "}
-                <span className="font-semibold text-zinc-800">
-                  {Math.min(
-                    (pagination.page - 1) * ITEMS_PER_PAGE + 1,
-                    pagination.total,
-                  )}
-                </span>{" "}
-                to{" "}
-                <span className="font-semibold text-zinc-800">
-                  {Math.min(pagination.page * ITEMS_PER_PAGE, pagination.total)}
-                </span>{" "}
-                of{" "}
-                <span className="font-bold text-zinc-900">
-                  {pagination.total}
-                </span>{" "}
-                vehicles
-              </div>
-
-              {pagination.pages > 1 && (
-                <div className="flex items-center gap-1.5 font-sans">
-                  {/* Prev Button */}
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(1, prev - 1))
-                    }
-                    disabled={pagination.page === 1}
-                    className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
-                    id="btn_prev_page"
-                    title="Previous Page">
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-
-                  {/* Page Numbers */}
-                  {Array.from(
-                    { length: pagination.pages },
-                    (_, i) => i + 1,
-                  ).map((pg) => {
-                    const isSelected = pagination.page === pg;
-                    return (
-                      <button
-                        key={pg}
-                        onClick={() => setCurrentPage(pg)}
-                        className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
-                          isSelected
-                            ? "bg-blue-600 border-blue-600 text-white shadow-xs font-bold"
-                            : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
-                        }`}
-                        id={`btn_page_${pg}`}>
-                        {pg}
-                      </button>
-                    );
-                  })}
-
-                  {/* Next Button */}
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) =>
-                        Math.min(pagination.pages, prev + 1),
-                      )
-                    }
-                    disabled={pagination.page === pagination.pages}
-                    className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
-                    id="btn_next_page"
-                    title="Next Page">
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          <CarPagination />
         </div>{" "}
         {/* Listings Section Container end */}
       </div>{" "}
@@ -1301,11 +1132,7 @@ export default function InventoryCMS({
                       {targetCar.make} {targetCar.model}
                     </span>
                     <button
-                      onClick={() =>
-                        setCompareIds((prev) =>
-                          prev.filter((item) => item !== id),
-                        )
-                      }
+                      onClick={() => toggleCompareId(id)}
                       className="text-slate-400 hover:text-slate-650 transition ml-1 cursor-pointer focus:outline-none">
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -1324,7 +1151,7 @@ export default function InventoryCMS({
 
               <button
                 onClick={() => {
-                  setCompareIds([]);
+                  clearCompareIds();
                   setIsCompareModalOpen(false);
                 }}
                 className="text-xs font-semibold text-slate-400 hover:text-slate-650 transition cursor-pointer">
