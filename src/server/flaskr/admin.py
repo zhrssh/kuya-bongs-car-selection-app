@@ -1,6 +1,8 @@
 from flaskr import status
 
 from .models.user import User
+from .models.event_log import EventLog
+from .db import db
 
 from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, current_user
@@ -50,6 +52,11 @@ def login():
 
     if error is None:
         login_user(user)
+        EventLog.safe_log(
+            type="login",
+            car_name="System Auth",
+            message="Administrator authenticated successfully",
+        )
         return (
             jsonify(
                 {
@@ -75,6 +82,11 @@ def login():
 def logout():
     """Log out the current user."""
     logout_user()
+    EventLog.safe_log(
+        type="logout",
+        car_name="System Auth",
+        message="Administrator session terminated (logged out)",
+    )
     return (
         jsonify(
             {

@@ -5,7 +5,7 @@ import {
   CarStatus,
   CarTransmission,
 } from "@repo/shared";
-import { ActivityLog, Car } from "./types";
+import { Car } from "./types";
 
 export const INITIAL_CARS: Car[] = [
   {
@@ -192,68 +192,6 @@ export const INITIAL_CARS: Car[] = [
       status: "inactive",
     },
   },
-];
-
-export const INITIAL_LOGS: ActivityLog[] = [
-  {
-    id: "log-1",
-    timestamp: "15:11:04",
-    type: "view",
-    carId: "car-1",
-    carName: "Tesla Model 3",
-    message: "User from San Francisco, CA viewed Tesla Model 3",
-    userLocation: "San Francisco, CA",
-  },
-  {
-    id: "log-2",
-    timestamp: "15:13:22",
-    type: "search",
-    carName: "All Cars",
-    message: 'Anonymous user searched for "Electric" bodyType "Sedan"',
-    userLocation: "Seattle, WA",
-  },
-  {
-    id: "log-3",
-    timestamp: "15:15:40",
-    type: "enquiry",
-    carId: "car-4",
-    carName: "Porsche 911 Carrera",
-    message:
-      "Lead sent to Richard Foster regarding specs of Porsche 911 Carrera",
-    userLocation: "Los Angeles, CA",
-  },
-  {
-    id: "log-4",
-    timestamp: "15:18:12",
-    type: "view",
-    carId: "car-3",
-    carName: "Toyota RAV4 Hybrid",
-    message: "User from Denver, CO viewed Toyota RAV4 Hybrid",
-    userLocation: "Denver, CO",
-  },
-  {
-    id: "log-5",
-    timestamp: "15:19:55",
-    type: "update",
-    carId: "car-2",
-    carName: "Ford F-150 Lightning",
-    message:
-      "CMS Agent updated price of Ford F-150 Lightning from $65,500 to $64,900",
-    userLocation: "Austin, TX",
-  },
-];
-
-export const US_LOCATIONS = [
-  "San Francisco, CA",
-  "Austin, TX",
-  "Seattle, WA",
-  "Los Angeles, CA",
-  "Denver, CO",
-  "Boston, MA",
-  "Miami, FL",
-  "Chicago, IL",
-  "New York, NY",
-  "Portland, OR",
 ];
 
 export const RANDOM_NAMES = [

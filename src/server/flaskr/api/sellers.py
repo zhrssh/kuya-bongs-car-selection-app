@@ -8,6 +8,7 @@ from sqlalchemy.orm import joinedload
 from flaskr import status
 from ..db import db
 from ..models.seller import Seller
+from ..models.event_log import EventLog
 from ..models.enums.seller import SellerStatus
 from .schemas.seller import SellerSchema
 from pydantic import TypeAdapter, ValidationError
@@ -109,6 +110,12 @@ def create_seller():
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
+    EventLog.safe_log(
+        type="create",
+        car_name=seller.name,
+        message=f"Registered new seller profile: {seller.name}",
+    )
+
     return (
         jsonify(
             {
@@ -173,6 +180,12 @@ def update_seller_status(seller_id):
             ),
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+    EventLog.safe_log(
+        type="update",
+        car_name=seller.name,
+        message=f"Seller status changed to {seller.status.value}: {seller.name}",
+    )
 
     return (
         jsonify(
@@ -243,6 +256,12 @@ def update_seller_by_id(seller_id):
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
+    EventLog.safe_log(
+        type="update",
+        car_name=seller.name,
+        message=f"Seller profile updated: {seller.name}",
+    )
+
     return (
         jsonify(
             {
@@ -278,6 +297,7 @@ def delete_seller_by_id(seller_id):
         )
 
     # Delete the seller
+    seller_name = seller.name
     try:
         db.session.delete(seller)
         db.session.commit()
@@ -291,6 +311,12 @@ def delete_seller_by_id(seller_id):
             ),
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+    EventLog.safe_log(
+        type="delete",
+        car_name=seller_name,
+        message=f"Seller removed: {seller_name} deleted from database",
+    )
 
     return (
         "",

@@ -1,1 +1,1 @@
-from . import cars, sellers, inquiries, uploads
+from . import cars, logs, sellers, inquiries, uploads
