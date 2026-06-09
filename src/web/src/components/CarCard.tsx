@@ -152,7 +152,7 @@ export const CarCard: React.FC<CarCardProps> = ({
         {/* Pricing tag & Action buttons */}
         <div className="flex items-center justify-between mt-auto">
           <div>
-            <span className="text-[9px] text-slate-400 uppercase tracking-widest block font-bold">
+            <span className="text-[9px] text-slate-400 block font-bold">
               Sale Price
             </span>
             <span className="font-display font-semibold text-lg text-slate-950">

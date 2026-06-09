@@ -195,31 +195,31 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             {/* Structured Specifications Grid */}
             <div className="grid grid-cols-2 gap-4 bg-slate-50 border border-slate-200/60 rounded-2xl p-4 text-xs">
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium uppercase tracking-wider">Body Type</span>
+                <span className="text-gray-400 font-medium">Body Type</span>
                 <span className="font-semibold text-gray-800">
                   {CarBodyTypeLabel[car.bodyType] || car.bodyType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium uppercase tracking-wider">Fuel Type</span>
+                <span className="text-gray-400 font-medium">Fuel Type</span>
                 <span className="font-semibold text-gray-800">
                   {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium uppercase tracking-wider">Transmission</span>
+                <span className="text-gray-400 font-medium">Transmission</span>
                 <span className="font-semibold text-gray-800">
                   {CarTransmissionLabel[car.transmission] || car.transmission}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium uppercase tracking-wider">Drivetrain</span>
+                <span className="text-gray-400 font-medium">Drivetrain</span>
                 <span className="font-semibold text-gray-800">
                   {car.drivetrain}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5 col-span-2 border-t border-gray-100 pt-2 mt-1">
-                <span className="text-gray-400 font-medium font-sans uppercase tracking-wider">
+                <span className="text-gray-400 font-medium font-sans">
                   Engine Powertrain
                 </span>
                 <span className="font-bold text-gray-800 text-xs">
@@ -227,7 +227,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 </span>
               </div>
               <div className="flex flex-col gap-0.5 col-span-2 border-t border-gray-100 pt-2 mt-1">
-                <span className="text-gray-400 font-medium font-sans uppercase tracking-wider">
+                <span className="text-gray-400 font-medium font-sans">
                   Colors
                 </span>
                 <span className="font-medium text-gray-800">

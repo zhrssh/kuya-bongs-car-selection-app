@@ -1,6 +1,14 @@
 import React, { useMemo } from 'react';
 import { FilterState, Car } from '../types';
-import { CarCondition, CarFuelType, CarTransmission } from '../enums';
+import {
+  CarCondition,
+  CarConditionLabel,
+  CarFuelType,
+  CarFuelTypeLabel,
+  CarTransmission,
+  CarTransmissionLabel,
+  CarBodyTypeLabel,
+} from '../enums';
 import { Search, RotateCcw, SlidersHorizontal, X } from 'lucide-react';
 
 interface FilterSidebarProps {
@@ -154,7 +162,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  {cond}
+                  {CarConditionLabel[cond]}
                 </button>
               );
             })}
@@ -317,7 +325,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  {type}
+                  {CarBodyTypeLabel[type] || type}
                 </button>
               );
             })}
@@ -336,7 +344,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             <option value="">All Fuel Types</option>
             {fuelTypes.map((fuel) => (
               <option key={fuel} value={fuel}>
-                {fuel}
+                {CarFuelTypeLabel[fuel] || fuel}
               </option>
             ))}
           </select>
@@ -359,7 +367,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                   }`}
                 >
-                  {trans}
+                  {CarTransmissionLabel[trans] || trans}
                 </button>
               );
             })}
