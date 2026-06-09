@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CarStatus } from "@repo/shared";
+import { CarStatus, Spinner } from "@repo/shared";
 import {
   BarChart3,
   Cpu,
@@ -20,8 +20,9 @@ import EventLogs from "./components/EventLogs";
 import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
 import SellersTab from "./components/SellersTab";
-import { ActivityLog, Car, SellerContact } from "./types";
+import { ActivityLog, Car } from "./types";
 import { useCarStore } from "./stores/carStore";
+import { useSellerStore } from "./stores/sellerStore";
 
 export default function App() {
   // Routing paths: / or /dashboard, /inventory, /login
@@ -54,8 +55,10 @@ export default function App() {
 
   // Check if user is already authenticated as admin
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   const handleGetAdminStatus = () => {
+    setIsCheckingAuth(true);
     fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/auth/status`, {
       method: "GET",
       credentials: "include",
@@ -76,18 +79,22 @@ export default function App() {
       .catch((err) => {
         console.error("Error fetching admin auth status:", err);
         setIsAdmin(false);
-      });
+      })
+      .finally(() => setIsCheckingAuth(false));
   };
 
   // On app load, check if user is already authenticated as admin
   useEffect(() => {
     if (!isAdmin) {
       handleGetAdminStatus();
+    } else {
+      setIsCheckingAuth(false);
     }
   }, []);
 
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [logRefreshKey, setLogRefreshKey] = useState(0);
+  const [logsLoading, setLogsLoading] = useState(false);
 
   const apiUrl = import.meta.env.VITE_FLASK_APP_API_URL;
 
@@ -104,6 +111,7 @@ export default function App() {
   };
 
   const fetchLogs = useCallback(() => {
+    setLogsLoading(true);
     fetch(`${apiUrl}/api/logs`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
@@ -120,7 +128,11 @@ export default function App() {
           );
         }
       })
-      .catch((err) => console.error("Error fetching logs:", err));
+      .catch((err) => {
+        console.error("Error fetching logs:", err);
+        alert("Failed to load logs. Please try again.");
+      })
+      .finally(() => setLogsLoading(false));
   }, [apiUrl]);
 
   useEffect(() => {
@@ -129,6 +141,12 @@ export default function App() {
     }
   }, [isAdmin, logRefreshKey, fetchLogs]);
 
+  useEffect(() => {
+    if (isAdmin) {
+      useSellerStore.getState().fetchSellers();
+    }
+  }, [isAdmin]);
+
   // Single detail state (from store)
   const selectedCar = useCarStore((s) => s.selectedCar);
   const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
@@ -136,10 +154,14 @@ export default function App() {
   const handleLoginSuccess = useCallback(() => {
     setIsAdmin(true);
     setLogRefreshKey((prev) => prev + 1);
+    useSellerStore.getState().fetchSellers();
   }, []);
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // On logout, clear admin state on both client and server and log the event
   const handleLogout = useCallback(() => {
+    setIsLoggingOut(true);
     fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/admin/logout`, {
       method: "POST",
       credentials: "include",
@@ -152,7 +174,8 @@ export default function App() {
       .catch(() => {
         // Even if server logout fails, clear client state to prevent stuck sessions
         setIsAdmin(false);
-      });
+      })
+      .finally(() => setIsLoggingOut(false));
   }, []);
 
 
@@ -162,184 +185,72 @@ export default function App() {
   const addCarToStore = useCarStore((s) => s.addCar);
   const updateCarInStore = useCarStore((s) => s.updateCar);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isAddingCar, setIsAddingCar] = useState(false);
+  const [isUpdatingCar, setIsUpdatingCar] = useState(false);
 
   // ADD CAR Listing
-  const handleAddCar = (newCar: Car) => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newCar),
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === "success") {
-          const savedCar = data.data.car;
-          addCarToStore(savedCar);
-          setLogRefreshKey((prev) => prev + 1);
-        }
-      })
-      .catch((err) => console.error("Error adding car:", err));
+  const handleAddCar = async (newCar: Car) => {
+    setIsAddingCar(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCar),
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        const savedCar = data.data.car;
+        addCarToStore(savedCar);
+        setLogRefreshKey((prev) => prev + 1);
+      }
+    } catch (err) {
+      console.error("Error adding car:", err);
+      alert("Failed to add car. Please try again.");
+    } finally {
+      setIsAddingCar(false);
+    }
   };
 
   // UPDATE CAR Listing
-  const handleUpdateCar = (updatedCar: Car) => {
-    fetch(
-      `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${updatedCar.id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+  const handleUpdateCar = async (updatedCar: Car) => {
+    setIsUpdatingCar(true);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars/${updatedCar.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedCar),
+          credentials: "include",
         },
-        body: JSON.stringify(updatedCar),
-        credentials: "include",
-      },
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === "success") {
-          const savedCar = data.data.car;
-          updateCarInStore(savedCar);
-          setLogRefreshKey((prev) => prev + 1);
+      );
+      const data = await res.json();
+      if (data.status === "success") {
+        const savedCar = data.data.car;
+        updateCarInStore(savedCar);
+        setLogRefreshKey((prev) => prev + 1);
 
-          // Mirror update in detail modal if active
-          if (selectedCar?.id === savedCar.id) {
-            setStoreSelectedCar(savedCar);
-          }
-          setRefreshKey((prev) => prev + 1);
+        // Mirror update in detail modal if active
+        if (selectedCar?.id === savedCar.id) {
+          setStoreSelectedCar(savedCar);
         }
-      })
-      .catch((err) => console.error("Error updating car:", err));
-  };
-
-  // GET SELLERS List
-  const [sellers, setSellers] = useState<SellerContact[]>([]);
-
-  const handleGetSellersList = () => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then((data) => {
-            if (data.status === "success") {
-              setSellers(data.data.sellers);
-            }
-          });
-        }
-      })
-      .catch((err) => console.error("Error fetching sellers:", err));
-  };
-
-  // On app load, fetch sellers from the database
-  useEffect(() => {
-    if (isAdmin) {
-      handleGetSellersList();
-    }
-  }, [isAdmin]);
-
-  // ADD SELLER
-  const handleAddSeller = (newSeller: SellerContact) => {
-    fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newSeller),
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === "success") {
-          setSellers((prev) => [data.data.seller, ...prev]);
-          setLogRefreshKey((prev) => prev + 1);
-        }
-      })
-      .catch((err) => console.error("Error adding seller:", err));
-  };
-
-  // UPDATE SELLER
-  const handleUpdateSeller = (updatedSeller: SellerContact) => {
-    fetch(
-      `${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers/${updatedSeller.id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedSeller),
-        credentials: "include",
-      },
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === "success") {
-          const saved = data.data.seller;
-          setSellers((prev) =>
-            prev.map((s) => (s.id === saved.id ? saved : s)),
-          );
-          setLogRefreshKey((prev) => prev + 1);
-        }
-      })
-      .catch((err) => console.error("Error updating seller:", err));
-  };
-
-  // DELETE SELLER
-  const handleDeleteSeller = (id: string) => {
-    const target = sellers.find((s) => s.id === id);
-    if (!target) return;
-
-    if (
-      confirm(
-        `Administrate CMS: Are you sure you want to permanently delete the seller profile for ${target.name}?`,
-      )
-    ) {
-      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-        .then((res) => {
-          if (res.ok) {
-            setSellers((prev) => prev.filter((s) => s.id !== id));
-            setLogRefreshKey((prev) => prev + 1);
-          }
-        })
-        .catch((err) => console.error("Error deleting seller:", err));
+        setRefreshKey((prev) => prev + 1);
+      }
+    } catch (err) {
+      console.error("Error updating car:", err);
+      alert("Failed to update car. Please try again.");
+    } finally {
+      setIsUpdatingCar(false);
     }
   };
 
-  // TOGGLE SELLER STATUS
-  const handleToggleSellerStatus = (id: string) => {
-    const seller = sellers.find((s) => s.id === id);
-    if (!seller) return;
-
-    const newStatus = seller.status === "active" ? "inactive" : "active";
-
-    fetch(
-      `${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers/${id}/status`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-        credentials: "include",
-      },
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status === "success") {
-          setSellers((prev) =>
-            prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s)),
-          );
-          setLogRefreshKey((prev) => prev + 1);
-        }
-      })
-      .catch((err) => console.error("Error toggling seller status:", err));
-  };
+  // Read sellers from store for passing to InventoryCMS
+  const sellers = useSellerStore((s) => s.sellers);
 
   // UPDATE CAR STATUS
   const handleUpdateCarStatus = (id: string, status: CarStatus) => {
@@ -431,10 +342,15 @@ export default function App() {
                       handleLogout();
                       navigate("/");
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-250 text-rose-700 hover:text-rose-800 rounded-lg text-xs font-semibold transition cursor-pointer focus:outline-none"
+                    disabled={isLoggingOut}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-250 text-rose-700 hover:text-rose-800 rounded-lg text-xs font-semibold transition cursor-pointer disabled:opacity-50 focus:outline-none"
                     id="btn_admin_logout"
                     title="Sign Out of Administration Session">
-                    <Unlock className="w-3.5 h-3.5 text-rose-500" />
+                    {isLoggingOut ? (
+                      <Spinner size="sm" />
+                    ) : (
+                      <Unlock className="w-3.5 h-3.5 text-rose-500" />
+                    )}
                     <span>Log Out</span>
                   </button>
                 </div>
@@ -465,14 +381,18 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
         {/* Tab Selection routing */}
         <div className="transition duration-150">
-          {(currentPath === "/" ||
+          {isCheckingAuth ? (
+            <div className="flex items-center justify-center py-20">
+              <Spinner label="Verifying session..." />
+            </div>
+          ) : (currentPath === "/" ||
             currentPath === "/dashboard" ||
             currentPath === "") &&
             (isAdmin ? (
               <div className="space-y-8 animate-in fade-in duration-350">
                 <DashboardMetrics />
                 <div className="border-t border-zinc-200/60 pt-8 mt-8">
-                  <EventLogs logs={logs} />
+                  <EventLogs logs={logs} isLoading={logsLoading} />
                 </div>
               </div>
             ) : (
@@ -502,6 +422,7 @@ export default function App() {
                 sellers={sellers}
                 onAddCar={handleAddCar}
                 onUpdateCar={handleUpdateCar}
+                isSaving={isAddingCar || isUpdatingCar}
               />
             ) : (
               <div className="max-w-md w-full mx-auto my-12 p-8 text-center bg-white border border-zinc-200 shadow-md rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -525,11 +446,6 @@ export default function App() {
           {currentPath === "/sellers" &&
             (isAdmin ? (
               <SellersTab
-                sellers={sellers}
-                onAddSeller={handleAddSeller}
-                onUpdateSeller={handleUpdateSeller}
-                onDeleteSeller={handleDeleteSeller}
-                onToggleStatus={handleToggleSellerStatus}
                 isAdmin={isAdmin}
               />
             ) : (

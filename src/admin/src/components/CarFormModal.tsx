@@ -11,6 +11,7 @@ import {
 } from "@repo/shared";
 import { Sparkles, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Spinner } from "@repo/shared";
 import { Car, SellerContact } from "../types";
 
 interface CarFormModalProps {
@@ -20,6 +21,7 @@ interface CarFormModalProps {
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
   onClose: () => void;
+  isSaving: boolean;
 }
 
 const defaultFormData: Partial<Car> = {
@@ -61,11 +63,12 @@ export default function CarFormModal({
   onAddCar,
   onUpdateCar,
   onClose,
+  isSaving,
 }: CarFormModalProps) {
   const [formData, setFormData] = useState<Partial<Car>>({});
   const [formError, setFormError] = useState("");
   const [imageInputUrl, setImageInputUrl] = useState("");
-  const [uploadError, setUploadError] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
   useEffect(() => {
@@ -77,38 +80,48 @@ export default function CarFormModal({
       }
       setFormError("");
       setImageInputUrl("");
-      setUploadError("");
       setUploadedFiles([]);
     }
   }, [isOpen, car]);
 
   const deleteUploadedFile = async (url: string) => {
     if (!isUploadedUrl(url)) return;
-    const filename = url.split("/").pop();
-    await fetch(`${API_URL}/api/uploads/${filename}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    try {
+      const filename = url.split("/").pop();
+      const res = await fetch(`${API_URL}/api/uploads/${filename}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        console.error("Failed to delete uploaded file:", url);
+      }
+    } catch (err) {
+      console.error("Error deleting uploaded file:", err);
+    }
   };
 
   const uploadFiles = async (files: File[]): Promise<string[]> => {
-    setUploadError("");
-    const fd = new FormData();
-    files.forEach((f) => fd.append("files", f));
+    setIsUploading(true);
+    try {
+      const fd = new FormData();
+      files.forEach((f) => fd.append("files", f));
 
-    const res = await fetch(`${API_URL}/api/uploads`, {
-      method: "POST",
-      body: fd,
-      credentials: "include",
-    });
-    const data = await res.json();
-    if (data.status !== "success") {
-      const msgs = data.errors
-        ? Object.values(data.errors).join("; ")
-        : "Upload failed";
-      throw new Error(msgs);
+      const res = await fetch(`${API_URL}/api/uploads`, {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.status !== "success") {
+        const msgs = data.errors
+          ? Object.values(data.errors).join("; ")
+          : "Upload failed";
+        throw new Error(msgs);
+      }
+      return data.data.urls;
+    } finally {
+      setIsUploading(false);
     }
-    return data.data.urls;
   };
 
   const handleCancel = async () => {
@@ -116,7 +129,6 @@ export default function CarFormModal({
       await deleteUploadedFile(url);
     }
     setUploadedFiles([]);
-    setUploadError("");
     onClose();
   };
 
@@ -182,7 +194,6 @@ export default function CarFormModal({
     }
 
     setUploadedFiles([]);
-    setUploadError("");
     onClose();
   };
 
@@ -210,11 +221,6 @@ export default function CarFormModal({
           {formError && (
             <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-mono">
               {formError}
-            </div>
-          )}
-          {uploadError && (
-            <div className="p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-xs font-mono">
-              {uploadError}
             </div>
           )}
           {/* Brand and Model row */}
@@ -561,9 +567,7 @@ export default function CarFormModal({
                     });
                     setUploadedFiles((prev) => [...prev, ...urls]);
                   } catch (err: any) {
-                    setUploadError(
-                      err.message || "Upload failed. Please try again.",
-                    );
+                    alert(err.message || "Upload failed. Please try again.");
                   }
                 }}
                 className="border-2 border-dashed border-slate-300 hover:border-blue-400 bg-white rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-all relative overflow-hidden">
@@ -594,30 +598,34 @@ export default function CarFormModal({
                       });
                       setUploadedFiles((prev) => [...prev, ...urls]);
                     } catch (err: any) {
-                      setUploadError(
-                        err.message || "Upload failed. Please try again.",
-                      );
+                      alert(err.message || "Upload failed. Please try again.");
                     }
                   }}
                   className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                   title="Choose image files"
                 />
 
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full border border-blue-105">
-                  <Upload className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <span className="text-xs font-semibold text-blue-600 hover:underline">
-                    Click to upload files
-                  </span>
-                  <span className="text-xs text-zinc-500">
-                    {" "}
-                    or drag and drop images
-                  </span>
-                </div>
-                <span className="text-[10px] text-zinc-400">
-                  Multiple image uploads supported (PNG, JPG, WebP)
-                </span>
+                {isUploading ? (
+                  <Spinner label="Uploading images..." />
+                ) : (
+                  <>
+                    <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full border border-blue-105">
+                      <Upload className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-blue-600 hover:underline">
+                        Click to upload files
+                      </span>
+                      <span className="text-xs text-zinc-500">
+                        {" "}
+                        or drag and drop images
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-zinc-400">
+                      Multiple image uploads supported (PNG, JPG, WebP)
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Direct text input option */}
@@ -868,9 +876,17 @@ export default function CarFormModal({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans"
+              disabled={isSaving}
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans inline-flex items-center gap-2"
               id="form_btn_submit">
-              {car ? "Save Changes" : "Publish Listing"}
+              {isSaving ? (
+                <>
+                  <Spinner size="sm" />
+                  <span>{car ? "Saving..." : "Publishing..."}</span>
+                </>
+              ) : (
+                car ? "Save Changes" : "Publish Listing"
+              )}
             </button>
           </div>
         </form>

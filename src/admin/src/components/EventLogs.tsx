@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Skeleton } from '@repo/shared';
 import { ActivityLog } from '../types';
 import { 
   Terminal, Calendar, ClipboardList, Shield, Filter, Award, Search
@@ -6,9 +7,10 @@ import {
 
 interface EventLogsProps {
   logs: ActivityLog[];
+  isLoading?: boolean;
 }
 
-export default function EventLogs({ logs }: EventLogsProps) {
+export default function EventLogs({ logs, isLoading }: EventLogsProps) {
   const [filterType, setFilterType] = useState<'all' | 'cms' | 'auth'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -111,7 +113,14 @@ export default function EventLogs({ logs }: EventLogsProps) {
           
           <div className="bg-zinc-900 text-zinc-100 font-mono text-[11px] p-4 h-64 overflow-y-auto space-y-2.5 shadow-inner">
             
-            {filteredLogs.length === 0 ? (
+            {isLoading ? (
+              <div className="h-full flex flex-col items-center justify-center gap-3 p-6">
+                <Skeleton className="h-3 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="h-3 w-2/3" />
+                <Skeleton className="h-3 w-1/3" />
+              </div>
+            ) : filteredLogs.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-zinc-500 italic p-6 text-center">
                 <Terminal className="w-8 h-8 text-zinc-700 mb-2.5 animate-pulse" />
                 <span>No event entries match your search criteria.</span>

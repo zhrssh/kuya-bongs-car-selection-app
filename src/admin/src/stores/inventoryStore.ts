@@ -44,6 +44,7 @@ interface InventoryState {
   currentPage: number;
   pagination: Pagination;
   isLoading: boolean;
+  error: string | null;
   compareIds: string[];
 
   updateFilter: <K extends keyof FilterState>(
@@ -55,6 +56,7 @@ interface InventoryState {
   setStatusTab: (tab: CarStatus) => void;
   setCurrentPage: (page: number) => void;
   setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
   toggleCompareId: (id: string) => void;
   clearCompareIds: () => void;
   fetchCars: (
@@ -73,6 +75,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   currentPage: 1,
   pagination: { ...INITIAL_PAGINATION },
   isLoading: false,
+  error: null,
   compareIds: [],
 
   updateFilter: (key, value) =>
@@ -95,6 +98,8 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
 
   setIsLoading: (loading) => set({ isLoading: loading }),
 
+  setError: (error) => set({ error }),
+
   toggleCompareId: (id) =>
     set((state) => {
       if (state.compareIds.includes(id)) {
@@ -107,7 +112,7 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
   clearCompareIds: () => set({ compareIds: [] }),
 
   fetchCars: async (page, status, filters, sort) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     let url = `${import.meta.env.VITE_FLASK_APP_API_URL}/api/cars?page=${page}&per_page=${ITEMS_PER_PAGE}`;
     if (status) url += `&status=${status}`;
     if (filters.make) url += `&make=${filters.make}`;
@@ -137,6 +142,8 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       }
     } catch (err) {
       console.error("Error fetching cars:", err);
+      alert("Failed to load cars. Please try again.");
+      set({ error: "Failed to load cars. Please try again." });
     } finally {
       set({ isLoading: false });
     }
@@ -160,6 +167,8 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
       }
     } catch (err) {
       console.error("Error deleting car:", err);
+      alert("Failed to delete car. Please try again.");
+      set({ error: "Failed to delete car. Please try again." });
     }
     await get().fetchCars(currentPage, statusTab, filters, sortKey);
   },

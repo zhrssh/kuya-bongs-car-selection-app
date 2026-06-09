@@ -17,26 +17,31 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Skeleton } from "@repo/shared";
 import { SellerContact } from "../types";
+import { useSellerStore } from "../stores/sellerStore";
 
 interface SellersTabProps {
-  sellers: SellerContact[];
-  onAddSeller: (seller: SellerContact) => void;
-  onUpdateSeller: (seller: SellerContact) => void;
-  onDeleteSeller: (id: string) => void;
-  onToggleStatus: (id: string) => void;
   isAdmin: boolean;
 }
 
 export default function SellersTab({
-  sellers,
-  onAddSeller,
-  onUpdateSeller,
-  onDeleteSeller,
-  onToggleStatus,
   isAdmin,
 }: SellersTabProps) {
+  const sellers = useSellerStore((s) => s.sellers);
+  const isLoading = useSellerStore((s) => s.isLoading);
+  const error = useSellerStore((s) => s.error);
+  const fetchSellers = useSellerStore((s) => s.fetchSellers);
+  const addSeller = useSellerStore((s) => s.addSeller);
+  const updateSeller = useSellerStore((s) => s.updateSeller);
+  const deleteSeller = useSellerStore((s) => s.deleteSeller);
+  const toggleStatus = useSellerStore((s) => s.toggleStatus);
+
+  useEffect(() => {
+    fetchSellers();
+  }, [fetchSellers]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -101,9 +106,9 @@ export default function SellersTab({
     };
 
     if (editingSeller) {
-      onUpdateSeller({ ...sellerData, id: editingSeller.id });
+      updateSeller({ ...sellerData, id: editingSeller.id });
     } else {
-      onAddSeller(sellerData);
+      addSeller(sellerData);
     }
 
     // Reset Form
@@ -149,49 +154,62 @@ export default function SellersTab({
       </div>
 
       {/* KPI Stats Widgets Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
-              Total Active Agents
-            </span>
-            <span className="text-2xl font-bold text-zinc-900 font-sans">
-              {totalSellers}
-            </span>
-          </div>
-          <div className="bg-blue-50 text-blue-600 p-3 rounded-xl border border-blue-100">
-            <Users className="w-5 h-5 text-blue-600" />
-          </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white border border-zinc-200/80 p-5 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+              <div className="space-y-3">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-7 w-12" />
+              </div>
+            </div>
+          ))}
         </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
+                Total Active Agents
+              </span>
+              <span className="text-2xl font-bold text-zinc-900 font-sans">
+                {totalSellers}
+              </span>
+            </div>
+            <div className="bg-blue-50 text-blue-600 p-3 rounded-xl border border-blue-100">
+              <Users className="w-5 h-5 text-blue-600" />
+            </div>
+          </div>
 
-        <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
-              Active Status
-            </span>
-            <span className="text-2xl font-bold text-emerald-600 font-sans">
-              {activeSellersCount}
-            </span>
+          <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
+                Active Status
+              </span>
+              <span className="text-2xl font-bold text-emerald-600 font-sans">
+                {activeSellersCount}
+              </span>
+            </div>
+            <div className="bg-emerald-50 text-emerald-600 p-3 rounded-xl border border-emerald-100">
+              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            </div>
           </div>
-          <div className="bg-emerald-50 text-emerald-600 p-3 rounded-xl border border-emerald-100">
-            <CheckCircle className="w-5 h-5 text-emerald-600" />
-          </div>
-        </div>
 
-        <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
-              Inactive Status
-            </span>
-            <span className="text-2xl font-bold text-rose-600 font-sans">
-              {inactiveSellersCount}
-            </span>
-          </div>
-          <div className="bg-rose-50 text-rose-600 p-3 rounded-xl border border-rose-100">
-            <XCircle className="w-5 h-5 text-rose-600" />
+          <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
+                Inactive Status
+              </span>
+              <span className="text-2xl font-bold text-rose-600 font-sans">
+                {inactiveSellersCount}
+              </span>
+            </div>
+            <div className="bg-rose-50 text-rose-600 p-3 rounded-xl border border-rose-100">
+              <XCircle className="w-5 h-5 text-rose-600" />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Grid: Left is Search & List, Right is Add Form if Open */}
       <div className="flex flex-col gap-6">
@@ -225,7 +243,26 @@ export default function SellersTab({
         </div>
 
         {/* Sellers Cards Catalog Grid */}
-        {filteredSellers.length === 0 ? (
+        {isLoading && sellers.length === 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white border border-zinc-205/90 rounded-2xl overflow-hidden">
+                <div className="p-5 space-y-4">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                  <div className="space-y-2 border-t border-dashed border-zinc-150 pt-3">
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-2/3" />
+                  </div>
+                  <Skeleton className="h-3 w-1/3" />
+                </div>
+                <div className="bg-zinc-50 px-5 py-3 border-t border-zinc-200/70">
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredSellers.length === 0 ? (
           <div className="bg-white border border-zinc-200 rounded-2xl p-12 text-center max-w-lg mx-auto w-full my-4">
             <Users className="w-10 h-10 text-zinc-400 mx-auto mb-3" />
             <h4 className="text-sm font-bold text-zinc-850">
@@ -308,7 +345,7 @@ export default function SellersTab({
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => onDeleteSeller(seller.id)}
+                            onClick={() => deleteSeller(seller.id)}
                             className="p-1.5 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                             title="Delete seller"
                             id={`btn_delete_seller_${index}`}>
@@ -319,7 +356,7 @@ export default function SellersTab({
                     </div>
 
                     <button
-                      onClick={() => onToggleStatus(seller.id)}
+                      onClick={() => toggleStatus(seller.id)}
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase transition cursor-pointer ${
                         seller.status === "inactive"
                           ? "bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100"

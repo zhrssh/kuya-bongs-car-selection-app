@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Car, Pagination } from './types';
-import { FilterState, SortKey, CarStatus } from '@repo/shared';
+import { FilterState, SortKey, CarStatus, Skeleton, Spinner, ErrorState } from '@repo/shared';
 import { fetchCars } from './apiClient';
 import { useDebounce } from '@repo/shared';
 import { FilterSidebar } from './components/FilterSidebar';
@@ -397,12 +397,43 @@ export default function App() {
             )}
 
             {isLoading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs text-slate-400 font-medium">Loading vehicles...</span>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col h-full">
+                    <Skeleton className="aspect-[4/3] w-full rounded-none" />
+                    <div className="p-4 space-y-3 flex-1">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="space-y-1.5 flex-1">
+                          <Skeleton className="h-4 w-3/4" />
+                          <Skeleton className="h-3 w-1/2" />
+                        </div>
+                        <Skeleton className="h-5 w-16 rounded-full shrink-0" />
+                      </div>
+                      <Skeleton className="h-6 w-1/3" />
+                      <div className="flex gap-3">
+                        <Skeleton className="h-3 w-16" />
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-3 w-14" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
+            ) : error && !isLoading ? (
+              <ErrorState message={error} onRetry={() => {
+                setIsLoading(true);
+                setError(null);
+                fetchCars(currentPage, effectiveFilters, sortKey, CarStatus.Available)
+                  .then((data) => {
+                    setCars(data.cars);
+                    setPagination(data.pagination);
+                    setIsLoading(false);
+                  })
+                  .catch((err) => {
+                    setError(err.message);
+                    setIsLoading(false);
+                  });
+              }} />
             ) : sortedCars.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

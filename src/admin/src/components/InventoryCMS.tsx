@@ -1,4 +1,4 @@
-import { CarStatus, FilterState, SortKey } from "@repo/shared";
+import { CarStatus, FilterState, SortKey, Skeleton } from "@repo/shared";
 import {
   Grid as GridIcon,
   Plus,
@@ -23,6 +23,7 @@ interface InventoryCMSProps {
   sellers: SellerContact[];
   onAddCar: (car: Car) => void;
   onUpdateCar: (car: Car) => void;
+  isSaving: boolean;
 }
 
 export default function InventoryCMS({
@@ -30,6 +31,7 @@ export default function InventoryCMS({
   sellers,
   onAddCar,
   onUpdateCar,
+  isSaving,
 }: InventoryCMSProps) {
   // Navigation & layout states
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
@@ -46,6 +48,8 @@ export default function InventoryCMS({
   const setStatusTab = useInventoryStore((s) => s.setStatusTab);
   const setCurrentPage = useInventoryStore((s) => s.setCurrentPage);
   const fetchCars = useInventoryStore((s) => s.fetchCars);
+  const isLoading = useInventoryStore((s) => s.isLoading);
+  const error = useInventoryStore((s) => s.error);
   const handleDelete = useInventoryStore((s) => s.handleDelete);
 
   const debouncedSearchQuery = useDebounce(filters.searchQuery, 300);
@@ -204,7 +208,24 @@ export default function InventoryCMS({
           </div>
 
           {/* Main Stock Content Layout */}
-          {cars.length === 0 ? (
+          {isLoading && cars.length === 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+                  <Skeleton className="aspect-4/3 w-full rounded-none" />
+                  <div className="p-4 space-y-3">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-5 w-1/2" />
+                    <div className="flex gap-2">
+                      <Skeleton className="h-3 w-16" />
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-3 w-14" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : cars.length === 0 ? (
             <div className="bg-white border border-zinc-200 p-12 text-center rounded-xl shadow-xs">
               <p className="text-zinc-500 text-sm font-medium">
                 No vehicles match your active filtering variables.
@@ -235,6 +256,7 @@ export default function InventoryCMS({
         onAddCar={onAddCar}
         onUpdateCar={onUpdateCar}
         onClose={handleFormClose}
+        isSaving={isSaving}
       />
     </div>
   );
