@@ -25,7 +25,7 @@ class Car(db.Model):
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
-    status: Mapped[CarStatus] = mapped_column(nullable=False, default="Available")
+    status: Mapped[CarStatus] = mapped_column(nullable=False, default=CarStatus.available)
     make: Mapped[str] = mapped_column(String(80), nullable=False)
     model: Mapped[str] = mapped_column(String(80), nullable=False)
     year: Mapped[int] = mapped_column(Integer, nullable=False)

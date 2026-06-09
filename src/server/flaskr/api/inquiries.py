@@ -8,6 +8,7 @@ from flask import Blueprint, jsonify, request
 from flaskr import status
 from .schemas.inquiry import InquirySchema
 from ..models.car import Car
+from ..models.lead import Lead
 from ..db import db
 
 bp = Blueprint("inquiries", __name__, url_prefix="/api")
@@ -61,6 +62,17 @@ def inquire_about_car(car_id):
             jsonify({"status": "fail", "data": {"message": "Invalid inquiry data."}}),
             status.HTTP_400_BAD_REQUEST,
         )
+
+    # Persist lead
+    lead = Lead(
+        carId=car_id,
+        sender_name=data.sender_name,
+        sender_email=data.sender_email,
+        message=data.message,
+        interest_type=data.interest_type,
+    )
+    db.session.add(lead)
+    db.session.commit()
 
     # Send email
     subject = f"New Inquiry: {car.make} {car.model}"
