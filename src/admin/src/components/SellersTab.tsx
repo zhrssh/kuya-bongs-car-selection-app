@@ -6,12 +6,14 @@
 import {
   Briefcase,
   CheckCircle,
+  Edit,
   Mail,
   MapPin,
   Phone,
   Plus,
   Search,
   Sparkles,
+  Trash2,
   Users,
   X,
   XCircle,
@@ -23,6 +25,8 @@ interface SellersTabProps {
   sellers: SellerContact[];
   cars: Car[];
   onAddSeller: (seller: SellerContact) => void;
+  onUpdateSeller: (seller: SellerContact) => void;
+  onDeleteSeller: (id: string) => void;
   onToggleStatus: (id: string) => void;
   isAdmin: boolean;
 }
@@ -31,6 +35,8 @@ export default function SellersTab({
   sellers,
   cars,
   onAddSeller,
+  onUpdateSeller,
+  onDeleteSeller,
   onToggleStatus,
   isAdmin,
 }: SellersTabProps) {
@@ -43,6 +49,9 @@ export default function SellersTab({
   const [email, setEmail] = useState("");
   const [location, setLocation] = useState("");
   const [formError, setFormError] = useState("");
+  const [editingSeller, setEditingSeller] = useState<SellerContact | null>(
+    null,
+  );
 
   // Top metric aggregate computations
   const totalSellers = sellers.length;
@@ -85,31 +94,38 @@ export default function SellersTab({
       return;
     }
 
-    // Check duplicate name
+    // Check duplicate name (exclude current seller when editing)
     if (
       sellers.some(
-        (s) => s.name.trim().toLowerCase() === name.trim().toLowerCase(),
+        (s) =>
+          s.id !== editingSeller?.id &&
+          s.name.trim().toLowerCase() === name.trim().toLowerCase(),
       )
     ) {
       setFormError("A seller with this name already exists.");
       return;
     }
 
-    const newSeller: SellerContact = {
+    const sellerData: SellerContact = {
       name: name.trim(),
       phone: phone.trim(),
       email: email.trim(),
       location: location.trim(),
-      status: "active",
+      status: editingSeller?.status || "active",
     };
 
-    onAddSeller(newSeller);
+    if (editingSeller) {
+      onUpdateSeller({ ...sellerData, id: editingSeller.id });
+    } else {
+      onAddSeller(sellerData);
+    }
 
     // Reset Form
     setName("");
     setPhone("");
     setEmail("");
     setLocation("");
+    setEditingSeller(null);
     setIsFormOpen(false);
   };
 
@@ -129,7 +145,15 @@ export default function SellersTab({
 
         {isAdmin && (
           <button
-            onClick={() => setIsFormOpen(true)}
+            onClick={() => {
+              setEditingSeller(null);
+              setName("");
+              setPhone("");
+              setEmail("");
+              setLocation("");
+              setFormError("");
+              setIsFormOpen(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition focus:outline-none self-start md:self-auto"
             id="btn_add_seller_trigger">
             <Plus className="w-4 h-4" />
@@ -299,9 +323,37 @@ export default function SellersTab({
 
                   {/* Toggleable Seller Status "Active" or "Inactive" */}
                   <div className="bg-zinc-50 px-5 py-3 border-t border-zinc-200/70 text-[10px] flex items-center justify-between">
-                    <span className="font-mono text-zinc-400 font-semibold uppercase tracking-wider">
-                      Seller Status
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-zinc-400 font-semibold uppercase tracking-wider">
+                        Seller Status
+                      </span>
+                      {isAdmin && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setName(seller.name);
+                              setPhone(seller.phone);
+                              setEmail(seller.email);
+                              setLocation(seller.location);
+                              setEditingSeller(seller);
+                              setFormError("");
+                              setIsFormOpen(true);
+                            }}
+                            className="p-1.5 rounded-md text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                            title="Edit seller"
+                            id={`btn_edit_seller_${index}`}>
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => onDeleteSeller(seller.id)}
+                            className="p-1.5 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                            title="Delete seller"
+                            id={`btn_delete_seller_${index}`}>
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
 
                     <button
                       onClick={() => onToggleStatus(seller.id)}
@@ -333,7 +385,10 @@ export default function SellersTab({
           {/* Background overlay click */}
           <div
             className="absolute inset-0 cursor-default"
-            onClick={() => setIsFormOpen(false)}
+            onClick={() => {
+              setEditingSeller(null);
+              setIsFormOpen(false);
+            }}
           />
 
           {/* Form Content Side Drawer */}
@@ -347,15 +402,20 @@ export default function SellersTab({
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm text-zinc-950 font-sans">
-                      Register New Agent
+                      {editingSeller ? "Edit Agent Profile" : "Register New Agent"}
                     </h3>
                     <span className="text-[10px] text-zinc-450 block font-mono">
-                      Create stateful representative profile
+                      {editingSeller
+                        ? "Modify representative profile fields"
+                        : "Create stateful representative profile"}
                     </span>
                   </div>
                 </div>
                 <button
-                  onClick={() => setIsFormOpen(false)}
+                  onClick={() => {
+                    setEditingSeller(null);
+                    setIsFormOpen(false);
+                  }}
                   className="p-1 px-2.5 rounded hover:bg-zinc-100 text-zinc-500 hover:text-zinc-700 transition font-bold"
                   title="Close form">
                   <X className="w-4 h-4" />
@@ -436,14 +496,17 @@ export default function SellersTab({
                 <div className="pt-4 border-t border-zinc-150 flex items-center justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsFormOpen(false)}
+                    onClick={() => {
+                      setEditingSeller(null);
+                      setIsFormOpen(false);
+                    }}
                     className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-205/50 rounded-lg text-xs text-zinc-700 font-semibold cursor-pointer transition">
                     Cancel
                   </button>
                   <button
                     type="submit"
                     className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition">
-                    Register Agent
+                    {editingSeller ? "Save Changes" : "Register Agent"}
                   </button>
                 </div>
               </form>

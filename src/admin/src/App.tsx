@@ -345,6 +345,66 @@ export default function App() {
       .catch((err) => console.error("Error adding seller:", err));
   };
 
+  // UPDATE SELLER
+  const handleUpdateSeller = (updatedSeller: SellerContact) => {
+    fetch(
+      `${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers/${updatedSeller.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedSeller),
+        credentials: "include",
+      },
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          const saved = data.data.seller;
+          setSellers((prev) =>
+            prev.map((s) => (s.id === saved.id ? saved : s)),
+          );
+          addLog(
+            "update",
+            saved.name,
+            `CMS: Updated seller profile for ${saved.name}`,
+            saved.location,
+          );
+        }
+      })
+      .catch((err) => console.error("Error updating seller:", err));
+  };
+
+  // DELETE SELLER
+  const handleDeleteSeller = (id: string) => {
+    const target = sellers.find((s) => s.id === id);
+    if (!target) return;
+
+    if (
+      confirm(
+        `Administrate CMS: Are you sure you want to permanently delete the seller profile for ${target.name}?`,
+      )
+    ) {
+      fetch(`${import.meta.env.VITE_FLASK_APP_API_URL}/api/sellers/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
+        .then((res) => {
+          if (res.ok) {
+            setSellers((prev) => prev.filter((s) => s.id !== id));
+            addLog(
+              "delete",
+              target.name,
+              `CMS: Removed seller ${target.name} from database pool`,
+              target.location,
+            );
+          }
+        })
+        .catch((err) => console.error("Error deleting seller:", err));
+    }
+  };
+
   // TOGGLE SELLER STATUS
   const handleToggleSellerStatus = (id: string) => {
     const seller = sellers.find((s) => s.id === id);
@@ -630,6 +690,8 @@ export default function App() {
                 sellers={sellers}
                 cars={cars}
                 onAddSeller={handleAddSeller}
+                onUpdateSeller={handleUpdateSeller}
+                onDeleteSeller={handleDeleteSeller}
                 onToggleStatus={handleToggleSellerStatus}
                 isAdmin={isAdmin}
               />
