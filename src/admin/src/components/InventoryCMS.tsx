@@ -207,7 +207,9 @@ export default function InventoryCMS({
     });
     const data = await res.json();
     if (data.status !== "success") {
-      const msgs = data.errors ? Object.values(data.errors).join("; ") : "Upload failed";
+      const msgs = data.errors
+        ? Object.values(data.errors).join("; ")
+        : "Upload failed";
       throw new Error(msgs);
     }
     return data.data.urls;
@@ -289,7 +291,7 @@ export default function InventoryCMS({
       exteriorColor: "",
       interiorColor: "",
       engine: "",
-      drivetrain: "RWD",
+      drivetrain: "",
       features: "",
       description: "",
       imageUrl: "",
@@ -1005,7 +1007,8 @@ export default function InventoryCMS({
                         <div className="flex items-center gap-2 col-span-2 text-[11px] text-slate-500">
                           <span className="font-normal">Transmission:</span>
                           <span className="font-semibold text-slate-700 ml-1">
-                            {CarTransmissionLabel[car.transmission] || car.transmission}
+                            {CarTransmissionLabel[car.transmission] ||
+                              car.transmission}
                           </span>
                         </div>
                       </div>
@@ -1084,7 +1087,9 @@ export default function InventoryCMS({
                                 {car.make} {car.model}
                               </div>
                               <div className="text-[11px] text-zinc-500 font-mono">
-                                Mfg: {car.year} &bull; {CarTransmissionLabel[car.transmission] || car.transmission}
+                                Mfg: {car.year} &bull;{" "}
+                                {CarTransmissionLabel[car.transmission] ||
+                                  car.transmission}
                               </div>
                             </div>
                           </div>
@@ -1641,7 +1646,9 @@ export default function InventoryCMS({
                     <option value={CarBodyType.Sedan}>
                       {CarBodyTypeLabel[CarBodyType.Sedan]}
                     </option>
-                    <option value={CarBodyType.SUV}>{CarBodyTypeLabel[CarBodyType.SUV]}</option>
+                    <option value={CarBodyType.SUV}>
+                      {CarBodyTypeLabel[CarBodyType.SUV]}
+                    </option>
                     <option value={CarBodyType.Coupe}>
                       {CarBodyTypeLabel[CarBodyType.Coupe]}
                     </option>
@@ -1745,13 +1752,9 @@ export default function InventoryCMS({
                       }))
                     }
                     className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none focus:border-blue-300">
-                    <option value={CarStatus.Available}>
-                      Available
-                    </option>
+                    <option value={CarStatus.Available}>Available</option>
                     <option value={CarStatus.Sold}>Sold</option>
-                    <option value={CarStatus.Archived}>
-                      Archived
-                    </option>
+                    <option value={CarStatus.Archived}>Archived</option>
                   </select>
                 </div>
               </div>
@@ -1888,9 +1891,9 @@ export default function InventoryCMS({
                       accept="image/*"
                       multiple
                       onChange={async (e) => {
-                        const files = Array.from(
-                          e.target.files || [],
-                        ).filter((f) => f.type.startsWith("image/"));
+                        const files = Array.from(e.target.files || []).filter(
+                          (f) => f.type.startsWith("image/"),
+                        );
                         if (files.length === 0) return;
                         try {
                           const urls = await uploadFiles(files);
@@ -2045,9 +2048,7 @@ export default function InventoryCMS({
                                         };
                                       });
                                       setUploadedFiles((prev) =>
-                                        prev.filter(
-                                          (u) => u !== deletingUrl,
-                                        ),
+                                        prev.filter((u) => u !== deletingUrl),
                                       );
                                     }}
                                     className="bg-rose-600 hover:bg-rose-500 text-white text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
