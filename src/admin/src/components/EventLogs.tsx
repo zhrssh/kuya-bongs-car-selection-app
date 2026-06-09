@@ -1,15 +1,14 @@
 import { useState, useMemo } from 'react';
 import { ActivityLog } from '../types';
 import { 
-  Terminal, Trash2, Calendar, ClipboardList, Shield, Filter, Award, Search
+  Terminal, Calendar, ClipboardList, Shield, Filter, Award, Search
 } from 'lucide-react';
 
 interface EventLogsProps {
   logs: ActivityLog[];
-  onClearLogs: () => void;
 }
 
-export default function EventLogs({ logs, onClearLogs }: EventLogsProps) {
+export default function EventLogs({ logs }: EventLogsProps) {
   const [filterType, setFilterType] = useState<'all' | 'cms' | 'auth'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -23,13 +22,11 @@ export default function EventLogs({ logs, onClearLogs }: EventLogsProps) {
         if (!log.message.toLowerCase().includes('auth') && !log.message.toLowerCase().includes('session')) return false;
       }
 
-      // Filter by search term
       if (searchTerm.trim() !== '') {
         const term = searchTerm.toLowerCase();
         return (
           log.carName.toLowerCase().includes(term) ||
           log.message.toLowerCase().includes(term) ||
-          log.userLocation.toLowerCase().includes(term) ||
           log.type.toLowerCase().includes(term)
         );
       }
@@ -53,19 +50,6 @@ export default function EventLogs({ logs, onClearLogs }: EventLogsProps) {
             Real-time, organic records of administrative CMS adjustments and listing updates.
           </p>
         </div>
-
-        {/* Header Action controls */}
-        {logs.length > 0 && (
-          <button
-            onClick={onClearLogs}
-            className="self-start md:self-auto flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-rose-50 text-zinc-600 hover:text-rose-600 border border-zinc-200 rounded-lg text-xs font-semibold cursor-pointer transition focus:outline-none"
-            id="btn_clear_event_logs"
-            title="Clear current log trail"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Clear Logs
-          </button>
-        )}
 
       </div>
 
@@ -163,15 +147,8 @@ export default function EventLogs({ logs, onClearLogs }: EventLogsProps) {
                       {log.type}
                     </span>
 
-                    {/* Log main body */}
                     <div className="flex-1 leading-relaxed">
                       <span className="text-zinc-200">{log.message}</span>
-                      
-                      {log.userLocation && log.userLocation !== 'Secure Terminal' && (
-                        <span className="text-zinc-600 text-[10px] font-sans italic ml-2">
-                          • {log.userLocation}
-                        </span>
-                      )}
                     </div>
 
                   </div>

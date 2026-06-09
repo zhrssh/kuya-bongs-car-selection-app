@@ -20,10 +20,6 @@ import EventLogs from "./components/EventLogs";
 import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
 import SellersTab from "./components/SellersTab";
-import {
-  INITIAL_LOGS,
-  US_LOCATIONS,
-} from "./initialData";
 import { ActivityLog, Car, SellerContact } from "./types";
 import { useCarStore } from "./stores/carStore";
 
@@ -90,56 +86,57 @@ export default function App() {
     }
   }, []);
 
-  const [logs, setLogs] = useState<ActivityLog[]>(INITIAL_LOGS);
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [logRefreshKey, setLogRefreshKey] = useState(0);
+
+  const apiUrl = import.meta.env.VITE_FLASK_APP_API_URL;
+
+  const formatTime = (isoString: string): string => {
+    const d = new Date(isoString);
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  };
+
+  const fetchLogs = useCallback(() => {
+    fetch(`${apiUrl}/api/logs`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setLogs(
+            data.data.logs.map((log: Record<string, unknown>) => ({
+              id: log.id as string,
+              timestamp: formatTime(log.createdAt as string),
+              type: log.type as ActivityLog["type"],
+              carId: (log.carId as string) || undefined,
+              carName: (log.carName as string) || "",
+              message: log.message as string,
+            })),
+          );
+        }
+      })
+      .catch((err) => console.error("Error fetching logs:", err));
+  }, [apiUrl]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchLogs();
+    }
+  }, [isAdmin, logRefreshKey, fetchLogs]);
 
   // Single detail state (from store)
   const selectedCar = useCarStore((s) => s.selectedCar);
   const setStoreSelectedCar = useCarStore((s) => s.setSelectedCar);
 
-  // Time generator helper for logs
-  const getFormattedTime = () => {
-    const d = new Date();
-    return d.toTimeString().split(" ")[0]; // returns HH:MM:SS
-  };
-
-  // Log appender helper
-  const addLog = useCallback(
-    (
-      type: ActivityLog["type"],
-      carName: string,
-      message: string,
-      customLoc?: string,
-      carId?: string,
-    ) => {
-      const loc =
-        customLoc ||
-        US_LOCATIONS[Math.floor(Math.random() * US_LOCATIONS.length)];
-      const newLog: ActivityLog = {
-        id: "log-" + Date.now() + "-" + Math.floor(Math.random() * 100),
-        timestamp: getFormattedTime(),
-        type,
-        carId,
-        carName,
-        message,
-        userLocation: loc,
-      };
-      setLogs((prev) => [newLog, ...prev]);
-      // TODO: Add logs to db
-    },
-    [],
-  );
-
   const handleLoginSuccess = useCallback(() => {
     setIsAdmin(true);
-
-    // Add log entry for successful authentication event
-    addLog(
-      "update",
-      "System Auth",
-      "User authenticated successfully as System Administrator",
-      "Secure Terminal",
-    );
-  }, [addLog]);
+    setLogRefreshKey((prev) => prev + 1);
+  }, []);
 
   // On logout, clear admin state on both client and server and log the event
   const handleLogout = useCallback(() => {
@@ -156,19 +153,9 @@ export default function App() {
         // Even if server logout fails, clear client state to prevent stuck sessions
         setIsAdmin(false);
       });
-
-    // Add log entry for logout event
-    addLog(
-      "update",
-      "System Auth",
-      "Administrator session terminated (logged out)",
-      "Secure Terminal",
-    );
-  }, [addLog]);
-
-  const handleClearLogs = useCallback(() => {
-    setLogs([]);
   }, []);
+
+
 
   // GET CAR Listing (from store)
   const cars = useCarStore((s) => s.cars);
@@ -191,14 +178,7 @@ export default function App() {
         if (data.status === "success") {
           const savedCar = data.data.car;
           addCarToStore(savedCar);
-          addLog(
-            "create",
-            `${savedCar.make} ${savedCar.model}`,
-            `CMS: Published new catalog listing for ${savedCar.make} ${savedCar.model} under ID ${savedCar.id}`,
-            savedCar.seller.location,
-            savedCar.id,
-          );
-
+          setLogRefreshKey((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error adding car:", err));
@@ -222,13 +202,7 @@ export default function App() {
         if (data.status === "success") {
           const savedCar = data.data.car;
           updateCarInStore(savedCar);
-          addLog(
-            "update",
-            `${savedCar.make} ${savedCar.model}`,
-            `CMS: Modified attributes/specifications of ${savedCar.make} ${savedCar.model}`,
-            savedCar.seller.location,
-            savedCar.id,
-          );
+          setLogRefreshKey((prev) => prev + 1);
 
           // Mirror update in detail modal if active
           if (selectedCar?.id === savedCar.id) {
@@ -281,12 +255,7 @@ export default function App() {
       .then((data) => {
         if (data.status === "success") {
           setSellers((prev) => [data.data.seller, ...prev]);
-          addLog(
-            "create",
-            newSeller.name,
-            `CMS: Registered new seller ${newSeller.name}`,
-            newSeller.location,
-          );
+          setLogRefreshKey((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error adding seller:", err));
@@ -312,12 +281,7 @@ export default function App() {
           setSellers((prev) =>
             prev.map((s) => (s.id === saved.id ? saved : s)),
           );
-          addLog(
-            "update",
-            saved.name,
-            `CMS: Updated seller profile for ${saved.name}`,
-            saved.location,
-          );
+          setLogRefreshKey((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error updating seller:", err));
@@ -340,12 +304,7 @@ export default function App() {
         .then((res) => {
           if (res.ok) {
             setSellers((prev) => prev.filter((s) => s.id !== id));
-            addLog(
-              "delete",
-              target.name,
-              `CMS: Removed seller ${target.name} from database pool`,
-              target.location,
-            );
+            setLogRefreshKey((prev) => prev + 1);
           }
         })
         .catch((err) => console.error("Error deleting seller:", err));
@@ -376,12 +335,7 @@ export default function App() {
           setSellers((prev) =>
             prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s)),
           );
-          addLog(
-            "update",
-            seller.name,
-            `CMS: Toggled seller status to ${newStatus}`,
-            seller.location,
-          );
+          setLogRefreshKey((prev) => prev + 1);
         }
       })
       .catch((err) => console.error("Error toggling seller status:", err));
@@ -518,7 +472,7 @@ export default function App() {
               <div className="space-y-8 animate-in fade-in duration-350">
                 <DashboardMetrics />
                 <div className="border-t border-zinc-200/60 pt-8 mt-8">
-                  <EventLogs logs={logs} onClearLogs={handleClearLogs} />
+                  <EventLogs logs={logs} />
                 </div>
               </div>
             ) : (

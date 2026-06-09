@@ -42,11 +42,10 @@ export interface Car {
 export interface ActivityLog {
   id: string;
   timestamp: string;
-  type: "view" | "enquiry" | "search" | "create" | "update" | "delete";
+  type: "view" | "enquiry" | "search" | "create" | "update" | "delete" | "login" | "logout";
   carId?: string;
   carName: string;
   message: string;
-  userLocation: string;
 }
 
 
