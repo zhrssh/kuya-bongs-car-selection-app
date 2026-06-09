@@ -12,7 +12,7 @@ import {
   Filler,
 } from 'chart.js';
 import { Car, DailyMetricData } from '../types';
-import { CarStatus } from '../enums';
+import { CarStatus } from '@repo/shared';
 import { TrendingUp, DollarSign, CarFront, MessageSquare, Archive } from 'lucide-react';
 
 // Register ChartJS modules

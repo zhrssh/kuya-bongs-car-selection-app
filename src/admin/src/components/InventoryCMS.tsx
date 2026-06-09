@@ -27,9 +27,10 @@ import {
   CarStatus,
   CarTransmission,
   CarTransmissionLabel,
-} from "../enums";
+} from "@repo/shared";
 import { useDebounce } from "../hooks/useDebounce";
-import { Car, FilterState, SellerContact, SortKey } from "../types";
+import { Car, SellerContact } from "../types";
+import { FilterState, SortKey } from "@repo/shared";
 
 interface InventoryCMSProps {
   refreshKey: number;

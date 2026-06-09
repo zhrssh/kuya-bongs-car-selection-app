@@ -4,7 +4,7 @@ import {
   CarFuelType,
   CarStatus,
   CarTransmission,
-} from "./enums";
+} from "@repo/shared";
 import { ActivityLog, Car, DailyMetricData } from "./types";
 
 export const INITIAL_CARS: Car[] = [

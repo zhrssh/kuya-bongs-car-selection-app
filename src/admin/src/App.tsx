@@ -19,7 +19,7 @@ import EventLogs from "./components/EventLogs";
 import InventoryCMS from "./components/InventoryCMS";
 import ListingDetailModal from "./components/ListingDetailModal";
 import SellersTab from "./components/SellersTab";
-import { CarStatus } from "./enums";
+import { CarStatus } from "@repo/shared";
 import {
   INITIAL_LOGS,
   INITIAL_METRICS,
