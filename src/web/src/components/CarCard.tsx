@@ -36,21 +36,21 @@ export const CarCard: React.FC<CarCardProps> = ({
   const getConditionColor = (cond: string) => {
     switch (cond) {
       case CarCondition.Excellent:
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        return 'bg-success-bg text-success-text border-success-border';
       case CarCondition.VeryGood:
         return 'bg-sky-50 text-sky-700 border-sky-100';
       default:
-        return 'bg-amber-50 text-amber-700 border-amber-100';
+        return 'bg-warning-bg text-warning border-warning-bg';
     }
   };
 
   return (
     <article
       id={`car-card-${car.id}`}
-      className="group bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col h-full"
+      className="group bg-bg-surface rounded-3xl border border-border overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col h-full"
     >
       {/* Image Area */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-slate-50">
+      <div className="relative aspect-[4/3] overflow-hidden bg-bg-raised">
         <img
           src={car.imageUrl}
           alt={`${car.year} ${car.make} ${car.model}`}
@@ -77,15 +77,15 @@ export const CarCard: React.FC<CarCardProps> = ({
             disabled={!isComparing && !canCompare}
             className={`pointer-events-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
               isComparing
-                ? 'bg-brand text-white border-brand-dark shadow-sm'
-                : 'bg-white/90 text-slate-700 border-slate-200 hover:bg-white disabled:opacity-40'
+                ? 'bg-brand text-text-on-brand border-brand-dark shadow-sm'
+                : 'bg-bg-surface/90 text-text-secondary-hover border-border hover:bg-bg-surface disabled:opacity-40'
             }`}
           >
             <div
               className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-all ${
                 isComparing
                   ? 'border-white bg-brand'
-                  : 'border-slate-400 bg-white'
+                  : 'border-text-faint bg-bg-surface'
               }`}
             >
               {isComparing && (
@@ -108,8 +108,8 @@ export const CarCard: React.FC<CarCardProps> = ({
         <div className="absolute bottom-3 left-3">
           <div className="flex gap-1.5">
             {car.year >= 2022 && (
-              <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider bg-slate-900/80 text-white font-bold px-2 py-1 rounded-full backdrop-blur-xs">
-                <Sparkles className="h-2.5 w-2.5 text-amber-400" />
+              <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider bg-bg-dark/80 text-white font-bold px-2 py-1 rounded-full backdrop-blur-xs">
+                <Sparkles className="h-2.5 w-2.5 text-warning" />
                 Recent
               </span>
             )}
@@ -122,47 +122,47 @@ export const CarCard: React.FC<CarCardProps> = ({
         {/* Title, Year, Make, Model */}
         <div>
           <div className="flex items-center justify-between gap-1 mb-1.5">
-            <span className="text-xs text-slate-400 font-semibold">{car.year}</span>
-            <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
+            <span className="text-xs text-text-faint font-semibold">{car.year}</span>
+            <span className="text-[10px] uppercase font-bold text-text-faint flex items-center gap-1">
               <MapPin className="h-3 w-3 flex-shrink-0" />
               {car.seller.location.split(',')[0]}
             </span>
           </div>
-          <h3 className="font-display font-semibold text-base text-slate-905 text-slate-900 line-clamp-1 group-hover:text-brand transition-colors">
+          <h3 className="font-display font-semibold text-base text-text-strong line-clamp-1 group-hover:text-brand transition-colors">
             {car.make} {car.model}
           </h3>
         </div>
 
         {/* Brief highlights grid */}
-        <div className="grid grid-cols-2 gap-y-2 border-t border-b border-slate-100 py-3 text-xs text-slate-650">
+        <div className="grid grid-cols-2 gap-y-2 border-t border-b border-bg-muted py-3 text-xs text-text-secondary">
           <div className="flex items-center gap-2">
-            <Milestone className="h-4 w-4 text-slate-400 flex-shrink-0" />
-            <span className="font-medium text-slate-600">{formattedMileage} km</span>
+            <Milestone className="h-4 w-4 text-text-faint flex-shrink-0" />
+            <span className="font-medium text-text-secondary">{formattedMileage} km</span>
           </div>
           <div className="flex items-center gap-2">
-            <Fuel className="h-4 w-4 text-slate-400 flex-shrink-0" />
-            <span className="font-medium text-slate-600 line-clamp-1">{CarFuelTypeLabel[car.fuelType] || car.fuelType}</span>
+            <Fuel className="h-4 w-4 text-text-faint flex-shrink-0" />
+            <span className="font-medium text-text-secondary line-clamp-1">{CarFuelTypeLabel[car.fuelType] || car.fuelType}</span>
           </div>
-          <div className="flex items-center gap-2 col-span-2 text-[11px] text-slate-500">
+          <div className="flex items-center gap-2 col-span-2 text-[11px] text-text-muted">
             <span className="font-normal">Transmission:</span>
-            <span className="font-semibold text-slate-700 ml-1">{CarTransmissionLabel[car.transmission] || car.transmission}</span>
+            <span className="font-semibold text-text-secondary-hover ml-1">{CarTransmissionLabel[car.transmission] || car.transmission}</span>
           </div>
         </div>
 
         {/* Pricing tag & Action buttons */}
         <div className="flex items-center justify-between mt-auto">
           <div>
-            <span className="text-[9px] text-slate-400 block font-bold">
+            <span className="text-[9px] text-text-faint block font-bold">
               Sale Price
             </span>
-            <span className="font-display font-semibold text-lg text-slate-950">
+            <span className="font-display font-semibold text-lg text-text-strong">
               {formattedPrice}
             </span>
           </div>
           
           <button
             onClick={() => onSelect(car)}
-            className="px-4 py-2 rounded-full bg-brand/10 hover:bg-brand text-brand hover:text-white text-xs font-semibold tracking-wide transition-all cursor-pointer focus:outline-none"
+            className="px-4 py-2 rounded-full bg-brand/10 hover:bg-brand text-brand hover:text-text-on-brand text-xs font-semibold tracking-wide transition-all cursor-pointer focus:outline-none"
           >
             Details
           </button>

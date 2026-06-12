@@ -37,25 +37,25 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
   const getConditionColor = (condition: string) => {
     switch (condition) {
       case CarCondition.Excellent:
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
+        return 'bg-success-bg text-success-text border-success-border/60';
       case CarCondition.VeryGood:
         return 'bg-brand/10 text-brand-dark border-brand/20';
       case CarCondition.Good:
       default:
-        return 'bg-amber-50 text-amber-700 border-amber-200/60';
+        return 'bg-warning-bg text-warning border-warning-bg';
     }
   };
 
   return (
     <>
       {/* Comparison Drawer / Sticky Compact Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 py-4 px-6 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-all animate-in slide-in-from-bottom duration-300">
+      <div className="fixed bottom-0 left-0 right-0 bg-bg-surface/95 backdrop-blur-md border-t border-border py-4 px-6 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-all animate-in slide-in-from-bottom duration-300">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="bg-brand text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-mono">
+            <span className="bg-brand text-text-on-brand rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-mono">
               {comparingCars.length}
             </span>
-            <h3 className="font-semibold text-sm text-slate-800">
+            <h3 className="font-semibold text-sm text-text-body">
               Vehicles selected to compare (Max 3)
             </h3>
           </div>
@@ -64,7 +64,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
             {comparingCars.map((car) => (
               <div
                 key={car.id}
-                className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full pl-2 pr-3 py-1 text-xs text-slate-700"
+                className="flex items-center gap-2 bg-bg-raised border border-border rounded-full pl-2 pr-3 py-1 text-xs text-text-secondary-hover"
               >
                 <img
                   src={car.imageUrl}
@@ -77,7 +77,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                 </span>
                 <button
                   onClick={() => onRemoveFromCompare(car)}
-                  className="text-slate-400 hover:text-slate-650 transition ml-1 cursor-pointer focus:outline-none"
+                  className="text-text-faint hover:text-text-secondary-hover transition ml-1 cursor-pointer focus:outline-none"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -87,7 +87,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
             {comparingCars.length >= 1 && (
               <button
                 onClick={() => setIsExpanded(true)}
-                className="px-4 py-1.5 bg-brand hover:bg-brand-dark text-white text-xs font-semibold rounded-full transition shadow-xs cursor-pointer focus:outline-none"
+                className="px-4 py-1.5 bg-brand hover:bg-brand-dark text-text-on-brand text-xs font-semibold rounded-full transition shadow-xs cursor-pointer focus:outline-none"
                 id="btn_open_compare_specs"
               >
                 Compare Side-by-Side
@@ -96,7 +96,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
 
             <button
               onClick={onClearCompare}
-              className="text-xs font-semibold text-slate-400 hover:text-slate-650 transition cursor-pointer focus:outline-none"
+              className="text-xs font-semibold text-text-faint hover:text-text-secondary-hover transition cursor-pointer focus:outline-none"
             >
               Clear All
             </button>
@@ -106,30 +106,30 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
 
       {/* Side-by-side comparison matrix modal */}
       {isExpanded && (
-        <div className="fixed inset-0 bg-zinc-950/45 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-white border border-zinc-200 text-zinc-800 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 relative flex flex-col gap-6 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-bg-dark/45 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-bg-surface border border-border text-text-body rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 relative flex flex-col gap-6 animate-in zoom-in-95 duration-200">
             <button
               onClick={() => setIsExpanded(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-650 transition Focus:outline-none cursor-pointer"
+              className="absolute top-4 right-4 text-text-faint hover:text-text-secondary-hover transition Focus:outline-none cursor-pointer"
             >
               <X className="h-6 w-6" />
             </button>
 
             <div>
-              <h3 className="text-xl font-display font-semibold text-zinc-900 tracking-tight flex items-center gap-2">
+              <h3 className="text-xl font-display font-semibold text-text-strong tracking-tight flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5 text-brand" />
                 Vehicle Specification Comparison
               </h3>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-text-faint mt-1 font-sans">
                 Direct feature matrix and specification breakdown for your selected vehicles
               </p>
             </div>
 
-            <div className="overflow-x-auto border border-zinc-100 rounded-xl">
+            <div className="overflow-x-auto border border-bg-muted rounded-xl">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-zinc-100 bg-slate-50/50">
-                    <th className="py-4 px-4 font-semibold text-slate-450 uppercase tracking-wider w-1/4">
+                  <tr className="border-b border-bg-muted bg-bg-raised/50">
+                    <th className="py-4 px-4 font-semibold text-text-faint uppercase tracking-wider w-1/4">
                       Specs Matrix
                     </th>
                     {comparingCars.map((car) => (
@@ -138,21 +138,21 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                           <img
                             src={car.imageUrl}
                             alt={car.model}
-                            className="w-48 h-32 object-cover rounded-xl border border-zinc-200 mx-auto mb-2"
+                            className="w-48 h-32 object-cover rounded-xl border border-border mx-auto mb-2"
                             referrerPolicy="no-referrer"
                           />
                           <button
                             onClick={() => onRemoveFromCompare(car)}
-                            className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white p-1 rounded-full shadow-sm transition-all focus:outline-none cursor-pointer"
+                            className="absolute -top-1.5 -right-1.5 bg-danger hover:bg-danger text-white p-1 rounded-full shadow-sm transition-all focus:outline-none cursor-pointer"
                             title="Remove from comparison"
                           >
                             <X className="h-3 w-3" />
                           </button>
                         </div>
-                        <div className="font-display font-semibold text-sm text-zinc-900">
+                        <div className="font-display font-semibold text-sm text-text-strong">
                           {car.make} {car.model}
                         </div>
-                        <div className="text-[10px] text-slate-400 font-medium font-mono mt-0.5">
+                        <div className="text-[10px] text-text-faint font-medium font-mono mt-0.5">
                           {car.year} Model
                         </div>
                       </th>
@@ -160,15 +160,15 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                     {/* Fill column if less than 3 cars compared to preserve 1/4 layout widths */}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <th key={`empty-col-${idx}`} className="py-4 px-4 w-1/4 text-center text-slate-300 font-normal italic border-l border-zinc-50">
+                        <th key={`empty-col-${idx}`} className="py-4 px-4 w-1/4 text-center text-text-faint font-normal italic border-l border-bg-raised">
                           Empty Slot
                         </th>
                       ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-105 divide-zinc-100">
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                <tbody className="divide-y divide-bg-muted divide-bg-muted">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Sale Price
                     </td>
                     {comparingCars.map((car) => (
@@ -181,29 +181,29 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-p-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic font-mono">
+                        <td key={`empty-p-${idx}`} className="py-3.5 px-4 text-center text-text-faint italic font-mono">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Mileage
                     </td>
                     {comparingCars.map((car) => (
-                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-705 font-mono">
+                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-text-secondary-hover font-mono">
                         {formatValue(car.mileage)} km
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-m-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic font-mono">
+                        <td key={`empty-m-${idx}`} className="py-3.5 px-4 text-center text-text-faint italic font-mono">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Condition
                     </td>
                     {comparingCars.map((car) => (
@@ -219,97 +219,97 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-c-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic">
+                        <td key={`empty-c-${idx}`} className="py-3.5 px-4 text-center text-text-faint italic">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Engine Powertrain
                     </td>
                     {comparingCars.map((car) => (
-                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
+                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-text-secondary-hover">
                         {car.engine}
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-e-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic">
+                        <td key={`empty-e-${idx}`} className="py-3.5 px-4 text-center text-text-faint italic">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Fuel Type
                     </td>
                     {comparingCars.map((car) => (
-                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
+                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-text-secondary-hover">
                         {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-f-${idx}`} className="py-3.5 px-4 text-center text-slate-355 text-slate-350 italic">
+                        <td key={`empty-f-${idx}`} className="py-3.5 px-4 text-center text-text-faint text-text-faint italic">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Transmission
                     </td>
                     {comparingCars.map((car) => (
-                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
+                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-text-secondary-hover">
                         {CarTransmissionLabel[car.transmission] || car.transmission}
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-t-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic">
+                        <td key={`empty-t-${idx}`} className="py-3.5 px-4 text-center text-text-faint italic">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Drivetrain
                     </td>
                     {comparingCars.map((car) => (
-                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-slate-700">
+                      <td key={car.id} className="py-3.5 px-4 text-center font-medium text-text-secondary-hover">
                         {car.drivetrain}
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-d-${idx}`} className="py-3.5 px-4 text-center text-slate-350 italic">
+                        <td key={`empty-d-${idx}`} className="py-3.5 px-4 text-center text-text-faint italic">
                           —
                         </td>
                       ))}
                   </tr>
                   {/* Action row */}
-                  <tr className="hover:bg-zinc-50/40 transition">
+                  <tr className="hover:bg-bg-raised/40 transition">
 
-                    <td className="py-3.5 px-4 font-semibold text-slate-500 text-[10px]">
+                    <td className="py-3.5 px-4 font-semibold text-text-muted text-[10px]">
                       Highlights & Amenities
                     </td>
                     {comparingCars.map((car) => (
                       <td key={car.id} className="py-3 px-4">
-                        <div className="flex justify-center text-[10px] text-slate-600 max-h-24 overflow-y-auto">
+                        <div className="flex justify-center text-[10px] text-text-secondary max-h-24 overflow-y-auto">
                             {car.features}
                         </div>
                       </td>
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-g-${idx}`} className="py-3 px-4 text-center text-slate-350 italic">
+                        <td key={`empty-g-${idx}`} className="py-3 px-4 text-center text-text-faint italic">
                           —
                         </td>
                       ))}
                   </tr>
-                  <tr className="hover:bg-zinc-50/40 transition">
-                    <td className="py-4 px-4 font-semibold text-slate-500 text-[10px]">
+                  <tr className="hover:bg-bg-raised/40 transition">
+                    <td className="py-4 px-4 font-semibold text-text-muted text-[10px]">
                       Action
                     </td>
                     {comparingCars.map((car) => (
@@ -319,7 +319,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                             setIsExpanded(false);
                             onSelectCar(car);
                           }}
-                          className="px-4 py-1.5 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-full transition-all cursor-pointer focus:outline-none shadow-xs"
+                          className="px-4 py-1.5 bg-brand hover:bg-brand-dark text-text-on-brand font-semibold text-xs rounded-full transition-all cursor-pointer focus:outline-none shadow-xs"
                         >
                           View Details
                         </button>
@@ -327,7 +327,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                     ))}
                     {comparingCars.length < 3 &&
                       Array.from({ length: 3 - comparingCars.length }).map((_, idx) => (
-                        <td key={`empty-a-${idx}`} className="py-4 px-4 text-center text-slate-300 italic">
+                        <td key={`empty-a-${idx}`} className="py-4 px-4 text-center text-text-faint italic">
                           Empty Slot
                         </td>
                       ))}
@@ -336,10 +336,10 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
               </table>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-zinc-100">
+            <div className="flex justify-end gap-3 pt-4 border-t border-bg-muted">
               <button
                 onClick={() => setIsExpanded(false)}
-                className="px-5 py-2 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-750 text-slate-805 text-zinc-700 text-xs font-semibold cursor-pointer transition focus:outline-none"
+                className="px-5 py-2 rounded-lg bg-bg-muted hover:bg-bg-hover text-text-secondary-hover text-text-body text-text-secondary-hover text-xs font-semibold cursor-pointer transition focus:outline-none"
               >
                 Close Comparison
               </button>

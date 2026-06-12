@@ -115,13 +115,13 @@ export default function InventoryCMS({
       <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
         {/* Search query input */}
         <div className="relative w-full lg:max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-faint" />
           <input
             type="text"
             placeholder="Search make, model, features..."
             value={filters.searchQuery}
             onChange={(e) => updateFilter("searchQuery", e.target.value)}
-            className="w-full bg-white border border-zinc-200 rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-850 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 font-sans transition-all"
+            className="w-full bg-bg-surface border border-border rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-850 placeholder-text-faint focus:outline-none focus:ring-1 focus:ring-border focus:border-border font-sans transition-all"
             id="search_query"
           />
         </div>
@@ -133,7 +133,7 @@ export default function InventoryCMS({
             className={`flex items-center gap-1.5 px-3 py-2 border rounded-lg text-xs font-semibold cursor-pointer transition ${
               isFilterSidebarOpen
                 ? "bg-brand/10 border-brand/20 text-brand-dark font-bold"
-                : "bg-white border-zinc-200 hover:bg-zinc-50 text-zinc-700"
+                : "bg-bg-surface border-border hover:bg-bg-raised text-text-secondary-hover"
             }`}
             id="toggle_filters_btn">
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -144,7 +144,7 @@ export default function InventoryCMS({
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer"
+            className="bg-bg-surface border border-border rounded-lg px-2.5 py-2 text-xs text-text-body font-semibold focus:outline-none focus:border-border cursor-pointer"
             id="catalog_sorter">
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
@@ -155,24 +155,24 @@ export default function InventoryCMS({
 
           <button
             onClick={handleOpenAdd}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-brand hover:bg-brand-dark text-text-on-brand rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans"
             id="btn_add_car">
-            <Plus className="w-3.5 h-3.5 text-white" />
+            <Plus className="w-3.5 h-3.5 text-text-on-brand" />
             Add Vehicle
           </button>
 
           {/* View Modes */}
-          <div className="flex items-center bg-zinc-100 border border-zinc-200/60 rounded-lg p-0.5">
+          <div className="flex items-center bg-bg-muted border border-border/60 rounded-lg p-0.5">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded-md transition ${viewMode === "grid" ? "bg-white text-zinc-900 shadow-xs border border-zinc-200/40" : "text-zinc-500 hover:text-zinc-900"}`}
+              className={`p-1.5 rounded-md transition ${viewMode === "grid" ? "bg-bg-surface text-text-strong shadow-xs border border-border/40" : "text-text-muted hover:text-text-strong"}`}
               title="Grid View"
               id="view_grid">
               <GridIcon className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode("table")}
-              className={`p-1.5 rounded-md transition ${viewMode === "table" ? "bg-white text-zinc-900 shadow-xs border border-zinc-200/40" : "text-zinc-500 hover:text-zinc-900"}`}
+              className={`p-1.5 rounded-md transition ${viewMode === "table" ? "bg-bg-surface text-text-strong shadow-xs border border-border/40" : "text-text-muted hover:text-text-strong"}`}
               title="Table View"
               id="view_table">
               <Table className="w-4 h-4" />
@@ -194,13 +194,13 @@ export default function InventoryCMS({
               : "lg:col-span-4 space-y-6"
           }>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Status Filter
             </label>
               <select
                 value={statusTab}
                 onChange={(e) => setStatusTab(e.target.value as CarStatus)}
-                className="w-full bg-white border border-zinc-200 rounded-lg px-2.5 py-2 text-xs text-zinc-800 font-semibold focus:outline-none focus:border-zinc-400 cursor-pointer">
+                className="w-full bg-bg-surface border border-border rounded-lg px-2.5 py-2 text-xs text-text-body font-semibold focus:outline-none focus:border-border cursor-pointer">
               <option value={CarStatus.Available}>Available</option>
               <option value={CarStatus.Sold}>Sold</option>
               <option value={CarStatus.Archived}>Archived</option>
@@ -211,7 +211,7 @@ export default function InventoryCMS({
           {isLoading && cars.length === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+                <div key={i} className="bg-bg-surface rounded-3xl border border-border overflow-hidden">
                   <Skeleton className="aspect-4/3 w-full rounded-none" />
                   <div className="p-4 space-y-3">
                     <Skeleton className="h-4 w-3/4" />
@@ -226,13 +226,13 @@ export default function InventoryCMS({
               ))}
             </div>
           ) : cars.length === 0 ? (
-            <div className="bg-white border border-zinc-200 p-12 text-center rounded-xl shadow-xs">
-              <p className="text-zinc-500 text-sm font-medium">
+            <div className="bg-bg-surface border border-border p-12 text-center rounded-xl shadow-xs">
+              <p className="text-text-muted text-sm font-medium">
                 No vehicles match your active filtering variables.
               </p>
               <button
                 onClick={() => resetFilters()}
-                className="mt-4 text-xs bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand-dark transition cursor-pointer font-medium"
+                className="mt-4 text-xs bg-brand text-text-on-brand px-4 py-2 rounded-lg hover:bg-brand-dark transition cursor-pointer font-medium"
                 id="reset_empty_state">
                 Clear Filters
               </button>

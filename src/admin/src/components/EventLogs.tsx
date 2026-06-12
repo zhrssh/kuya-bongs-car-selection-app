@@ -38,17 +38,17 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
   }, [logs, filterType, searchTerm]);
 
   return (
-    <div className="bg-white border border-zinc-200 rounded-xl shadow-xs overflow-hidden transition-all duration-200">
+    <div className="bg-bg-surface border border-border rounded-xl shadow-xs overflow-hidden transition-all duration-200">
       
       {/* Header element */}
-      <div className="border-b border-zinc-200 px-5 py-4 bg-zinc-50/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="border-b border-border px-5 py-4 bg-bg-raised/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         
         <div>
           <div className="flex items-center gap-2">
             <ClipboardList className="w-4.5 h-4.5 text-zinc-650" />
-            <span className="text-sm font-bold tracking-tight text-zinc-900 font-sans">System Audit &amp; Event Logs</span>
+            <span className="text-sm font-bold tracking-tight text-text-strong font-sans">System Audit &amp; Event Logs</span>
           </div>
-          <p className="text-[11.5px] text-zinc-500 mt-0.5 font-sans">
+          <p className="text-[11.5px] text-text-muted mt-0.5 font-sans">
             Real-time, organic records of administrative CMS adjustments and listing updates.
           </p>
         </div>
@@ -61,13 +61,13 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           
           {/* Quick Filter tabs */}
-          <div className="flex items-center gap-1 bg-zinc-100 p-0.5 rounded-lg border border-zinc-250/60 max-w-max">
+          <div className="flex items-center gap-1 bg-bg-muted p-0.5 rounded-lg border border-zinc-250/60 max-w-max">
             <button
               onClick={() => setFilterType('all')}
               className={`px-3 py-1 text-xs font-medium rounded-md transition cursor-pointer select-none ${
                 filterType === 'all'
-                  ? 'bg-white text-zinc-850 shadow-xs border border-zinc-200'
-                  : 'text-zinc-500 hover:text-zinc-800'
+                  ? 'bg-bg-surface text-zinc-850 shadow-xs border border-border'
+                  : 'text-text-muted hover:text-zinc-800'
               }`}
             >
               All Logs
@@ -76,8 +76,8 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
               onClick={() => setFilterType('cms')}
               className={`px-3 py-1 text-xs font-medium rounded-md transition cursor-pointer select-none ${
                 filterType === 'cms'
-                  ? 'bg-white text-zinc-850 shadow-xs border border-zinc-200'
-                  : 'text-zinc-500 hover:text-zinc-800'
+                  ? 'bg-bg-surface text-zinc-850 shadow-xs border border-border'
+                  : 'text-text-muted hover:text-zinc-800'
               }`}
             >
               CMS Actions
@@ -86,8 +86,8 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
               onClick={() => setFilterType('auth')}
               className={`px-3 py-1 text-xs font-medium rounded-md transition cursor-pointer select-none ${
                 filterType === 'auth'
-                  ? 'bg-white text-zinc-850 shadow-xs border border-zinc-200'
-                  : 'text-zinc-500 hover:text-zinc-800'
+                  ? 'bg-bg-surface text-zinc-850 shadow-xs border border-border'
+                  : 'text-text-muted hover:text-zinc-800'
               }`}
             >
               Authorization
@@ -96,22 +96,22 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
 
           {/* Search tool block */}
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-faint" />
             <input
               type="text"
               placeholder="Filter events..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-zinc-50 pl-8 pr-3 py-1.5 border border-zinc-200 rounded-lg text-xs placeholder-zinc-400 focus:outline-none focus:bg-white focus:border-zinc-350"
+              className="w-full bg-bg-raised pl-8 pr-3 py-1.5 border border-border rounded-lg text-xs placeholder-text-faint focus:outline-none focus:bg-bg-surface focus:border-border-hover"
             />
           </div>
 
         </div>
 
         {/* The Listing Element logs container */}
-        <div className="border border-zinc-200 rounded-xl overflow-hidden bg-zinc-50">
+        <div className="border border-border rounded-xl overflow-hidden bg-bg-raised">
           
-          <div className="bg-zinc-900 text-zinc-100 font-mono text-[11px] p-4 h-64 overflow-y-auto space-y-2.5 shadow-inner">
+          <div className="bg-bg-dark text-zinc-100 font-mono text-[11px] p-4 h-64 overflow-y-auto space-y-2.5 shadow-inner">
             
             {isLoading ? (
               <div className="h-full flex flex-col items-center justify-center gap-3 p-6">
@@ -121,7 +121,7 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
                 <Skeleton className="h-3 w-1/3" />
               </div>
             ) : filteredLogs.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-zinc-500 italic p-6 text-center">
+              <div className="h-full flex flex-col items-center justify-center text-text-muted italic p-6 text-center">
                 <Terminal className="w-8 h-8 text-zinc-700 mb-2.5 animate-pulse" />
                 <span>No event entries match your search criteria.</span>
                 <span className="text-[10px] text-zinc-650 mt-1 max-w-xs leading-normal">
@@ -142,7 +142,7 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
                   >
                     
                     {/* Timestamp signature */}
-                    <span className="text-zinc-500 font-bold select-none flex-shrink-0">
+                    <span className="text-text-muted font-bold select-none flex-shrink-0">
                       [{log.timestamp}]
                     </span>
 
@@ -167,7 +167,7 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
 
           </div>
 
-          <div className="bg-zinc-50 px-4 py-2 text-[10px] text-zinc-400 font-mono border-t border-zinc-200 flex items-center justify-between">
+          <div className="bg-bg-raised px-4 py-2 text-[10px] text-text-faint font-mono border-t border-border flex items-center justify-between">
             <span>Tracking logs matching filters: <b>{filteredLogs.length} entries</b></span>
             <span>Organic Stream Indicator: Active</span>
           </div>

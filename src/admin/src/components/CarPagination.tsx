@@ -10,21 +10,21 @@ export default function CarPagination() {
   if (pagination.total === 0) return null;
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-8 border-t border-zinc-200">
-      <div className="text-xs text-zinc-500 font-sans">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-8 border-t border-border">
+      <div className="text-xs text-text-muted font-sans">
         Showing{" "}
-        <span className="font-semibold text-zinc-800">
+        <span className="font-semibold text-text-body">
           {Math.min(
             (pagination.page - 1) * ITEMS_PER_PAGE + 1,
             pagination.total,
           )}
         </span>{" "}
         to{" "}
-        <span className="font-semibold text-zinc-800">
+        <span className="font-semibold text-text-body">
           {Math.min(pagination.page * ITEMS_PER_PAGE, pagination.total)}
         </span>{" "}
         of{" "}
-        <span className="font-bold text-zinc-900">
+        <span className="font-bold text-text-strong">
           {pagination.total}
         </span>{" "}
         vehicles
@@ -37,7 +37,7 @@ export default function CarPagination() {
               setCurrentPage(Math.max(1, pagination.page - 1))
             }
             disabled={pagination.page === 1}
-            className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
+            className="p-2 border border-border hover:border-border-hover rounded-lg bg-bg-surface text-zinc-650 hover:text-text-body disabled:opacity-40 disabled:hover:border-border disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
             id="btn_prev_page"
             title="Previous Page">
             <ChevronLeft className="w-4 h-4" />
@@ -54,8 +54,8 @@ export default function CarPagination() {
                 onClick={() => setCurrentPage(pg)}
                 className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
                   isSelected
-                    ? "bg-brand border-brand text-white shadow-xs font-bold"
-                    : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
+                    ? "bg-brand border-brand text-text-on-brand shadow-xs font-bold"
+                    : "bg-bg-surface border-border text-zinc-650 hover:bg-bg-raised"
                 }`}
                 id={`btn_page_${pg}`}>
                 {pg}
@@ -70,7 +70,7 @@ export default function CarPagination() {
               )
             }
             disabled={pagination.page === pagination.pages}
-            className="p-2 border border-zinc-200 hover:border-zinc-300 rounded-lg bg-white text-zinc-650 hover:text-zinc-800 disabled:opacity-40 disabled:hover:border-zinc-200 disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
+            className="p-2 border border-border hover:border-border-hover rounded-lg bg-bg-surface text-zinc-650 hover:text-text-body disabled:opacity-40 disabled:hover:border-border disabled:hover:text-zinc-650 cursor-pointer transition focus:outline-none flex items-center justify-center"
             id="btn_next_page"
             title="Next Page">
             <ChevronRight className="w-4 h-4" />

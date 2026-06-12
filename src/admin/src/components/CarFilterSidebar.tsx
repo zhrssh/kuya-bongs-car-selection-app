@@ -74,26 +74,26 @@ export default function CarFilterSidebar({
 
   return (
     <div className="lg:col-span-1">
-      <aside className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col gap-6 transition-all duration-300 shadow-[0_1px_4px_rgba(0,0,0,0.01)]">
+      <aside className="bg-bg-surface rounded-2xl border border-border p-6 flex flex-col gap-6 transition-all duration-300 shadow-[0_1px_4px_rgba(0,0,0,0.01)]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-slate-700" />
-            <h2 className="font-display font-semibold text-base text-slate-900">
+            <SlidersHorizontal className="h-4 w-4 text-text-secondary-hover" />
+            <h2 className="font-display font-semibold text-base text-text-strong">
               Filters
             </h2>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => resetFilters()}
-              className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-brand transition-colors focus:outline-none"
+              className="flex items-center gap-1.5 text-xs font-semibold text-text-muted hover:text-brand transition-colors focus:outline-none"
               title="Reset all filters">
               <RotateCcw className="h-3 w-3" />
               Clear All
             </button>
             <button
               onClick={onClose}
-              className="md:hidden text-slate-400 hover:text-slate-650 focus:outline-none">
+              className="md:hidden text-text-faint hover:text-zinc-650 focus:outline-none">
               <X className="h-5 w-5" />
             </button>
           </div>
@@ -103,7 +103,7 @@ export default function CarFilterSidebar({
         <div className="flex flex-col gap-5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1">
           {/* Keyword Search */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Keyword Search
             </label>
             <div className="relative">
@@ -114,21 +114,21 @@ export default function CarFilterSidebar({
                 onChange={(e) =>
                   handleChange("searchQuery", e.target.value)
                 }
-                className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
+                className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body"
               />
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-faint" />
             </div>
           </div>
 
           {/* Brand / Make */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Brand (Make)
             </label>
             <select
               value={filters.make}
               onChange={(e) => handleChange("make", e.target.value)}
-              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer">
+              className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer">
               <option value="">All Brands</option>
               {uniqueMakes.map((make) => (
                 <option key={make} value={make}>
@@ -140,14 +140,14 @@ export default function CarFilterSidebar({
 
           {/* Vehicle Model */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Model
             </label>
             <select
               value={filters.model}
               onChange={(e) => handleChange("model", e.target.value)}
               disabled={modelsForMake.length === 0}
-              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer disabled:opacity-50">
+              className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer disabled:opacity-50">
               <option value="">
                 {filters.make
                   ? `All ${filters.make} Models`
@@ -163,7 +163,7 @@ export default function CarFilterSidebar({
 
           {/* Vehicle Condition */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Vehicle Condition
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -183,7 +183,7 @@ export default function CarFilterSidebar({
                     className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                       isSelected
                         ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                        : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                     }`}>
                     {CarConditionLabel[cond]}
                   </button>
@@ -194,12 +194,12 @@ export default function CarFilterSidebar({
 
           {/* Price Range */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Price Range (₱)
             </label>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                <span className="text-[9px] text-text-faint font-bold uppercase tracking-wider block mb-1">
                   Min Price
                 </span>
                 <input
@@ -209,11 +209,11 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("priceMin", e.target.value)
                   }
-                  className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body"
                 />
               </div>
               <div>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                <span className="text-[9px] text-text-faint font-bold uppercase tracking-wider block mb-1">
                   Max Price
                 </span>
                 <input
@@ -223,7 +223,7 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("priceMax", e.target.value)
                   }
-                  className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body"
                 />
               </div>
             </div>
@@ -237,7 +237,7 @@ export default function CarFilterSidebar({
                   filters.priceMax === "1500000" &&
                   filters.priceMin === ""
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 Under ₱1.5M
               </button>
@@ -250,7 +250,7 @@ export default function CarFilterSidebar({
                   filters.priceMin === "1500000" &&
                   filters.priceMax === "3000000"
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 ₱1.5M - ₱3M
               </button>
@@ -261,7 +261,7 @@ export default function CarFilterSidebar({
                   filters.priceMin === "3000000" &&
                   filters.priceMax === ""
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 ₱3M+
               </button>
@@ -270,12 +270,12 @@ export default function CarFilterSidebar({
 
           {/* Year Range */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Model Year Range
             </label>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                <span className="text-[9px] text-text-faint font-bold uppercase tracking-wider block mb-1">
                   Min Year
                 </span>
                 <input
@@ -285,11 +285,11 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("yearMin", e.target.value)
                   }
-                  className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-bg-raised border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body"
                 />
               </div>
               <div>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block mb-1">
+                <span className="text-[9px] text-text-faint font-bold uppercase tracking-wider block mb-1">
                   Max Year
                 </span>
                 <input
@@ -299,7 +299,7 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("yearMax", e.target.value)
                   }
-                  className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-bg-raised border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body"
                 />
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "2024" && filters.yearMax === ""
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 2024 & Newer
               </button>
@@ -322,7 +322,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "2020" && filters.yearMax === "2024"
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 2020 - 2024
               </button>
@@ -332,7 +332,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "2015" && filters.yearMax === "2019"
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 2015 - 2019
               </button>
@@ -342,7 +342,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "" && filters.yearMax === "2015"
                     ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                    : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                 }`}>
                 2015 & Older
               </button>
@@ -351,7 +351,7 @@ export default function CarFilterSidebar({
 
           {/* Body Type */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Body Type
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -366,7 +366,7 @@ export default function CarFilterSidebar({
                     className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                       isSelected
                         ? "border-brand bg-brand/10 text-brand-dark font-bold"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                        : "border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:bg-bg-raised"
                     }`}>
                     {CarBodyTypeLabel[type] || type}
                   </button>
@@ -377,13 +377,13 @@ export default function CarFilterSidebar({
 
           {/* Fuel Type */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Fuel Type
             </label>
             <select
               value={filters.fuelType}
               onChange={(e) => handleChange("fuelType", e.target.value)}
-              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer">
+              className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer">
               <option value="">All Fuel Types</option>
               {uniqueFuelTypes.map((fuel) => (
                 <option key={fuel} value={fuel}>
@@ -395,7 +395,7 @@ export default function CarFilterSidebar({
 
           {/* Transmission */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Transmission
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -413,7 +413,7 @@ export default function CarFilterSidebar({
                     className={`text-xs py-2 rounded-full border font-medium transition-all cursor-pointer ${
                       isSelected
                         ? "border-brand bg-brand/10 text-brand-dark font-semibold"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                        : "border-border bg-bg-surface text-text-secondary hover:border-border-hover"
                     }`}>
                     {CarTransmissionLabel[trans]}
                   </button>

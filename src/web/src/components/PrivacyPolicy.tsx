@@ -12,16 +12,16 @@ export default function PrivacyPolicy() {
         Back to Browse
       </Link>
 
-      <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-900 mb-2">
+      <h1 className="font-display font-bold text-3xl sm:text-4xl text-text-strong mb-2">
         Privacy Policy
       </h1>
-      <p className="text-sm text-slate-500 mb-8">
+      <p className="text-sm text-text-muted mb-8">
         Last updated: {new Date().toLocaleDateString('en-PH', {year: 'numeric', month: 'long', day: 'numeric'})}
       </p>
 
-      <div className="space-y-8 text-sm text-slate-700 leading-relaxed">
+      <div className="space-y-8 text-sm text-text-secondary-hover leading-relaxed">
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Data Privacy Notice
           </h2>
           <p>
@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Information We Collect
           </h2>
           <p className="mb-2">
@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             How We Use Your Information
           </h2>
           <p className="mb-2">Your personal data is used solely for the following purposes:</p>
@@ -73,7 +73,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Data Sharing and Disclosure
           </h2>
           <p>
@@ -85,7 +85,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Data Storage and Retention
           </h2>
           <p>
@@ -96,7 +96,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Your Rights Under RA 10173
           </h2>
           <p className="mb-2">
@@ -128,7 +128,7 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Consent
           </h2>
           <p>
@@ -141,21 +141,21 @@ export default function PrivacyPolicy() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Contact Information
           </h2>
           <p className="mb-2">
             If you have any questions, concerns, or requests regarding your personal data or
             this Privacy Policy, you may contact us at:
           </p>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm">
-            <p className="font-semibold text-slate-900">Kuya Bong's Car Selection</p>
+          <div className="bg-bg-raised border border-border rounded-xl p-4 text-sm">
+            <p className="font-semibold text-text-strong">Kuya Bong's Car Selection</p>
             <p>Email: privacy@kuyabongscars.com</p>
           </div>
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Changes to This Policy
           </h2>
           <p>

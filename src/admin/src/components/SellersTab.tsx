@@ -123,12 +123,12 @@ export default function SellersTab({
   return (
     <div className="space-y-8 animate-in fade-in duration-300 font-sans">
       {/* Upper Module Heading */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-200/60 pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/60 pb-5">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-zinc-900 font-sans">
+          <h2 className="text-xl font-bold tracking-tight text-text-strong font-sans">
             Registered Direct Sellers
           </h2>
-          <p className="text-xs text-zinc-500 font-mono tracking-tight mt-1">
+          <p className="text-xs text-text-muted font-mono tracking-tight mt-1">
             Browse corporate account representatives, assignable client owners,
             and broker profiles.
           </p>
@@ -145,7 +145,7 @@ export default function SellersTab({
               setFormError("");
               setIsFormOpen(true);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-dark active:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition focus:outline-none self-start md:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-dark active:bg-brand-dark text-text-on-brand rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition focus:outline-none self-start md:self-auto"
             id="btn_add_seller_trigger">
             <Plus className="w-4 h-4" />
             <span>Register New Agent</span>
@@ -157,7 +157,7 @@ export default function SellersTab({
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white border border-zinc-200/80 p-5 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+            <div key={i} className="bg-bg-surface border border-border/80 p-5 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
               <div className="space-y-3">
                 <Skeleton className="h-3 w-24" />
                 <Skeleton className="h-7 w-12" />
@@ -167,12 +167,12 @@ export default function SellersTab({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+          <div className="bg-bg-surface border border-border/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
             <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-text-faint font-mono tracking-wider block">
                 Total Active Agents
               </span>
-              <span className="text-2xl font-bold text-zinc-900 font-sans">
+              <span className="text-2xl font-bold text-text-strong font-sans">
                 {totalSellers}
               </span>
             </div>
@@ -181,31 +181,31 @@ export default function SellersTab({
             </div>
           </div>
 
-          <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+          <div className="bg-bg-surface border border-border/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
             <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-text-faint font-mono tracking-wider block">
                 Active Status
               </span>
-              <span className="text-2xl font-bold text-emerald-600 font-sans">
+              <span className="text-2xl font-bold text-success font-sans">
                 {activeSellersCount}
               </span>
             </div>
-            <div className="bg-emerald-50 text-emerald-600 p-3 rounded-xl border border-emerald-100">
-              <CheckCircle className="w-5 h-5 text-emerald-600" />
+            <div className="bg-success-bg text-success p-3 rounded-xl border border-success-border">
+              <CheckCircle className="w-5 h-5 text-success" />
             </div>
           </div>
 
-          <div className="bg-white border border-zinc-200/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+          <div className="bg-bg-surface border border-border/80 p-5 rounded-2xl flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
             <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 font-mono tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-text-faint font-mono tracking-wider block">
                 Inactive Status
               </span>
-              <span className="text-2xl font-bold text-rose-600 font-sans">
+              <span className="text-2xl font-bold text-danger font-sans">
                 {inactiveSellersCount}
               </span>
             </div>
-            <div className="bg-rose-50 text-rose-600 p-3 rounded-xl border border-rose-100">
-              <XCircle className="w-5 h-5 text-rose-600" />
+            <div className="bg-danger-bg text-danger p-3 rounded-xl border border-danger-border">
+              <XCircle className="w-5 h-5 text-danger" />
             </div>
           </div>
         </div>
@@ -214,28 +214,28 @@ export default function SellersTab({
       {/* Main Grid: Left is Search & List, Right is Add Form if Open */}
       <div className="flex flex-col gap-6">
         {/* Search Bar & Stats header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-zinc-200/80 p-4 rounded-xl shadow-xs">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-bg-surface border border-border/80 p-4 rounded-xl shadow-xs">
           <div className="relative w-full sm:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-faint w-4 h-4" />
             <input
               type="text"
               placeholder="Search by agent name, email, or office territory..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-lg pl-9 pr-4 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-zinc-305 font-sans transition-all"
+              className="w-full bg-bg-raised border border-border rounded-lg pl-9 pr-4 py-1.5 text-xs text-text-body placeholder-text-faint focus:outline-none focus:border-border-hover font-sans transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-650">
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-faint hover:text-zinc-650">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          <div className="text-[11px] text-zinc-500 font-mono tracking-tight shrink-0">
+          <div className="text-[11px] text-text-muted font-mono tracking-tight shrink-0">
             Found{" "}
-            <span className="font-bold text-zinc-800">
+            <span className="font-bold text-text-body">
               {filteredSellers.length}
             </span>{" "}
             corresponding agent accounts
@@ -246,7 +246,7 @@ export default function SellersTab({
         {isLoading && sellers.length === 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white border border-zinc-205/90 rounded-2xl overflow-hidden">
+              <div key={i} className="bg-bg-surface border border-zinc-205/90 rounded-2xl overflow-hidden">
                 <div className="p-5 space-y-4">
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
@@ -256,19 +256,19 @@ export default function SellersTab({
                   </div>
                   <Skeleton className="h-3 w-1/3" />
                 </div>
-                <div className="bg-zinc-50 px-5 py-3 border-t border-zinc-200/70">
+                <div className="bg-bg-raised px-5 py-3 border-t border-border/70">
                   <Skeleton className="h-3 w-24" />
                 </div>
               </div>
             ))}
           </div>
         ) : filteredSellers.length === 0 ? (
-          <div className="bg-white border border-zinc-200 rounded-2xl p-12 text-center max-w-lg mx-auto w-full my-4">
-            <Users className="w-10 h-10 text-zinc-400 mx-auto mb-3" />
+          <div className="bg-bg-surface border border-border rounded-2xl p-12 text-center max-w-lg mx-auto w-full my-4">
+            <Users className="w-10 h-10 text-text-faint mx-auto mb-3" />
             <h4 className="text-sm font-bold text-zinc-850">
               No Agents Match Your Search
             </h4>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-text-muted mt-1">
               Refine your text parameters or try looking up another agent.
             </p>
           </div>
@@ -278,16 +278,16 @@ export default function SellersTab({
               return (
                 <div
                   key={index}
-                  className="bg-white border border-zinc-205/90 hover:border-zinc-300 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between"
+                  className="bg-bg-surface border border-zinc-205/90 hover:border-border-hover rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)] hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between"
                   id={`seller_card_${index}`}>
                   <div className="p-5 space-y-4">
                     {/* Seller Visual Identification - Simple, clean, no image or placeholder circle */}
                     <div>
-                      <h4 className="font-bold text-sm text-zinc-900 font-sans leading-tight">
+                      <h4 className="font-bold text-sm text-text-strong font-sans leading-tight">
                         {seller.name}
                       </h4>
                       <span className="flex items-center gap-1 text-[10px] text-zinc-450 font-mono mt-1.5 leading-none">
-                        <MapPin className="h-3 w-3 text-zinc-400" />
+                        <MapPin className="h-3 w-3 text-text-faint" />
                         {seller.location}
                       </span>
                     </div>
@@ -295,13 +295,13 @@ export default function SellersTab({
                     {/* Contact details */}
                     <div className="space-y-2 border-t border-dashed border-zinc-150 pt-3 text-xs leading-5">
                       <div className="flex items-center gap-2 text-zinc-650">
-                        <Phone className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <Phone className="w-3.5 h-3.5 text-text-faint shrink-0" />
                         <span className="font-mono select-all text-[11px]">
                           {seller.phone}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-zinc-650">
-                        <Mail className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <Mail className="w-3.5 h-3.5 text-text-faint shrink-0" />
                         <span className="select-all text-[11px] line-clamp-1">
                           {seller.email}
                         </span>
@@ -311,10 +311,10 @@ export default function SellersTab({
                     {/* Managed Stock Count */}
                     <div className="pt-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider font-mono">
+                        <span className="text-[10px] font-bold text-text-faint uppercase tracking-wider font-mono">
                           Managed Stock ({seller.stock ?? 0})
                         </span>
-                        <span className="text-[10px] text-zinc-400 font-semibold font-mono">
+                        <span className="text-[10px] text-text-faint font-semibold font-mono">
                           Live Active
                         </span>
                       </div>
@@ -322,9 +322,9 @@ export default function SellersTab({
                   </div>
 
                   {/* Toggleable Seller Status "Active" or "Inactive" */}
-                  <div className="bg-zinc-50 px-5 py-3 border-t border-zinc-200/70 text-[10px] flex items-center justify-between">
+                  <div className="bg-bg-raised px-5 py-3 border-t border-border/70 text-[10px] flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <span className="font-mono text-zinc-400 font-semibold uppercase tracking-wider">
+                      <span className="font-mono text-text-faint font-semibold uppercase tracking-wider">
                         Seller Status
                       </span>
                       {isAdmin && (
@@ -339,14 +339,14 @@ export default function SellersTab({
                               setFormError("");
                               setIsFormOpen(true);
                             }}
-                            className="p-1.5 rounded-md text-zinc-400 hover:text-brand hover:bg-brand/10 transition cursor-pointer"
+                            className="p-1.5 rounded-md text-text-faint hover:text-brand hover:bg-brand/10 transition cursor-pointer"
                             title="Edit seller"
                             id={`btn_edit_seller_${index}`}>
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => deleteSeller(seller.id)}
-                            className="p-1.5 rounded-md text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                            className="p-1.5 rounded-md text-text-faint hover:text-danger hover:bg-danger-bg transition cursor-pointer"
                             title="Delete seller"
                             id={`btn_delete_seller_${index}`}>
                             <Trash2 className="w-3.5 h-3.5" />
@@ -359,13 +359,13 @@ export default function SellersTab({
                       onClick={() => toggleStatus(seller.id)}
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase transition cursor-pointer ${
                         seller.status === "inactive"
-                          ? "bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100"
-                          : "bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                          ? "bg-danger-bg border border-danger-border text-danger-text hover:bg-danger-hover"
+                          : "bg-success-bg border border-success-border text-success-text hover:bg-success-bg"
                       }`}
                       id={`btn_toggle_status_${index}`}
                       title="Click to toggle status">
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${seller.status === "inactive" ? "bg-rose-500" : "bg-emerald-500"}`}></span>
+                        className={`w-1.5 h-1.5 rounded-full ${seller.status === "inactive" ? "bg-danger" : "bg-success"}`}></span>
                       {seller.status || "Active"}
                     </button>
                   </div>
@@ -381,7 +381,7 @@ export default function SellersTab({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
+          className="fixed inset-0 z-50 overflow-y-auto bg-bg-dark/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
           {/* Background overlay click */}
           <div
             className="absolute inset-0 cursor-default"
@@ -392,7 +392,7 @@ export default function SellersTab({
           />
 
           {/* Form Content Side Drawer */}
-          <div className="relative w-full max-w-md bg-white min-h-screen p-6 md:p-8 flex flex-col justify-between shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-250 z-10">
+          <div className="relative w-full max-w-md bg-bg-surface min-h-screen p-6 md:p-8 flex flex-col justify-between shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-250 z-10">
             <div className="space-y-6">
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-zinc-150">
@@ -416,7 +416,7 @@ export default function SellersTab({
                     setEditingSeller(null);
                     setIsFormOpen(false);
                   }}
-                  className="p-1 px-2.5 rounded hover:bg-zinc-100 text-zinc-500 hover:text-zinc-700 transition font-bold"
+                  className="p-1 px-2.5 rounded hover:bg-bg-muted text-text-muted hover:text-text-secondary-hover transition font-bold"
                   title="Close form">
                   <X className="w-4 h-4" />
                 </button>
@@ -424,7 +424,7 @@ export default function SellersTab({
 
               {/* Form errors */}
               {formError && (
-                <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs text-rose-800 font-medium">
+                <div className="bg-danger-bg border border-danger-border rounded-xl p-3 text-xs text-danger-text font-medium">
                   {formError}
                 </div>
               )}
@@ -434,7 +434,7 @@ export default function SellersTab({
                 onSubmit={handleSubmit}
                 className="space-y-4 font-sans text-xs">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-zinc-700 block">
+                  <label className="text-xs font-semibold text-text-secondary-hover block">
                     Agent Full Name *
                   </label>
                   <input
@@ -443,13 +443,13 @@ export default function SellersTab({
                     placeholder="e.g. Rachel Adams"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-200"
+                    className="w-full bg-bg-surface border border-border focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-text-faint focus:outline-none focus:ring-1 focus:ring-border"
                     id="input_seller_name"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-zinc-700 block">
+                  <label className="text-xs font-semibold text-text-secondary-hover block">
                     Cell Phone Mobile Number *
                   </label>
                   <input
@@ -458,13 +458,13 @@ export default function SellersTab({
                     placeholder="e.g. (415) 555-0190"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-200 font-mono"
+                    className="w-full bg-bg-surface border border-border focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-text-faint focus:outline-none focus:ring-1 focus:ring-border font-mono"
                     id="input_seller_phone"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-zinc-700 block">
+                  <label className="text-xs font-semibold text-text-secondary-hover block">
                     Professional Business Email *
                   </label>
                   <input
@@ -473,13 +473,13 @@ export default function SellersTab({
                     placeholder="e.g. rachel.a@autodrive.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-200 font-mono"
+                    className="w-full bg-bg-surface border border-border focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-text-faint focus:outline-none focus:ring-1 focus:ring-border font-mono"
                     id="input_seller_email"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-zinc-700 block">
+                  <label className="text-xs font-semibold text-text-secondary-hover block">
                     Territory Location / Office *
                   </label>
                   <input
@@ -488,7 +488,7 @@ export default function SellersTab({
                     placeholder="e.g. Los Angeles, CA"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-200"
+                    className="w-full bg-bg-surface border border-border focus:border-zinc-350 rounded px-3 py-2 text-xs text-zinc-805 placeholder-text-faint focus:outline-none focus:ring-1 focus:ring-border"
                     id="input_seller_location"
                   />
                 </div>
@@ -500,19 +500,19 @@ export default function SellersTab({
                       setEditingSeller(null);
                       setIsFormOpen(false);
                     }}
-                    className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-205/50 rounded-lg text-xs text-zinc-700 font-semibold cursor-pointer transition">
+                    className="px-4 py-2 bg-bg-muted hover:bg-bg-hover border border-zinc-205/50 rounded-lg text-xs text-text-secondary-hover font-semibold cursor-pointer transition">
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition">
+                    className="px-5 py-2 bg-brand hover:bg-brand-dark text-text-on-brand rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition">
                     {editingSeller ? "Save Changes" : "Register Agent"}
                   </button>
                 </div>
               </form>
             </div>
 
-            <div className="text-[10px] text-zinc-400 text-center font-mono pt-6 border-t border-zinc-100">
+            <div className="text-[10px] text-text-faint text-center font-mono pt-6 border-t border-border">
               Registered agents are immediately assignable using the car
               inventory form.
             </div>

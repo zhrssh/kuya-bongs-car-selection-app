@@ -43,10 +43,10 @@ export default function DashboardMetrics() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white border border-zinc-200/80 p-5 rounded-xl animate-pulse">
-            <div className="h-4 bg-zinc-200 rounded w-24 mb-3" />
-            <div className="h-8 bg-zinc-200 rounded w-16 mb-2" />
-            <div className="h-3 bg-zinc-200 rounded w-32" />
+          <div key={i} className="bg-bg-surface border border-border/80 p-5 rounded-xl animate-pulse">
+            <div className="h-4 bg-bg-hover rounded w-24 mb-3" />
+            <div className="h-8 bg-bg-hover rounded w-16 mb-2" />
+            <div className="h-3 bg-bg-hover rounded w-32" />
           </div>
         ))}
       </div>
@@ -55,9 +55,9 @@ export default function DashboardMetrics() {
 
   if (error && !metrics) {
     return (
-      <div className="bg-rose-50 border border-rose-200 p-5 rounded-xl text-center">
-        <p className="text-rose-600 text-sm">Failed to load metrics</p>
-        <button onClick={fetchMetrics} className="mt-2 text-xs text-rose-500 underline cursor-pointer">
+      <div className="bg-danger-bg border border-danger-border p-5 rounded-xl text-center">
+        <p className="text-danger text-sm">Failed to load metrics</p>
+        <button onClick={fetchMetrics} className="mt-2 text-xs text-danger underline cursor-pointer">
           Retry
         </button>
       </div>
@@ -76,10 +76,10 @@ export default function DashboardMetrics() {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-zinc-700">Dashboard Metrics</h2>
+        <h2 className="text-sm font-semibold text-text-secondary-hover">Dashboard Metrics</h2>
         <button
           onClick={fetchMetrics}
-          className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-800 transition cursor-pointer"
+          className="flex items-center gap-1 text-xs text-text-muted hover:text-text-body transition cursor-pointer"
           title="Refresh metrics"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -89,11 +89,11 @@ export default function DashboardMetrics() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
         {/* KPI 1: Active Listings */}
-        <div className="bg-white border border-zinc-200/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
+        <div className="bg-bg-surface border border-border/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider font-mono">Available Stock</span>
-            <div className="text-2xl font-semibold text-zinc-900 tracking-tight">{stats.availableCars}</div>
-            <p className="text-[11px] text-zinc-500">Live vehicles on catalog</p>
+            <span className="text-[10px] uppercase font-semibold text-text-faint tracking-wider font-mono">Available Stock</span>
+            <div className="text-2xl font-semibold text-text-strong tracking-tight">{stats.availableCars}</div>
+            <p className="text-[11px] text-text-muted">Live vehicles on catalog</p>
           </div>
           <div className="bg-brand/10 p-2.5 rounded-lg text-brand border border-brand/15 shadow-2xs">
             <CarFront className="w-5 h-5 text-brand" />
@@ -101,29 +101,29 @@ export default function DashboardMetrics() {
         </div>
 
         {/* KPI 2: Total Sold / Archived */}
-        <div className="bg-white border border-zinc-200/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
+        <div className="bg-bg-surface border border-border/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider font-mono">Sold &amp; Archived</span>
+            <span className="text-[10px] uppercase font-semibold text-text-faint tracking-wider font-mono">Sold &amp; Archived</span>
             <div className="text-xl font-semibold text-zinc-950 tracking-tight font-mono">
-              <span className="text-emerald-600 font-bold">{stats.soldCars}</span> <span className="text-zinc-400 text-xs font-normal">sold</span>
-              <span className="text-zinc-300 mx-1.5">•</span>
-              <span className="text-zinc-600 font-bold">{stats.archivedCars}</span> <span className="text-zinc-400 text-xs font-normal">arch</span>
+              <span className="text-success font-bold">{stats.soldCars}</span> <span className="text-text-faint text-xs font-normal">sold</span>
+              <span className="text-zinc-300 mx-1.5">&bull;</span>
+              <span className="text-text-secondary font-bold">{stats.archivedCars}</span> <span className="text-text-faint text-xs font-normal">arch</span>
             </div>
-            <p className="text-[11px] text-zinc-500">Completed cycles</p>
+            <p className="text-[11px] text-text-muted">Completed cycles</p>
           </div>
-          <div className="bg-zinc-50 p-2.5 rounded-lg text-zinc-700 border border-zinc-200 shadow-2xs">
+          <div className="bg-bg-raised p-2.5 rounded-lg text-text-secondary-hover border border-border shadow-2xs">
             <Archive className="w-5 h-5 text-zinc-650" />
           </div>
         </div>
 
         {/* KPI 3: Total Valuation / Avg Price in PHP (₱) */}
-        <div className="bg-white border border-zinc-200/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
+        <div className="bg-bg-surface border border-border/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider font-mono">Portfolio Value</span>
+            <span className="text-[10px] uppercase font-semibold text-text-faint tracking-wider font-mono">Portfolio Value</span>
             <div className="text-2xl font-semibold text-brand tracking-tight font-mono">
               ₱{(stats.totalValue / 1000).toFixed(1)}k
             </div>
-            <p className="text-[11px] text-zinc-500 font-mono">Avg: ₱{Math.round(stats.avgPrice).toLocaleString()}</p>
+            <p className="text-[11px] text-text-muted font-mono">Avg: ₱{Math.round(stats.avgPrice).toLocaleString()}</p>
           </div>
           <div className="bg-brand/10 p-2.5 rounded-lg text-brand border border-brand/15 shadow-2xs">
             <DollarSign className="w-5 h-5 text-brand" />

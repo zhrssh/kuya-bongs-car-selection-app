@@ -200,11 +200,11 @@ export default function CarFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-zinc-950/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-      <div className="bg-white border border-zinc-200 text-zinc-800 rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl p-6 relative flex flex-col justify-between space-y-6">
+    <div className="fixed inset-0 bg-bg-dark/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+      <div className="bg-bg-surface border border-border text-text-body rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl p-6 relative flex flex-col justify-between space-y-6">
         {/* Form Header */}
         <div>
-          <h3 className="text-lg font-bold text-zinc-900 font-sans tracking-tight flex items-center gap-2">
+          <h3 className="text-lg font-bold text-text-strong font-sans tracking-tight flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-zinc-650" />
             {car
               ? "Update Car Listing CMS"
@@ -219,7 +219,7 @@ export default function CarFormModal({
         {/* Form Fields body */}
         <form onSubmit={handleFormSubmit} className="space-y-4">
           {formError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-mono">
+            <div className="p-3 bg-danger-bg border border-danger-border text-danger-text rounded-lg text-xs font-mono">
               {formError}
             </div>
           )}
@@ -237,7 +237,7 @@ export default function CarFormModal({
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, make: e.target.value }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 placeholder-zinc-450 focus:outline-none focus:ring-1 focus:ring-zinc-300 focus:border-zinc-300 font-mono"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body placeholder-zinc-450 focus:outline-none focus:ring-1 focus:ring-border-hover focus:border-border-hover font-mono"
               />
             </div>
             <div className="space-y-1">
@@ -252,7 +252,7 @@ export default function CarFormModal({
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, model: e.target.value }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 placeholder-zinc-455 focus:outline-none focus:ring-1 focus:ring-zinc-300 focus:border-zinc-300 font-mono"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body placeholder-zinc-455 focus:outline-none focus:ring-1 focus:ring-border-hover focus:border-border-hover font-mono"
               />
             </div>
           </div>{" "}
@@ -273,7 +273,7 @@ export default function CarFormModal({
                     year: Number(e.target.value),
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:border-zinc-300"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none focus:border-border-hover"
               />
             </div>
             <div className="space-y-1">
@@ -292,7 +292,7 @@ export default function CarFormModal({
                     price: Number(e.target.value),
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:border-zinc-300 font-mono"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none focus:border-border-hover font-mono"
               />
             </div>
             <div className="space-y-1">
@@ -311,14 +311,14 @@ export default function CarFormModal({
                     mileage: Number(e.target.value),
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:border-zinc-300 font-mono"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none focus:border-border-hover font-mono"
               />
             </div>
           </div>
           {/* Categorization elements */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-zinc-500">
+              <label className="text-xs font-medium text-text-muted">
                 Body Type
               </label>
               <select
@@ -329,7 +329,7 @@ export default function CarFormModal({
                     bodyType: e.target.value as any,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none">
                 <option value={CarBodyType.Sedan}>
                   {CarBodyTypeLabel[CarBodyType.Sedan]}
                 </option>
@@ -352,7 +352,7 @@ export default function CarFormModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-zinc-500">
+              <label className="text-xs font-medium text-text-muted">
                 Fuel Type
               </label>
               <select
@@ -363,7 +363,7 @@ export default function CarFormModal({
                     fuelType: e.target.value as any,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none">
                 <option value={CarFuelType.Gasoline}>
                   {CarFuelTypeLabel[CarFuelType.Gasoline]}
                 </option>
@@ -380,7 +380,7 @@ export default function CarFormModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-zinc-500">
+              <label className="text-xs font-medium text-text-muted">
                 Transmission
               </label>
               <select
@@ -391,7 +391,7 @@ export default function CarFormModal({
                     transmission: e.target.value as any,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none">
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none">
                 <option value={CarTransmission.Automatic}>
                   {CarTransmissionLabel[CarTransmission.Automatic]}
                 </option>
@@ -402,7 +402,7 @@ export default function CarFormModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-zinc-500">
+              <label className="text-xs font-medium text-text-muted">
                 Condition
               </label>
               <select
@@ -413,7 +413,7 @@ export default function CarFormModal({
                     condition: e.target.value as any,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-205 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none">
+                className="w-full bg-bg-raised border border-zinc-205 rounded px-3 py-2 text-sm text-text-body font-semibold focus:outline-none">
                 <option value={CarCondition.Excellent}>
                   {CarConditionLabel[CarCondition.Excellent]}
                 </option>
@@ -438,7 +438,7 @@ export default function CarFormModal({
                     status: e.target.value as any,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none focus:border-brand">
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body font-semibold focus:outline-none focus:border-brand">
                 <option value={CarStatus.Available}>Available</option>
                 <option value={CarStatus.Sold}>Sold</option>
                 <option value={CarStatus.Archived}>Archived</option>
@@ -462,7 +462,7 @@ export default function CarFormModal({
                     exteriorColor: e.target.value,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-zinc-300"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body placeholder-text-faint focus:outline-none focus:border-border-hover"
               />
             </div>{" "}
             <div className="space-y-1">
@@ -479,7 +479,7 @@ export default function CarFormModal({
                     interiorColor: e.target.value,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:border-zinc-300 placeholder-zinc-400"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none focus:border-border-hover placeholder-text-faint"
               />
             </div>
             <div className="space-y-1">
@@ -493,7 +493,7 @@ export default function CarFormModal({
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, engine: e.target.value }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:border-zinc-300 placeholder-zinc-400"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none focus:border-border-hover placeholder-text-faint"
               />
             </div>
             <div className="space-y-1">
@@ -507,13 +507,13 @@ export default function CarFormModal({
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, drivetrain: e.target.value }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 focus:outline-none focus:border-zinc-300 placeholder-zinc-400"
+                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none focus:border-border-hover placeholder-text-faint"
               />
             </div>
             {/* Media URL / Upload Image section */}
-            <div className="space-y-3 border border-slate-200 rounded-xl p-4 bg-slate-50/50 col-span-4">
+            <div className="space-y-3 border border-border rounded-xl p-4 bg-bg-raised/50 col-span-4">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold text-zinc-700 block">
+                <label className="text-xs font-semibold text-text-secondary-hover block">
                   Vehicle Media Image Gallery *
                 </label>
                 {formData.imageUrl && (
@@ -530,7 +530,7 @@ export default function CarFormModal({
                       }));
                       setUploadedFiles([]);
                     }}
-                    className="text-[10px] font-bold text-rose-600 hover:underline cursor-pointer">
+                    className="text-[10px] font-bold text-danger hover:underline cursor-pointer">
                     Reset All Images
                   </button>
                 )}
@@ -570,7 +570,7 @@ export default function CarFormModal({
                     alert(err.message || "Upload failed. Please try again.");
                   }
                 }}
-                className="border-2 border-dashed border-slate-300 hover:border-brand bg-white rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-all relative overflow-hidden">
+                className="border-2 border-dashed border-border-hover hover:border-brand bg-bg-surface rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-all relative overflow-hidden">
                 <input
                   type="file"
                   accept="image/*"
@@ -616,12 +616,12 @@ export default function CarFormModal({
                       <span className="text-xs font-semibold text-brand hover:underline">
                         Click to upload files
                       </span>
-                      <span className="text-xs text-zinc-500">
+                      <span className="text-xs text-text-muted">
                         {" "}
                         or drag and drop images
                       </span>
                     </div>
-                    <span className="text-[10px] text-zinc-400">
+                    <span className="text-[10px] text-text-faint">
                       Multiple image uploads supported (PNG, JPG, WebP)
                     </span>
                   </>
@@ -630,7 +630,7 @@ export default function CarFormModal({
 
               {/* Direct text input option */}
               <div className="space-y-1.5 mt-2">
-                <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider font-mono block">
+                <span className="text-[10px] font-semibold text-text-faint uppercase tracking-wider font-mono block">
                   Add Image by Direct URL:
                 </span>
                 <div className="flex gap-2">
@@ -639,7 +639,7 @@ export default function CarFormModal({
                     placeholder="e.g. https://images.unsplash.com/photo-..."
                     value={imageInputUrl}
                     onChange={(e) => setImageInputUrl(e.target.value)}
-                    className="flex-1 bg-white border border-zinc-200 rounded px-3 py-1.5 text-xs text-zinc-850 placeholder-zinc-400 focus:outline-none focus:border-zinc-300 font-mono"
+                    className="flex-1 bg-bg-surface border border-border rounded px-3 py-1.5 text-xs text-zinc-850 placeholder-text-faint focus:outline-none focus:border-border-hover font-mono"
                   />
                   <button
                     type="button"
@@ -678,8 +678,8 @@ export default function CarFormModal({
                 if (items.length === 0) return null;
 
                 return (
-                  <div className="space-y-2 mt-3 pt-3 border-t border-zinc-200/60">
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block font-mono">
+                  <div className="space-y-2 mt-3 pt-3 border-t border-border/60">
+                    <span className="text-[10px] font-bold text-text-faint uppercase tracking-wider block font-mono">
                       Loaded Images Gallery ({items.length})
                     </span>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -688,10 +688,10 @@ export default function CarFormModal({
                         return (
                           <div
                             key={index}
-                            className={`relative group/thumb border rounded-xl overflow-hidden aspect-video bg-zinc-50 flex items-center justify-center transition-all ${
+                            className={`relative group/thumb border rounded-xl overflow-hidden aspect-video bg-bg-raised flex items-center justify-center transition-all ${
                               isMain
                                 ? "border-brand ring-2 ring-brand/20"
-                                : "border-zinc-200 hover:border-zinc-350"
+                                : "border-border hover:border-border-hover"
                             }`}>
                             <img
                               src={url}
@@ -710,7 +710,7 @@ export default function CarFormModal({
                                       imageUrl: url,
                                     }))
                                   }
-                                  className="bg-brand hover:bg-brand-dark text-white text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
+                                  className="bg-brand hover:bg-brand-dark text-text-on-brand text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
                                   Set Main
                                 </button>
                               )}
@@ -740,14 +740,14 @@ export default function CarFormModal({
                                     prev.filter((u) => u !== deletingUrl),
                                   );
                                 }}
-                                className="bg-rose-600 hover:bg-rose-500 text-white text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
+                                className="bg-danger hover:bg-danger text-text-on-brand text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
                                 Delete
                               </button>
                             </div>
 
                             {/* Main image label indicator */}
                             {isMain && (
-                              <span className="absolute top-1 left-1 bg-brand text-white text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shadow-xs font-mono">
+                              <span className="absolute top-1 left-1 bg-brand text-text-on-brand text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shadow-xs font-mono">
                                 Main
                               </span>
                             )}
@@ -777,7 +777,7 @@ export default function CarFormModal({
               onChange={(e) =>
                 setFormData((p) => ({ ...p, features: e.target.value }))
               }
-              className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-805 placeholder-zinc-400 focus:outline-none focus:border-zinc-300"
+              className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-zinc-805 placeholder-text-faint focus:outline-none focus:border-border-hover"
             />
           </div>
           {/* Listing description */}
@@ -793,16 +793,16 @@ export default function CarFormModal({
               onChange={(e) =>
                 setFormData((p) => ({ ...p, description: e.target.value }))
               }
-              className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm font-sans text-zinc-805 placeholder-zinc-400 focus:outline-none focus:border-zinc-300"
+              className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm font-sans text-zinc-805 placeholder-text-faint focus:outline-none focus:border-border-hover"
             />
           </div>
           {/* Seller details group toggleable or static */}
-          <div className="border border-zinc-200 p-4 rounded-lg bg-zinc-50 space-y-3">
+          <div className="border border-border p-4 rounded-lg bg-bg-raised space-y-3">
             <h5 className="text-[10px] uppercase tracking-wider font-semibold text-zinc-450 font-mono">
               Seller Assignment
             </h5>
             <div className="space-y-1">
-              <span className="text-[10px] text-zinc-400 font-semibold block font-mono">
+              <span className="text-[10px] text-text-faint font-semibold block font-mono">
                 Select Assigned Agent *
               </span>
               <select
@@ -825,7 +825,7 @@ export default function CarFormModal({
                   }
                 }}
                 required
-                className="w-full bg-white border border-zinc-200 rounded px-2.5 py-1.5 text-xs text-zinc-805 placeholder-zinc-400 focus:outline-none focus:border-zinc-350 cursor-pointer"
+                className="w-full bg-bg-surface border border-border rounded px-2.5 py-1.5 text-xs text-zinc-805 placeholder-text-faint focus:outline-none focus:border-zinc-350 cursor-pointer"
                 id="select_seller_assignment">
                 <option value="">-- Choose Agent from Directory --</option>
                 {sellers.map((s, idx) => (
@@ -837,28 +837,28 @@ export default function CarFormModal({
             </div>
 
             {formData.seller && formData.seller.name && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 bg-white/40 p-2.5 rounded border border-zinc-205/65">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 bg-bg-surface/40 p-2.5 rounded border border-zinc-205/65">
                 <div className="space-y-0.5">
-                  <span className="text-[10px] text-zinc-400 font-mono block">
+                  <span className="text-[10px] text-text-faint font-mono block">
                     Station/Office
                   </span>
-                  <span className="text-xs font-semibold text-zinc-700">
+                  <span className="text-xs font-semibold text-text-secondary-hover">
                     {formData.seller.location}
                   </span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] text-zinc-400 font-mono block">
+                  <span className="text-[10px] text-text-faint font-mono block">
                     Contact Phone
                   </span>
-                  <span className="text-xs font-semibold text-zinc-700 font-mono">
+                  <span className="text-xs font-semibold text-text-secondary-hover font-mono">
                     {formData.seller.phone}
                   </span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] text-zinc-400 font-mono block">
+                  <span className="text-[10px] text-text-faint font-mono block">
                     Sales Email
                   </span>
-                  <span className="text-xs font-semibold text-zinc-700 line-clamp-1">
+                  <span className="text-xs font-semibold text-text-secondary-hover line-clamp-1">
                     {formData.seller.email}
                   </span>
                 </div>
@@ -870,14 +870,14 @@ export default function CarFormModal({
             <button
               type="button"
               onClick={handleCancel}
-              className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-205/50 rounded-lg text-xs text-zinc-700 font-semibold cursor-pointer transition font-sans"
+              className="px-4 py-2 bg-bg-muted hover:bg-bg-hover border border-zinc-205/50 rounded-lg text-xs text-text-secondary-hover font-semibold cursor-pointer transition font-sans"
               id="form_btn_cancel">
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="px-5 py-2 bg-brand hover:bg-brand-dark disabled:opacity-50 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans inline-flex items-center gap-2"
+              className="px-5 py-2 bg-brand hover:bg-brand-dark disabled:opacity-50 text-text-on-brand rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans inline-flex items-center gap-2"
               id="form_btn_submit">
               {isSaving ? (
                 <>

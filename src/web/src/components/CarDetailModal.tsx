@@ -102,23 +102,23 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/45 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-10">
+      className="fixed inset-0 z-50 overflow-y-auto bg-bg-dark/45 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-10">
       {/* Background click to close */}
       <div className="absolute inset-0 cursor-default" onClick={onClose} />
 
       {/* Modal Container */}
-      <div className="relative bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-in fade-in zoom-in duration-200">
+      <div className="relative bg-bg-surface w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-in fade-in zoom-in duration-200">
         {/* Close Button Pin */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white text-gray-700 hover:text-gray-900 p-2 rounded-full shadow-md focus:outline-none transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-10 bg-bg-surface/90 hover:bg-bg-surface text-text-secondary-hover hover:text-text-strong p-2 rounded-full shadow-md focus:outline-none transition-colors cursor-pointer"
           title="Close details">
           <X className="h-5 w-5" />
         </button>
 
         {/* Left Column: Visuals and Essential Specs (Scrollable on desktop) */}
-        <div className="w-full md:w-1/2 flex flex-col overflow-y-auto border-r border-gray-150">
-          <div className="relative aspect-video md:aspect-4/3 bg-slate-900 shrink-0 group overflow-hidden">
+        <div className="w-full md:w-1/2 flex flex-col overflow-y-auto border-r border-bg-muted">
+          <div className="relative aspect-video md:aspect-4/3 bg-bg-dark shrink-0 group overflow-hidden">
             {/* Main Active Image */}
             <img
               src={carImages[activeImgIndex]}
@@ -128,7 +128,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             />
 
             {/* Gradient Mask for controls readability */}
-            <div className="absolute inset-0 bg-linear-to-t from-slate-950/40 via-transparent to-slate-950/20 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-t from-text-strong/40 via-transparent to-text-strong/20 pointer-events-none" />
 
             {/* Left and Right navigation chevrons */}
             {carImages.length > 1 && (
@@ -136,14 +136,14 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 <button
                   type="button"
                   onClick={handlePrevImage}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900/90 hover:scale-105 active:scale-95 text-white p-2 rounded-full shadow-md transition-all focus:outline-none cursor-pointer"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-bg-dark/60 hover:bg-bg-dark/90 hover:scale-105 active:scale-95 text-white p-2 rounded-full shadow-md transition-all focus:outline-none cursor-pointer"
                   title="Previous image">
                   <ChevronLeft className="h-4.5 w-4.5" />
                 </button>
                 <button
                   type="button"
                   onClick={handleNextImage}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900/90 hover:scale-105 active:scale-95 text-white p-2 rounded-full shadow-md transition-all focus:outline-none cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-bg-dark/60 hover:bg-bg-dark/90 hover:scale-105 active:scale-95 text-white p-2 rounded-full shadow-md transition-all focus:outline-none cursor-pointer"
                   title="Next image">
                   <ChevronRight className="h-4.5 w-4.5" />
                 </button>
@@ -152,13 +152,13 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
             {/* Condition badge overlay */}
             <div className="absolute bottom-4 left-4">
-              <span className="bg-brand text-white rounded-full px-3 py-1 text-xs font-semibold shadow-xs">
+              <span className="bg-brand text-text-on-brand rounded-full px-3 py-1 text-xs font-semibold shadow-xs">
                 {CarConditionLabel[car.condition] || car.condition} Condition
               </span>
             </div>
 
             {/* Image Counter Badge */}
-            <div className="absolute bottom-4 right-4 bg-slate-900/75 backdrop-blur-xs text-white text-[10px] font-bold font-mono px-2 py-0.5 rounded-md">
+            <div className="absolute bottom-4 right-4 bg-bg-dark/75 backdrop-blur-xs text-white text-[10px] font-bold font-mono px-2 py-0.5 rounded-md">
               {activeImgIndex + 1} / {carImages.length}
             </div>
           </div>
@@ -166,61 +166,61 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
           <div className="p-6 flex flex-col gap-6">
             {/* Core identity header */}
             <div>
-              <div className="text-sm font-semibold text-slate-400 mb-1.5 leading-none uppercase tracking-widest">
+              <div className="text-sm font-semibold text-text-faint mb-1.5 leading-none uppercase tracking-widest">
                 {car.year} USED CAR CATALOG
               </div>
-              <h2 className="font-display font-semibold text-2xl text-slate-900 mb-1 leading-snug">
+              <h2 className="font-display font-semibold text-2xl text-text-strong mb-1 leading-snug">
                 {car.make} {car.model}
               </h2>
               <div className="flex items-center gap-2">
                 <span className="font-display font-semibold text-2xl text-brand">
                   {formattedPrice}
                 </span>
-                <span className="text-sm text-gray-500 font-medium">
+                <span className="text-sm text-text-muted font-medium">
                   | {formattedMileage} km
                 </span>
               </div>
             </div>
 
             {/* Structured Specifications Grid */}
-            <div className="grid grid-cols-2 gap-4 bg-slate-50 border border-slate-200/60 rounded-2xl p-4 text-xs">
+            <div className="grid grid-cols-2 gap-4 bg-bg-raised border border-border/60 rounded-2xl p-4 text-xs">
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Body Type</span>
-                <span className="font-semibold text-gray-800">
+                <span className="text-text-faint font-medium">Body Type</span>
+                <span className="font-semibold text-text-body">
                   {CarBodyTypeLabel[car.bodyType] || car.bodyType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Fuel Type</span>
-                <span className="font-semibold text-gray-800">
+                <span className="text-text-faint font-medium">Fuel Type</span>
+                <span className="font-semibold text-text-body">
                   {CarFuelTypeLabel[car.fuelType] || car.fuelType}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Transmission</span>
-                <span className="font-semibold text-gray-800">
+                <span className="text-text-faint font-medium">Transmission</span>
+                <span className="font-semibold text-text-body">
                   {CarTransmissionLabel[car.transmission] || car.transmission}
                 </span>
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-gray-400 font-medium">Drivetrain</span>
-                <span className="font-semibold text-gray-800">
+                <span className="text-text-faint font-medium">Drivetrain</span>
+                <span className="font-semibold text-text-body">
                   {car.drivetrain}
                 </span>
               </div>
-              <div className="flex flex-col gap-0.5 col-span-2 border-t border-gray-100 pt-2 mt-1">
-                <span className="text-gray-400 font-medium font-sans">
+              <div className="flex flex-col gap-0.5 col-span-2 border-t border-bg-muted pt-2 mt-1">
+                <span className="text-text-faint font-medium font-sans">
                   Engine Powertrain
                 </span>
-                <span className="font-bold text-gray-800 text-xs">
+                <span className="font-bold text-text-body text-xs">
                   {car.engine}
                 </span>
               </div>
-              <div className="flex flex-col gap-0.5 col-span-2 border-t border-gray-100 pt-2 mt-1">
-                <span className="text-gray-400 font-medium font-sans">
+              <div className="flex flex-col gap-0.5 col-span-2 border-t border-bg-muted pt-2 mt-1">
+                <span className="text-text-faint font-medium font-sans">
                   Colors
                 </span>
-                <span className="font-medium text-gray-800">
+                <span className="font-medium text-text-body">
                   {car.exteriorColor} over {car.interiorColor}
                 </span>
               </div>
@@ -228,20 +228,20 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
             {/* Description */}
             <div className="flex flex-col gap-2">
-              <h4 className="text-xs font-extrabold uppercase tracking-widest text-gray-500">
+              <h4 className="text-xs font-extrabold uppercase tracking-widest text-text-muted">
                 Seller Remarks
               </h4>
-              <p className="text-sm text-gray-600 leading-relaxed font-sans font-normal border-l-2 border-gray-150 pl-3">
+              <p className="text-sm text-text-secondary leading-relaxed font-sans font-normal border-l-2 border-bg-muted pl-3">
                 {car.description}
               </p>
             </div>
 
             {/* Highlights list */}
             <div>
-              <h4 className="text-xs font-extrabold uppercase tracking-widest text-gray-500 mb-3.5">
+              <h4 className="text-xs font-extrabold uppercase tracking-widest text-text-muted mb-3.5">
                 Premium Equipment & Highlights
               </h4>
-              <p className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/60 p-3 rounded-lg">
+              <p className="text-xs font-medium text-text-secondary-hover bg-bg-raised border border-border/60 p-3 rounded-lg">
                 {car.features}
               </p>
             </div>
@@ -249,11 +249,11 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         </div>
 
         {/* Right Column: Dynamic Action & Contacts (Scrollable on desktop) */}
-        <div className="w-full md:w-1/2 flex flex-col overflow-y-auto bg-slate-50 p-6 md:p-8">
+        <div className="w-full md:w-1/2 flex flex-col overflow-y-auto bg-bg-raised p-6 md:p-8">
           <div className="flex flex-col gap-6">
             {/* Quick Contact buttons block */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.01)] flex flex-col gap-4">
-              <h4 className="font-display font-semibold text-sm text-slate-900 leading-none">
+            <div className="bg-bg-surface border border-border rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.01)] flex flex-col gap-4">
+              <h4 className="font-display font-semibold text-sm text-text-strong leading-none">
                 Dealer contact info
               </h4>
               <div className="flex items-start gap-4">
@@ -261,11 +261,11 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <h5 className="font-semibold text-sm text-slate-800 leading-tight">
+                  <h5 className="font-semibold text-sm text-text-body leading-tight">
                     {car.seller.name}
                   </h5>
-                  <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium mt-1">
-                    <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                  <div className="flex items-center gap-1 text-[11px] text-text-muted font-medium mt-1">
+                    <MapPin className="h-3.5 w-3.5 text-text-faint" />
                     {car.seller.location}
                   </div>
                 </div>
@@ -280,9 +280,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                       revealContact === "phone" ? "none" : "phone",
                     )
                   }
-                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-250 bg-white hover:bg-slate-50 text-brand font-semibold cursor-pointer transition-colors focus:outline-none">
+                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-border bg-bg-surface hover:bg-bg-raised text-brand font-semibold cursor-pointer transition-colors focus:outline-none">
                   <Phone className="h-4 w-4 mb-1" />
-                  <span className="text-[11px] leading-tight text-slate-600 font-normal">
+                  <span className="text-[11px] leading-tight text-text-secondary font-normal">
                     Call agent
                   </span>
                   <span className="text-xs font-bold leading-tight select-all">
@@ -299,9 +299,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                       revealContact === "email" ? "none" : "email",
                     )
                   }
-                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-250 bg-white hover:bg-slate-50 text-brand font-semibold cursor-pointer transition-colors focus:outline-none">
+                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-border bg-bg-surface hover:bg-bg-raised text-brand font-semibold cursor-pointer transition-colors focus:outline-none">
                   <Mail className="h-4 w-4 mb-1" />
-                  <span className="text-[11px] leading-tight text-slate-600 font-normal">
+                  <span className="text-[11px] leading-tight text-text-secondary font-normal">
                     Email agent
                   </span>
                   <span className="text-xs font-bold leading-tight select-all">
@@ -320,13 +320,13 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             </div>
 
             {/* Detailed Interest Form */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.01)] flex flex-col gap-4">
-              <div className="border-b border-slate-100 pb-3 leading-none flex items-center justify-between">
+            <div className="bg-bg-surface border border-border rounded-2xl p-6 shadow-[0_1px_4px_rgba(0,0,0,0.01)] flex flex-col gap-4">
+              <div className="border-b border-bg-muted pb-3 leading-none flex items-center justify-between">
                 <div>
-                  <h4 className="font-display font-semibold text-sm text-slate-900 leading-none">
+                  <h4 className="font-display font-semibold text-sm text-text-strong leading-none">
                     Send Inquiry Form
                   </h4>
-                  <span className="text-[11px] text-slate-400 mt-1 block">
+                  <span className="text-[11px] text-text-faint mt-1 block">
                     Inquire directly to agent
                   </span>
                 </div>
@@ -337,14 +337,14 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 onSubmit={handleSubmitMessage}
                 className="flex flex-col gap-3.5">
                 {/* Interest Selector tabs */}
-                <div className="grid grid-cols-3 gap-1 bg-gray-50 p-1.5 rounded-xl">
+                <div className="grid grid-cols-3 gap-1 bg-bg-raised p-1.5 rounded-xl">
                   <button
                     type="button"
                     onClick={() => setInterestType("questions")}
                     className={`text-[10px] py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
                       interestType === "questions"
-                        ? "bg-white text-gray-900 shadow-xs"
-                        : "text-gray-500 hover:text-gray-800"
+                        ? "bg-bg-surface text-text-strong shadow-xs"
+                        : "text-text-muted hover:text-text-body"
                     }`}>
                     Questions
                   </button>
@@ -353,8 +353,8 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                     onClick={() => setInterestType("test-drive")}
                     className={`text-[10px] py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
                       interestType === "test-drive"
-                        ? "bg-white text-gray-900 shadow-xs"
-                        : "text-gray-500 hover:text-gray-800"
+                        ? "bg-bg-surface text-text-strong shadow-xs"
+                        : "text-text-muted hover:text-text-body"
                     }`}>
                     Test Drive
                   </button>
@@ -363,8 +363,8 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                     onClick={() => setInterestType("finance")}
                     className={`text-[10px] py-1.5 rounded-lg font-bold uppercase transition-all cursor-pointer ${
                       interestType === "finance"
-                        ? "bg-white text-gray-900 shadow-xs"
-                        : "text-gray-500 hover:text-gray-800"
+                        ? "bg-bg-surface text-text-strong shadow-xs"
+                        : "text-text-muted hover:text-text-body"
                     }`}>
                     Finance Option
                   </button>
@@ -373,7 +373,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 {/* Sender Details */}
                 <div className="grid grid-cols-1 gap-3">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                    <label className="text-[10px] font-bold text-text-faint uppercase tracking-wider block mb-1">
                       Your Name *
                     </label>
                     <input
@@ -382,13 +382,13 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                       placeholder="e.g. John Doe"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      className="w-full bg-white border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 focus:border-brand transition-all text-slate-800"
+                      className="w-full bg-bg-surface border border-border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 focus:border-brand transition-all text-text-body"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                      <label className="text-[10px] font-bold text-text-faint uppercase tracking-wider block mb-1">
                         Email Address *
                       </label>
                       <input
@@ -398,8 +398,8 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                         value={userEmail}
                         onChange={(e) => setUserEmail(e.target.value)}
                         onBlur={() => setEmailTouched(true)}
-                        className={`w-full bg-white border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 transition-all text-slate-800 ${
-                          emailTouched && !isEmailValid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-brand'
+                        className={`w-full bg-bg-surface border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 transition-all text-text-body ${
+                          emailTouched && !isEmailValid ? 'border-red-400 focus:border-red-500' : 'border-border focus:border-brand'
                         }`}
                       />
                       {emailTouched && !isEmailValid && (
@@ -407,7 +407,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                       )}
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                      <label className="text-[10px] font-bold text-text-faint uppercase tracking-wider block mb-1">
                         Phone (Optional)
                       </label>
                       <input
@@ -415,7 +415,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                         placeholder="(555) 000-0000"
                         value={userPhone}
                         onChange={(e) => setUserPhone(e.target.value)}
-                        className="w-full bg-white border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 focus:border-brand transition-all text-slate-800"
+                        className="w-full bg-bg-surface border border-border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 focus:border-brand transition-all text-text-body"
                       />
                     </div>
                   </div>
@@ -423,7 +423,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
                 {/* Message TextArea */}
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  <label className="text-[10px] font-bold text-text-faint uppercase tracking-wider block mb-1">
                     Your Message *
                   </label>
                   <textarea
@@ -439,8 +439,8 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onBlur={() => setMessageTouched(true)}
-                    className={`w-full bg-white border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 transition-all text-slate-800 ${
-                      messageTouched && !isMessageValid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-brand'
+                    className={`w-full bg-bg-surface border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-brand/10 transition-all text-text-body ${
+                      messageTouched && !isMessageValid ? 'border-red-400 focus:border-red-500' : 'border-border focus:border-brand'
                     }`}
                   />
                   {messageTouched && !isMessageValid && (
@@ -455,9 +455,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                     type="checkbox"
                     checked={consentGiven}
                     onChange={(e) => setConsentGiven(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer"
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-border-hover text-brand focus:ring-brand cursor-pointer"
                   />
-                  <label htmlFor="consent" className="text-[11px] text-slate-500 leading-relaxed cursor-pointer select-none">
+                  <label htmlFor="consent" className="text-[11px] text-text-muted leading-relaxed cursor-pointer select-none">
                     I consent to my information being shared with the seller for inquiry purposes in accordance with the{' '}
                     <Link to="/privacy" className="text-brand hover:text-brand-dark underline font-medium">
                       Privacy Policy
@@ -473,7 +473,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting || !userName || !userEmail || !isEmailValid || !isMessageValid || !consentGiven}
-                  className="w-full bg-brand hover:bg-brand-dark text-white font-semibold py-2.5 rounded-full text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 focus:outline-none">
+                  className="w-full bg-brand hover:bg-brand-dark text-text-on-brand font-semibold py-2.5 rounded-full text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 focus:outline-none">
                   {isSubmitting ? (
                     <>
                       <Spinner size="sm" className="inline-flex" />
@@ -490,11 +490,11 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
                 {/* Visual Feedback Confirmation */}
                 {submitSuccess && (
-                  <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl text-xs text-emerald-800 animate-in fade-in duration-200">
+                  <div className="bg-success-bg border border-success-border p-3 rounded-xl text-xs text-success-text animate-in fade-in duration-200">
                     <p className="font-semibold mb-0.5">
                       Success! Your inquiry has been sent.
                     </p>
-                    <p className="text-emerald-700">
+                    <p className="text-success-text">
                       The selling agent ({car.seller.name}) typically responds
                       within 2 hours. Keep an eye on your email inbox!
                     </p>
@@ -504,8 +504,8 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
             </div>
 
             {/* Quick tips box */}
-            <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-4 text-xs text-amber-900 flex gap-2">
-              <ClipboardList className="h-5 w-5 text-amber-600 shrink-0" />
+            <div className="bg-warning-bg/50 border border-warning-bg rounded-xl p-4 text-xs text-warning flex gap-2">
+              <ClipboardList className="h-5 w-5 text-warning shrink-0" />
               <div>
                 <span className="font-bold">Advice for Buyers:</span> We always
                 recommend getting a third-party pre-purchase inspection prior to

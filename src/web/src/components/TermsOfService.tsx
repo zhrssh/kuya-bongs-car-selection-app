@@ -12,16 +12,16 @@ export default function TermsOfService() {
         Back to Browse
       </Link>
 
-      <h1 className="font-display font-bold text-3xl sm:text-4xl text-slate-900 mb-2">
+      <h1 className="font-display font-bold text-3xl sm:text-4xl text-text-strong mb-2">
         Terms of Service
       </h1>
-      <p className="text-sm text-slate-500 mb-8">
+      <p className="text-sm text-text-muted mb-8">
         Last updated: {new Date().toLocaleDateString('en-PH', {year: 'numeric', month: 'long', day: 'numeric'})}
       </p>
 
-      <div className="space-y-8 text-sm text-slate-700 leading-relaxed">
+      <div className="space-y-8 text-sm text-text-secondary-hover leading-relaxed">
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Site Usage Terms
           </h2>
           <p className="mb-2">
@@ -50,7 +50,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Disclaimer of Warranties
           </h2>
           <p>
@@ -70,7 +70,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Limitation of Liability
           </h2>
           <p>
@@ -103,7 +103,7 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Governing Law
           </h2>
           <p>
@@ -115,11 +115,11 @@ export default function TermsOfService() {
         </section>
 
         <section>
-          <h2 className="font-display font-semibold text-lg text-slate-900 mb-3">
+          <h2 className="font-display font-semibold text-lg text-text-strong mb-3">
             Contact Information
           </h2>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm">
-            <p className="font-semibold text-slate-900">Kuya Bong's Car Selection</p>
+          <div className="bg-bg-raised border border-border rounded-xl p-4 text-sm">
+            <p className="font-semibold text-text-strong">Kuya Bong's Car Selection</p>
             <p>Email: legal@kuyabongscars.com</p>
           </div>
         </section>
