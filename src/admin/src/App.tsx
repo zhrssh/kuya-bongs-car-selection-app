@@ -6,7 +6,6 @@
 import { CarStatus, Spinner } from "@repo/shared";
 import {
   BarChart3,
-  Cpu,
   Lock,
   Settings2,
   ShieldCheck,
@@ -266,18 +265,19 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo & Headline */}
           <div className="flex items-center gap-2.5">
-            <div
-              className="bg-blue-50 border border-blue-100 p-2 rounded-lg text-blue-600 cursor-pointer"
-              onClick={() => navigate("/")}>
-              <Cpu className="w-5 h-5 text-blue-600" />
-            </div>
+            <img
+              src="https://placehold.co/36x36/2563eb/ffffff?text=KBCS"
+              alt="Kuya Bong's Car Selection"
+              className="rounded-lg cursor-pointer"
+              onClick={() => navigate("/")}
+            />
             <div className="cursor-pointer" onClick={() => navigate("/")}>
               <h1 className="text-base font-semibold tracking-tight text-zinc-900 font-sans">
-                AutoDrive Studio
+                Kuya Bong's Car Selection
               </h1>
               <p className="text-[11px] text-zinc-500 font-mono tracking-tight flex items-center gap-1.5 flex-wrap">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block"></span>
-                Catalog CMS &amp; Live Real-time Metrics
+                Manage Cars, Sellers &amp; Sales
               </p>
             </div>
           </div>
@@ -402,10 +402,9 @@ export default function App() {
                   Administrator Access Required
                 </h3>
                 <p className="text-xs text-zinc-500 mt-2 leading-relaxed">
-                  You are attempting to access the AutoDrive Metrics and System
-                  Event logs. Please sign in with your admin credentials to view
-                  interactive analytics, performance graphs, and catalog audit
-                  trails.
+                  Sign in with your admin credentials to access system
+                  metrics, event logs, and inventory management
+                  tools.
                 </p>
                 <button
                   onClick={() => navigate("/login")}
@@ -504,17 +503,7 @@ export default function App() {
         </div>
       </main>
 
-      {/* Bottom Footer Credits block */}
-      <footer className="border-t border-zinc-200/60 bg-white py-8 mt-16 text-center text-xs text-zinc-400">
-        <div className="max-w-7xl mx-auto px-6 space-y-1">
-          <p className="font-mono text-zinc-500 text-[11px]">
-            AutoDrive • Engineered with React &amp; Tailwind
-          </p>
-          <p className="text-[10px] text-zinc-400">
-            Local state preservation for fast client-side performance auditing.
-          </p>
-        </div>
-      </footer>
+
 
       {/* Detail Overlay Sheet Drawer */}
       {selectedCar && (

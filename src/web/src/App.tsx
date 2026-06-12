@@ -8,7 +8,6 @@ import { CarCard } from './components/CarCard';
 import { CarDetailModal } from './components/CarDetailModal';
 import { ComparePanel } from './components/ComparePanel';
 import {
-  Car as CarIcon,
   Search,
   ArrowUpDown,
   Filter,
@@ -186,15 +185,17 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
           <div className="flex items-center gap-3">
-            <div className="bg-blue-600 text-white rounded-xl p-2.5 shadow-sm">
-              <CarIcon className="h-5.5 w-5.5 stroke-[2]" />
-            </div>
+            <img
+              src="https://placehold.co/44x44/2563eb/ffffff?text=KBCS"
+              alt="Kuya Bong's Car Selection"
+              className="rounded-xl"
+            />
             <div>
               <h1 className="font-display font-bold text-lg tracking-tight text-slate-900 leading-none">
-                PRESTIGE <span className="font-light text-slate-500">MARQUE</span>
+                KUYA BONG'S <span className="font-light text-slate-500">CAR SELECTION</span>
               </h1>
               <span className="text-[10px] font-mono tracking-widest text-blue-600 uppercase block font-bold mt-1">
-                Curated Used Vehicles
+                Quality Cars. Fair Prices.
               </span>
             </div>
           </div>
@@ -230,13 +231,13 @@ export default function App() {
           <div className="relative z-10 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-semibold text-blue-300 mb-3.5 tracking-wide uppercase leading-none">
               <Star className="h-3 w-3 text-blue-400" />
-              CURATED PREMIUM PRESTIGE
+              BROWSE APPROVED VEHICLES
             </div>
             <h2 className="font-display font-bold text-2xl sm:text-3xl leading-tight tracking-tight">
-              Find your next <br />automotive masterpiece
+              Quality pre-owned cars <br />you can rely on
             </h2>
             <p className="text-xs text-slate-400 leading-relaxed font-sans mt-2.5 max-w-sm">
-              Discover an elite showcase of fine pre-owned automobiles. Meticulously inspected, mechanically certified, and detailed to pristine condition.
+              Every car on our lot is handpicked, thoroughly inspected, and ready to hit the road. Your next trusted vehicle is just a click away.
             </p>
           </div>
         </div>
@@ -573,7 +574,7 @@ export default function App() {
       <footer className="mt-auto border-t border-gray-150 bg-white py-12 text-gray-400 select-none text-center">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs font-sans">
-            &copy; {new Date().getFullYear()} Prestige Marque Ltd. All rights reserved. Registered automotive vendor #391-492-491.
+            &copy; {new Date().getFullYear()} Kuya Bong's Car Selection. All rights reserved.
           </p>
           <div className="flex gap-4 text-xs font-medium text-gray-400 hover:text-gray-600">
             <span className="hover:underline cursor-pointer">Consumer Rights Protection Act</span>

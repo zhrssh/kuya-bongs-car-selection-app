@@ -71,10 +71,10 @@ export default function AdminLoginPage({
           <Lock className="w-5 h-5 text-blue-450" />
         </div>
         <h2 className="text-lg font-bold tracking-tight">
-          AutoDrive Security Protocol
+          Admin Access Portal
         </h2>
         <p className="text-[11px] text-zinc-400 font-mono mt-1">
-          Authorized Administration portal & catalog ledger
+          Authorized administration &amp; inventory management
         </p>
       </div>
 
@@ -82,8 +82,8 @@ export default function AdminLoginPage({
         {/* Core Instructions */}
         <div className="text-center space-y-1.5">
           <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto font-sans">
-            Please log in with your administrative key to manage vehicle assets,
-            update listing catalogs, and perform status modifications.
+            Sign in with your credentials to manage vehicle listings, track
+            inventory changes, and monitor system activity.
           </p>
         </div>
 
