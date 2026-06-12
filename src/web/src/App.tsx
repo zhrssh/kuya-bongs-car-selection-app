@@ -9,6 +9,7 @@ import { CarCard } from './components/CarCard';
 import { CarDetailModal } from './components/CarDetailModal';
 import { ComparePanel } from './components/ComparePanel';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsOfService from './components/TermsOfService';
 import {
   Search,
   ArrowUpDown,
@@ -546,6 +547,7 @@ export default function App() {
           </main>
         } />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
       </Routes>
 
       {mobileFiltersOpen && (
@@ -585,6 +587,9 @@ export default function App() {
           </p>
           <div className="flex gap-4 text-xs font-medium text-gray-400 hover:text-gray-600">
             <Link to="/privacy" className="hover:underline cursor-pointer">Privacy Policy</Link>
+            <Link to="/terms" className="hover:underline cursor-pointer">Terms of Sale</Link>
+            <a href="https://lawphil.net/statutes/repacts/ra1992/ra_7394_1992.html" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-pointer">Consumer Rights Protection Act</a>
+            <Link to="/terms" className="hover:underline cursor-pointer">Warranty & Service Policy</Link>
           </div>
         </div>
       </footer>
