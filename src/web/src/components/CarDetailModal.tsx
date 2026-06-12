@@ -14,7 +14,8 @@ import {
   User,
   X,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { sendEmail } from "../apiClient";
 import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel, Spinner, ErrorState } from "@repo/shared";
 import { Car } from "../types";
@@ -35,6 +36,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
   const [userPhone, setUserPhone] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [interestType, setInterestType] = useState("questions"); // 'questions' | 'test-drive' | 'finance'
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [messageTouched, setMessageTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -43,29 +47,11 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
   >("none");
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
-  // Generate 4 beautiful images for any car if not defined
-  const carImages = useMemo(() => {
-    if (car.images && car.images.length > 0) {
-      return car.images;
-    }
-    // Generate beautiful and diverse placeholder images from picsum matching the vehicle's unique ID
-    if (car.imageUrl.includes("picsum.photos/seed/")) {
-      const match = car.imageUrl.match(/\/seed\/([^\/]+)/);
-      const baseSeed = match ? match[1] : car.id;
-      return [
-        car.imageUrl,
-        `https://picsum.photos/seed/${baseSeed}-int/800/600`,
-        `https://picsum.photos/seed/${baseSeed}-back/800/600`,
-        `https://picsum.photos/seed/${baseSeed}-side/800/600`,
-      ];
-    }
-    return [
-      car.imageUrl,
-      `https://picsum.photos/seed/${car.id}-interior/800/600`,
-      `https://picsum.photos/seed/${car.id}-dashboard/800/600`,
-      `https://picsum.photos/seed/${car.id}-engine/800/600`,
-    ];
-  }, [car]);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = userEmail === "" || emailRegex.test(userEmail);
+  const isMessageValid = message.trim().length > 0;
+
+  const carImages = [car.imageUrl, ...(car.images ?? [])];
 
   const handlePrevImage = () => {
     setActiveImgIndex((prev) => (prev === 0 ? carImages.length - 1 : prev - 1));
@@ -86,13 +72,13 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
   const handleSubmitMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userName || !userEmail || !car) return;
+    if (!userName || !userEmail || !isEmailValid || !isMessageValid || !car) return;
 
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
-      await sendEmail(car, userName, userEmail, message, interestType);
+      await sendEmail(car, userName, userEmail, message, interestType, consentGiven);
       setSubmitSuccess(true);
       // Reset form fields after delay
       setTimeout(() => {
@@ -100,10 +86,12 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         setUserName("");
         setUserPhone("");
         setUserEmail("");
+        setConsentGiven(false);
+        setEmailTouched(false);
+        setMessageTouched(false);
         setSubmitSuccess(false);
       }, 5000);
     } catch (error) {
-      console.error("Error submitting inquiry:", error);
       setSubmitError("Failed to send inquiry. Please try again later.");
     } finally {
       setIsSubmitting(false);
@@ -236,33 +224,6 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                   {car.exteriorColor} over {car.interiorColor}
                 </span>
               </div>
-            </div>
-
-            {/* Vehicle History Check --REMOVED */}
-            {/* <div className="border border-emerald-100 bg-emerald-50/30 rounded-xl p-4 flex flex-col gap-3">
-              <h4 className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider leading-none">
-                <ShieldCheck className="h-4.5 w-4.5 text-emerald-600" />
-                Verified Car History
-              </h4>
-              <ul className="text-xs text-emerald-900 grid grid-cols-2 gap-2 mt-1">
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <strong>{car.history.owners}</strong>{" "}
-                  {car.history.owners === 1 ? "Owner" : "Owners"}
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <strong>{car.history.accidents}</strong> accidents reported
-                </li>
-                <li className="col-span-2 flex items-start gap-1.5 mt-1 border-t border-emerald-100 pt-2">
-                  <span className="text-[10px] uppercase font-bold text-emerald-700 block">
-                    Service Status:{" "}
-                  </span>
-                  <span className="font-normal italic text-slate-700">
-                    {car.history.serviceHistory}
-                  </span>
-                </li>
-              </ul>
             </div>
 
             {/* Description */}
@@ -436,8 +397,14 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                         placeholder="john@example.com"
                         value={userEmail}
                         onChange={(e) => setUserEmail(e.target.value)}
-                        className="w-full bg-white border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800"
+                        onBlur={() => setEmailTouched(true)}
+                        className={`w-full bg-white border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 transition-all text-slate-800 ${
+                          emailTouched && !isEmailValid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500'
+                        }`}
                       />
+                      {emailTouched && !isEmailValid && (
+                        <p className="text-[10px] text-red-500 mt-1">Please enter a valid email address</p>
+                      )}
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
@@ -457,9 +424,10 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 {/* Message TextArea */}
                 <div>
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                    Your Message
+                    Your Message *
                   </label>
                   <textarea
+                    required
                     rows={3}
                     placeholder={
                       interestType === "test-drive"
@@ -470,8 +438,31 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                     }
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full bg-white border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800"
+                    onBlur={() => setMessageTouched(true)}
+                    className={`w-full bg-white border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 transition-all text-slate-800 ${
+                      messageTouched && !isMessageValid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500'
+                    }`}
                   />
+                  {messageTouched && !isMessageValid && (
+                    <p className="text-[10px] text-red-500 mt-1">Please enter a message</p>
+                  )}
+                </div>
+
+                {/* Consent checkbox */}
+                <div className="flex items-start gap-2">
+                  <input
+                    id="consent"
+                    type="checkbox"
+                    checked={consentGiven}
+                    onChange={(e) => setConsentGiven(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <label htmlFor="consent" className="text-[11px] text-slate-500 leading-relaxed cursor-pointer select-none">
+                    I consent to my information being shared with the seller for inquiry purposes in accordance with the{' '}
+                    <Link to="/privacy" className="text-blue-600 hover:text-blue-700 underline font-medium">
+                      Privacy Policy
+                    </Link>.
+                  </label>
                 </div>
 
                 {submitError && (
@@ -481,7 +472,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting || !userName || !userEmail}
+                  disabled={isSubmitting || !userName || !userEmail || !isEmailValid || !isMessageValid || !consentGiven}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-full text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 focus:outline-none">
                   {isSubmitting ? (
                     <>

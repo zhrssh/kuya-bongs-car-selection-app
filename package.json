@@ -2,9 +2,9 @@
   "private": true,
   "scripts": {
     "build:shared": "pnpm --filter @repo/shared build",
-    "build:admin": "pnpm --filter react-example build",
-    "build:web": "pnpm --filter react-example build",
-    "lint:admin": "pnpm --filter react-example lint",
-    "lint:web": "pnpm --filter react-example lint"
+    "build:admin": "pnpm --filter kuya-bongs-admin build",
+    "build:web": "pnpm --filter kuya-bongs-storefront build",
+    "lint:admin": "pnpm --filter kuya-bongs-admin lint",
+    "lint:web": "pnpm --filter kuya-bongs-storefront lint"
   }
 }

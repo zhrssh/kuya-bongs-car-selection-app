@@ -13,7 +13,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarStatus, CarStatusLabel, CarTransmissionLabel } from "@repo/shared";
 import { Car } from "../types";
 
@@ -35,30 +35,7 @@ export default function ListingDetailModal({
   >("none");
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
-  // ! FOR DEVELOPMENT ONLY
-  // Generate 4 beautiful images for any car if not defined
-  const carImages = useMemo(() => {
-    if (car.images && car.images.length > 0) {
-      return car.images;
-    }
-    // Generate beautiful and diverse placeholder images from picsum matching the vehicle's unique ID
-    if (car.imageUrl.includes("picsum.photos/seed/")) {
-      const match = car.imageUrl.match(/\/seed\/([^\/]+)/);
-      const baseSeed = match ? match[1] : car.id;
-      return [
-        car.imageUrl,
-        `https://picsum.photos/seed/${baseSeed}-int/800/600`,
-        `https://picsum.photos/seed/${baseSeed}-back/800/600`,
-        `https://picsum.photos/seed/${baseSeed}-side/800/600`,
-      ];
-    }
-    return [
-      car.imageUrl,
-      `https://picsum.photos/seed/${car.id}-interior/800/600`,
-      `https://picsum.photos/seed/${car.id}-dashboard/800/600`,
-      `https://picsum.photos/seed/${car.id}-engine/800/600`,
-    ];
-  }, [car]);
+  const carImages = [car.imageUrl, ...(car.images ?? [])];
 
   const handlePrevImage = () => {
     setActiveImgIndex((prev) => (prev === 0 ? carImages.length - 1 : prev - 1));

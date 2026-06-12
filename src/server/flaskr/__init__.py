@@ -125,6 +125,10 @@ def create_app(test_config=None) -> Flask:
     def load_user(user_id):
         return User.query.filter_by(id=uuid.UUID(user_id)).first()
 
+    @app.route("/robots.txt")
+    def robots_txt():
+        return "User-agent: *\nDisallow: /\n", {"Content-Type": "text/plain"}
+
     # healthcheck
     @app.route("/health")
     def healthcheck():
@@ -169,7 +173,7 @@ def create_app(test_config=None) -> Flask:
 
     app.register_blueprint(admin.bp)
 
-    from .api import cars, logs, metrics, sellers, inquiries, uploads
+    from .api import cars, logs, metrics, sellers, inquiries, uploads, leads
 
     app.register_blueprint(cars.bp)
     app.register_blueprint(logs.bp)
@@ -177,6 +181,7 @@ def create_app(test_config=None) -> Flask:
     app.register_blueprint(sellers.bp)
     app.register_blueprint(inquiries.bp)
     app.register_blueprint(uploads.bp)
+    app.register_blueprint(leads.bp)
 
     @app.route("/public/images/<path:filename>")
     def uploaded_file(filename):
