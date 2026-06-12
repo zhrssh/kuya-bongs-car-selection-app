@@ -5,14 +5,15 @@ import { FilterState, SortKey, CarStatus, Skeleton, Spinner, ErrorState } from '
 import { fetchCars } from './apiClient';
 import { useDebounce } from '@repo/shared';
 import { FilterSidebar } from './components/FilterSidebar';
+import { SortDropdown } from './components/SortDropdown';
 import { CarCard } from './components/CarCard';
 import { CarDetailModal } from './components/CarDetailModal';
 import { ComparePanel } from './components/ComparePanel';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfService from './components/TermsOfService';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   Search,
-  ArrowUpDown,
   Filter,
   X,
   BadgeAlert,
@@ -37,9 +38,17 @@ const INITIAL_FILTER: FilterState = {
 
 const ITEMS_PER_PAGE = 21;
 
+const SORT_OPTIONS = [
+  { value: 'year-desc', label: 'Year: Newest First' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'year-asc', label: 'Year: Oldest First' },
+  { value: 'mileage-asc', label: 'Mileage: Lowest First' },
+];
+
 export default function App() {
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTER);
-  const [sortKey, setSortKey] = useState<SortKey>('relevance');
+  const [sortKey, setSortKey] = useState<SortKey>('year-desc');
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [comparingCars, setComparingCars] = useState<Car[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -138,7 +147,6 @@ export default function App() {
         return list.sort((a, b) => a.year - b.year);
       case 'mileage-asc':
         return list.sort((a, b) => a.mileage - b.mileage);
-      case 'relevance':
       default:
         return list;
     }
@@ -290,25 +298,14 @@ export default function App() {
                       <span className="hidden md:inline text-[11px] font-semibold text-text-faint uppercase tracking-wider select-none">
                         Sort By:
                       </span>
-                      <div className="relative flex-1">
-                        <select
-                          value={sortKey}
-                          onChange={(e) => {
-                            setSortKey(e.target.value as SortKey);
-                            setCurrentPage(1);
-                          }}
-                          className="w-full appearance-none bg-bg-raised border border-border rounded-full py-1.5 px-3 pl-8 pr-8 text-xs font-medium text-text-body outline-none hover:border-border-hover focus:bg-bg-surface focus:ring-2 focus:ring-brand/20 transition-all cursor-pointer"
-                        >
-                          <option value="relevance">Featured & Relevance</option>
-                          <option value="price-asc">Price: Low to High</option>
-                          <option value="price-desc">Price: High to Low</option>
-                          <option value="year-desc">Year: Newest First</option>
-                          <option value="year-asc">Year: Oldest First</option>
-                          <option value="mileage-asc">Mileage: Lowest First</option>
-                        </select>
-                        <ArrowUpDown className="absolute left-3 top-2.5 h-3.5 w-3.5 text-text-faint pointer-events-none" />
-                        <div className="absolute right-3 top-3.5 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-text-muted" />
-                      </div>
+                      <SortDropdown
+                        value={sortKey}
+                        options={SORT_OPTIONS}
+                        onChange={(value) => {
+                          setSortKey(value as SortKey);
+                          setCurrentPage(1);
+                        }}
+                      />
                     </div>
 
                   </div>
@@ -551,23 +548,37 @@ export default function App() {
         <Route path="/terms" element={<TermsOfService />} />
       </Routes>
 
-      {mobileFiltersOpen && (
-        <div className="fixed inset-0 z-50 bg-bg-dark/40 backdrop-blur-md flex justify-end lg:hidden animate-in fade-in duration-250">
-          <div className="absolute inset-0" onClick={() => setMobileFiltersOpen(false)} />
-          <div className="relative bg-white w-full max-w-sm h-full shadow-2xl flex flex-col p-6 overflow-y-auto animate-in slide-in-from-right duration-250">
-            <FilterSidebar
-              filters={filters}
-              onFilterChange={handleChange}
-              onPriceQuickSelect={handlePriceQuickSelect}
-              onYearQuickSelect={handleYearQuickSelect}
-              cars={cars}
-              onReset={handleResetFilters}
-              isOpen={mobileFiltersOpen}
-              onClose={() => setMobileFiltersOpen(false)}
-            />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileFiltersOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-50 bg-bg-dark/40 backdrop-blur-md flex justify-end lg:hidden"
+          >
+            <div className="absolute inset-0" onClick={() => setMobileFiltersOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="relative bg-white w-full max-w-sm h-full shadow-2xl flex flex-col"
+            >
+              <FilterSidebar
+                filters={filters}
+                onFilterChange={handleChange}
+                onPriceQuickSelect={handlePriceQuickSelect}
+                onYearQuickSelect={handleYearQuickSelect}
+                cars={cars}
+                onReset={handleResetFilters}
+                isOpen={mobileFiltersOpen}
+                onClose={() => setMobileFiltersOpen(false)}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <ComparePanel
         comparingCars={comparingCars}

@@ -7,6 +7,7 @@ import {
   CarTransmission,
   CarTransmissionLabel,
   FilterState,
+  Select,
 } from "@repo/shared";
 import { RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { useMemo } from "react";
@@ -125,17 +126,13 @@ export default function CarFilterSidebar({
             <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Brand (Make)
             </label>
-            <select
+            <Select
               value={filters.make}
-              onChange={(e) => handleChange("make", e.target.value)}
-              className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer">
-              <option value="">All Brands</option>
-              {uniqueMakes.map((make) => (
-                <option key={make} value={make}>
-                  {make}
-                </option>
-              ))}
-            </select>
+              options={uniqueMakes.map((make) => ({ value: make, label: make }))}
+              onChange={(v) => handleChange("make", v)}
+              placeholder="All Brands"
+              className="[&_button]:bg-slate-55"
+            />
           </div>
 
           {/* Vehicle Model */}
@@ -143,22 +140,14 @@ export default function CarFilterSidebar({
             <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Model
             </label>
-            <select
+            <Select
               value={filters.model}
-              onChange={(e) => handleChange("model", e.target.value)}
+              options={modelsForMake.map((model) => ({ value: model, label: model }))}
+              onChange={(v) => handleChange("model", v)}
+              placeholder={filters.make ? `All ${filters.make} Models` : "All Models"}
               disabled={modelsForMake.length === 0}
-              className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer disabled:opacity-50">
-              <option value="">
-                {filters.make
-                  ? `All ${filters.make} Models`
-                  : "All Models"}
-              </option>
-              {modelsForMake.map((model) => (
-                <option key={model} value={model}>
-                  {model}
-                </option>
-              ))}
-            </select>
+              className="[&_button]:bg-slate-55"
+            />
           </div>
 
           {/* Vehicle Condition */}
@@ -380,17 +369,13 @@ export default function CarFilterSidebar({
             <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Fuel Type
             </label>
-            <select
+            <Select
               value={filters.fuelType}
-              onChange={(e) => handleChange("fuelType", e.target.value)}
-              className="w-full bg-slate-55 border border-border outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer">
-              <option value="">All Fuel Types</option>
-              {uniqueFuelTypes.map((fuel) => (
-                <option key={fuel} value={fuel}>
-                  {CarFuelTypeLabel[fuel]}
-                </option>
-              ))}
-            </select>
+              options={uniqueFuelTypes.map((fuel) => ({ value: fuel, label: CarFuelTypeLabel[fuel] }))}
+              onChange={(v) => handleChange("fuelType", v)}
+              placeholder="All Fuel Types"
+              className="[&_button]:bg-slate-55"
+            />
           </div>
 
           {/* Transmission */}

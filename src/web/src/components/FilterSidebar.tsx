@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Car } from '../types';
-import { FilterState } from '@repo/shared';
+import { FilterState, Select } from '@repo/shared';
 import {
   CarCondition,
   CarConditionLabel,
@@ -60,8 +60,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   return (
     <aside
       className={`
-        bg-bg-surface rounded-2xl border border-border p-6 flex flex-col gap-6 transition-all duration-300
-        ${isOpen ? 'shadow-lg' : 'shadow-[0_1px_4px_rgba(0,0,0,0.01)]'}
+        bg-bg-surface border border-border p-6 flex flex-col gap-6 transition-all duration-300
+        ${isOpen ? 'rounded-none shadow-lg h-full' : 'rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.01)]'}
       `}
     >
       <div className="flex items-center justify-between border-b border-bg-muted pb-4">
@@ -89,7 +89,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1">
+      <div className={`flex flex-col gap-5 overflow-y-auto pr-1 ${isOpen ? 'flex-1 min-h-0' : 'max-h-[calc(100vh-280px)]'}`}>
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
             Keyword Search
@@ -110,39 +110,25 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
             Brand (Make)
           </label>
-          <select
-            value={filters.make}
-            onChange={(e) => onFilterChange('make', e.target.value)}
-            className="w-full bg-bg-raised border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer"
-          >
-            <option value="">All Brands</option>
-            {makes.map((make) => (
-              <option key={make} value={make}>
-                {make}
-              </option>
-            ))}
-          </select>
+            <Select
+              value={filters.make}
+              options={makes.map((make) => ({ value: make, label: make }))}
+              onChange={(v) => onFilterChange('make', v)}
+              placeholder="All Brands"
+            />
         </div>
 
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
             Model
           </label>
-          <select
-            value={filters.model}
-            onChange={(e) => onFilterChange('model', e.target.value)}
-            disabled={modelsForMake.length === 0}
-            className="w-full bg-bg-raised border border-border outline-none rounded-xl py-2 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer disabled:opacity-50"
-          >
-            <option value="">
-              {filters.make ? `All ${filters.make} Models` : 'All Models'}
-            </option>
-            {modelsForMake.map((model) => (
-              <option key={model} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
+            <Select
+              value={filters.model}
+              options={modelsForMake.map((model) => ({ value: model, label: model }))}
+              onChange={(v) => onFilterChange('model', v)}
+              placeholder={filters.make ? `All ${filters.make} Models` : 'All Models'}
+              disabled={modelsForMake.length === 0}
+            />
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -337,18 +323,12 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
             Fuel Type
           </label>
-          <select
-            value={filters.fuelType}
-            onChange={(e) => onFilterChange('fuelType', e.target.value)}
-            className="w-full bg-bg-raised border border-border outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-bg-surface focus:ring-2 focus:ring-brand/10 transition-all font-sans text-text-body cursor-pointer"
-          >
-            <option value="">All Fuel Types</option>
-            {fuelTypes.map((fuel) => (
-              <option key={fuel} value={fuel}>
-                {CarFuelTypeLabel[fuel] || fuel}
-              </option>
-            ))}
-          </select>
+            <Select
+              value={filters.fuelType}
+              options={fuelTypes.map((fuel) => ({ value: fuel, label: CarFuelTypeLabel[fuel] || fuel }))}
+              onChange={(v) => onFilterChange('fuelType', v)}
+              placeholder="All Fuel Types"
+            />
         </div>
 
         <div className="flex flex-col gap-1.5">

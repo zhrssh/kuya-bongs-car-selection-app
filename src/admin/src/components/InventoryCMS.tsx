@@ -1,4 +1,4 @@
-import { CarStatus, FilterState, SortKey, Skeleton } from "@repo/shared";
+import { CarStatus, FilterState, SortKey, Skeleton, Select } from "@repo/shared";
 import {
   Grid as GridIcon,
   Plus,
@@ -35,7 +35,7 @@ export default function InventoryCMS({
 }: InventoryCMSProps) {
   // Navigation & layout states
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
-  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
+  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
   const filters = useInventoryStore((s) => s.filters);
@@ -141,17 +141,18 @@ export default function InventoryCMS({
           </button>
 
           {/* Sorter Selector */}
-          <select
+          <Select
             value={sortKey}
-            onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="bg-bg-surface border border-border rounded-lg px-2.5 py-2 text-xs text-text-body font-semibold focus:outline-none focus:border-border cursor-pointer"
-            id="catalog_sorter">
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="year-desc">Year: Newest First</option>
-            <option value="year-asc">Year: Oldest First</option>
-            <option value="mileage-asc">Lowest Mileage</option>
-          </select>
+            options={[
+              { value: "price-asc", label: "Price: Low to High" },
+              { value: "price-desc", label: "Price: High to Low" },
+              { value: "year-desc", label: "Year: Newest First" },
+              { value: "year-asc", label: "Year: Oldest First" },
+              { value: "mileage-asc", label: "Lowest Mileage" },
+            ]}
+            onChange={(v) => setSortKey(v as SortKey)}
+            id="catalog_sorter"
+          />
 
           <button
             onClick={handleOpenAdd}
@@ -197,14 +198,15 @@ export default function InventoryCMS({
             <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
               Status Filter
             </label>
-              <select
+              <Select
                 value={statusTab}
-                onChange={(e) => setStatusTab(e.target.value as CarStatus)}
-                className="w-full bg-bg-surface border border-border rounded-lg px-2.5 py-2 text-xs text-text-body font-semibold focus:outline-none focus:border-border cursor-pointer">
-              <option value={CarStatus.Available}>Available</option>
-              <option value={CarStatus.Sold}>Sold</option>
-              <option value={CarStatus.Archived}>Archived</option>
-            </select>
+                options={[
+                  { value: CarStatus.Available, label: "Available" },
+                  { value: CarStatus.Sold, label: "Sold" },
+                  { value: CarStatus.Archived, label: "Archived" },
+                ]}
+                onChange={(v) => setStatusTab(v as CarStatus)}
+              />
           </div>
 
           {/* Main Stock Content Layout */}

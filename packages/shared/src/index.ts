@@ -18,3 +18,4 @@ export { useDebounce } from "./hooks/useDebounce";
 export { Skeleton } from "./components/Skeleton";
 export { Spinner } from "./components/Spinner";
 export { ErrorState } from "./components/ErrorState";
+export { Select } from "./components/Select";

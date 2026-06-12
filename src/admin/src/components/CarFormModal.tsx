@@ -8,6 +8,7 @@ import {
   CarStatus,
   CarTransmission,
   CarTransmissionLabel,
+  Select,
 } from "@repo/shared";
 import { Sparkles, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -321,128 +322,78 @@ export default function CarFormModal({
               <label className="text-xs font-medium text-text-muted">
                 Body Type
               </label>
-              <select
+              <Select
                 value={formData.bodyType || CarBodyType.Sedan}
-                onChange={(e) =>
-                  setFormData((p) => ({
-                    ...p,
-                    bodyType: e.target.value as any,
-                  }))
-                }
-                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none">
-                <option value={CarBodyType.Sedan}>
-                  {CarBodyTypeLabel[CarBodyType.Sedan]}
-                </option>
-                <option value={CarBodyType.SUV}>
-                  {CarBodyTypeLabel[CarBodyType.SUV]}
-                </option>
-                <option value={CarBodyType.Coupe}>
-                  {CarBodyTypeLabel[CarBodyType.Coupe]}
-                </option>
-                <option value={CarBodyType.Truck}>
-                  {CarBodyTypeLabel[CarBodyType.Truck]}
-                </option>
-                <option value={CarBodyType.Hatchback}>
-                  {CarBodyTypeLabel[CarBodyType.Hatchback]}
-                </option>
-                <option value={CarBodyType.Convertible}>
-                  {CarBodyTypeLabel[CarBodyType.Convertible]}
-                </option>
-              </select>
+                options={[
+                  { value: CarBodyType.Sedan, label: CarBodyTypeLabel[CarBodyType.Sedan] },
+                  { value: CarBodyType.SUV, label: CarBodyTypeLabel[CarBodyType.SUV] },
+                  { value: CarBodyType.Coupe, label: CarBodyTypeLabel[CarBodyType.Coupe] },
+                  { value: CarBodyType.Truck, label: CarBodyTypeLabel[CarBodyType.Truck] },
+                  { value: CarBodyType.Hatchback, label: CarBodyTypeLabel[CarBodyType.Hatchback] },
+                  { value: CarBodyType.Convertible, label: CarBodyTypeLabel[CarBodyType.Convertible] },
+                ]}
+                onChange={(v) => setFormData((p) => ({ ...p, bodyType: v as any }))}
+              />
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-text-muted">
                 Fuel Type
               </label>
-              <select
+              <Select
                 value={formData.fuelType || CarFuelType.Gasoline}
-                onChange={(e) =>
-                  setFormData((p) => ({
-                    ...p,
-                    fuelType: e.target.value as any,
-                  }))
-                }
-                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none">
-                <option value={CarFuelType.Gasoline}>
-                  {CarFuelTypeLabel[CarFuelType.Gasoline]}
-                </option>
-                <option value={CarFuelType.Electric}>
-                  {CarFuelTypeLabel[CarFuelType.Electric]}
-                </option>
-                <option value={CarFuelType.Hybrid}>
-                  {CarFuelTypeLabel[CarFuelType.Hybrid]}
-                </option>
-                <option value={CarFuelType.Diesel}>
-                  {CarFuelTypeLabel[CarFuelType.Diesel]}
-                </option>
-              </select>
+                options={[
+                  { value: CarFuelType.Gasoline, label: CarFuelTypeLabel[CarFuelType.Gasoline] },
+                  { value: CarFuelType.Electric, label: CarFuelTypeLabel[CarFuelType.Electric] },
+                  { value: CarFuelType.Hybrid, label: CarFuelTypeLabel[CarFuelType.Hybrid] },
+                  { value: CarFuelType.Diesel, label: CarFuelTypeLabel[CarFuelType.Diesel] },
+                ]}
+                onChange={(v) => setFormData((p) => ({ ...p, fuelType: v as any }))}
+              />
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-text-muted">
                 Transmission
               </label>
-              <select
+              <Select
                 value={formData.transmission || CarTransmission.Automatic}
-                onChange={(e) =>
-                  setFormData((p) => ({
-                    ...p,
-                    transmission: e.target.value as any,
-                  }))
-                }
-                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body focus:outline-none">
-                <option value={CarTransmission.Automatic}>
-                  {CarTransmissionLabel[CarTransmission.Automatic]}
-                </option>
-                <option value={CarTransmission.Manual}>
-                  {CarTransmissionLabel[CarTransmission.Manual]}
-                </option>
-              </select>
+                options={[
+                  { value: CarTransmission.Automatic, label: CarTransmissionLabel[CarTransmission.Automatic] },
+                  { value: CarTransmission.Manual, label: CarTransmissionLabel[CarTransmission.Manual] },
+                ]}
+                onChange={(v) => setFormData((p) => ({ ...p, transmission: v as any }))}
+              />
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-text-muted">
                 Condition
               </label>
-              <select
+              <Select
                 value={formData.condition || CarCondition.Excellent}
-                onChange={(e) =>
-                  setFormData((p) => ({
-                    ...p,
-                    condition: e.target.value as any,
-                  }))
-                }
-                className="w-full bg-bg-raised border border-zinc-205 rounded px-3 py-2 text-sm text-text-body font-semibold focus:outline-none">
-                <option value={CarCondition.Excellent}>
-                  {CarConditionLabel[CarCondition.Excellent]}
-                </option>
-                <option value={CarCondition.VeryGood}>
-                  {CarConditionLabel[CarCondition.VeryGood]}
-                </option>
-                <option value={CarCondition.Good}>
-                  {CarConditionLabel[CarCondition.Good]}
-                </option>
-              </select>
+                options={[
+                  { value: CarCondition.Excellent, label: CarConditionLabel[CarCondition.Excellent] },
+                  { value: CarCondition.VeryGood, label: CarConditionLabel[CarCondition.VeryGood] },
+                  { value: CarCondition.Good, label: CarConditionLabel[CarCondition.Good] },
+                ]}
+                onChange={(v) => setFormData((p) => ({ ...p, condition: v as any }))}
+              />
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-brand font-mono">
                 Status
               </label>
-              <select
+              <Select
                 value={formData.status || CarStatus.Available}
-                onChange={(e) =>
-                  setFormData((p) => ({
-                    ...p,
-                    status: e.target.value as any,
-                  }))
-                }
-                className="w-full bg-bg-raised border border-border rounded px-3 py-2 text-sm text-text-body font-semibold focus:outline-none focus:border-brand">
-                <option value={CarStatus.Available}>Available</option>
-                <option value={CarStatus.Sold}>Sold</option>
-                <option value={CarStatus.Archived}>Archived</option>
-              </select>
+                options={[
+                  { value: CarStatus.Available, label: "Available" },
+                  { value: CarStatus.Sold, label: "Sold" },
+                  { value: CarStatus.Archived, label: "Archived" },
+                ]}
+                onChange={(v) => setFormData((p) => ({ ...p, status: v as any }))}
+              />
             </div>
           </div>
           {/* Mechanical specs colors */}
@@ -805,10 +756,13 @@ export default function CarFormModal({
               <span className="text-[10px] text-text-faint font-semibold block font-mono">
                 Select Assigned Agent *
               </span>
-              <select
+              <Select
                 value={formData.seller?.name || ""}
-                onChange={(e) => {
-                  const selectedName = e.target.value;
+                options={sellers.map((s) => ({
+                  value: s.name,
+                  label: `${s.name} (${s.location} - ${s.status || "Active"})`,
+                }))}
+                onChange={(selectedName) => {
                   const selectedSeller = sellers.find(
                     (s) => s.name === selectedName,
                   );
@@ -825,15 +779,9 @@ export default function CarFormModal({
                   }
                 }}
                 required
-                className="w-full bg-bg-surface border border-border rounded px-2.5 py-1.5 text-xs text-zinc-805 placeholder-text-faint focus:outline-none focus:border-zinc-350 cursor-pointer"
-                id="select_seller_assignment">
-                <option value="">-- Choose Agent from Directory --</option>
-                {sellers.map((s, idx) => (
-                  <option key={idx} value={s.name}>
-                    {s.name} ({s.location} - {s.status || "Active"})
-                  </option>
-                ))}
-              </select>
+                placeholder="-- Choose Agent from Directory --"
+                id="select_seller_assignment"
+              />
             </div>
 
             {formData.seller && formData.seller.name && (

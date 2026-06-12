@@ -17,5 +17,4 @@ export type SortKey =
   | "price-desc"
   | "year-desc"
   | "year-asc"
-  | "mileage-asc"
-  | "relevance";
+  | "mileage-asc";
