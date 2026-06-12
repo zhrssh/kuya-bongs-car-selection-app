@@ -73,13 +73,13 @@ export default function CarGrid({ onOpenEdit, onDelete }: CarGridProps) {
                   disabled={!isComparing && !canCompare}
                   className={`pointer-events-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold backdrop-blur-md border transition-all cursor-pointer ${
                     isComparing
-                      ? "bg-blue-600 text-white border-blue-700 shadow-sm"
+                      ? "bg-brand text-white border-brand-dark shadow-sm"
                       : "bg-white/90 text-slate-700 border-slate-200 hover:bg-white disabled:opacity-40"
                   }`}>
                   <div
                     className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center transition-all ${
                       isComparing
-                        ? "border-white bg-blue-600"
+                        ? "border-white bg-brand"
                         : "border-slate-400 bg-white"
                     }`}>
                     {isComparing && (
@@ -124,7 +124,7 @@ export default function CarGrid({ onOpenEdit, onDelete }: CarGridProps) {
                     {car.seller!.location.split(",")[0]}
                   </span>
                 </div>
-                <h3 className="font-display font-semibold text-base text-slate-905 text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                <h3 className="font-display font-semibold text-base text-slate-905 text-slate-900 line-clamp-1 group-hover:text-brand transition-colors">
                   {car.make} {car.model}
                 </h3>
               </div>
@@ -164,7 +164,7 @@ export default function CarGrid({ onOpenEdit, onDelete }: CarGridProps) {
                 <div className="flex items-center gap-1.5 font-sans">
                   <button
                     onClick={() => onOpenEdit(car)}
-                    className="p-2 bg-slate-50 hover:bg-blue-50 text-slate-500 hover:text-blue-600 border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
+                    className="p-2 bg-slate-50 hover:bg-brand/10 text-slate-500 hover:text-brand border border-slate-200 rounded-full transition-all cursor-pointer focus:outline-none"
                     title="Edit details"
                     id={`btn_edit_grid_${car.id}`}>
                     <Edit className="w-3.5 h-3.5" />
@@ -178,7 +178,7 @@ export default function CarGrid({ onOpenEdit, onDelete }: CarGridProps) {
                   </button>
                   <button
                     onClick={() => setSelectedCar(car)}
-                    className="px-4 py-2 rounded-full bg-blue-50/70 hover:bg-blue-600 text-blue-700 hover:text-white text-xs font-semibold tracking-wide transition-all cursor-pointer focus:outline-none">
+                    className="px-4 py-2 rounded-full bg-brand/10 hover:bg-brand text-brand-dark hover:text-white text-xs font-semibold tracking-wide transition-all cursor-pointer focus:outline-none">
                     Details
                   </button>
                 </div>

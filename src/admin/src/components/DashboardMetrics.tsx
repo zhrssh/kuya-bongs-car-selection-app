@@ -95,8 +95,8 @@ export default function DashboardMetrics() {
             <div className="text-2xl font-semibold text-zinc-900 tracking-tight">{stats.availableCars}</div>
             <p className="text-[11px] text-zinc-500">Live vehicles on catalog</p>
           </div>
-          <div className="bg-blue-50 p-2.5 rounded-lg text-blue-600 border border-blue-100 shadow-2xs">
-            <CarFront className="w-5 h-5 text-blue-600" />
+          <div className="bg-brand/10 p-2.5 rounded-lg text-brand border border-brand/15 shadow-2xs">
+            <CarFront className="w-5 h-5 text-brand" />
           </div>
         </div>
 
@@ -120,13 +120,13 @@ export default function DashboardMetrics() {
         <div className="bg-white border border-zinc-200/80 p-5 rounded-xl flex items-center justify-between shadow-xs transition hover:shadow-sm">
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider font-mono">Portfolio Value</span>
-            <div className="text-2xl font-semibold text-blue-600 tracking-tight font-mono">
+            <div className="text-2xl font-semibold text-brand tracking-tight font-mono">
               ₱{(stats.totalValue / 1000).toFixed(1)}k
             </div>
             <p className="text-[11px] text-zinc-500 font-mono">Avg: ₱{Math.round(stats.avgPrice).toLocaleString()}</p>
           </div>
-          <div className="bg-blue-50 p-2.5 rounded-lg text-blue-600 border border-blue-100 shadow-2xs">
-            <DollarSign className="w-5 h-5 text-blue-600" />
+          <div className="bg-brand/10 p-2.5 rounded-lg text-brand border border-brand/15 shadow-2xs">
+            <DollarSign className="w-5 h-5 text-brand" />
           </div>
         </div>
 

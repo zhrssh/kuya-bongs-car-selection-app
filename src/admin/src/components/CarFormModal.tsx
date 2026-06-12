@@ -427,7 +427,7 @@ export default function CarFormModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-blue-600 font-mono">
+              <label className="text-xs font-medium text-brand font-mono">
                 Status
               </label>
               <select
@@ -438,7 +438,7 @@ export default function CarFormModal({
                     status: e.target.value as any,
                   }))
                 }
-                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none focus:border-blue-300">
+                className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-2 text-sm text-zinc-800 font-semibold focus:outline-none focus:border-brand">
                 <option value={CarStatus.Available}>Available</option>
                 <option value={CarStatus.Sold}>Sold</option>
                 <option value={CarStatus.Archived}>Archived</option>
@@ -570,7 +570,7 @@ export default function CarFormModal({
                     alert(err.message || "Upload failed. Please try again.");
                   }
                 }}
-                className="border-2 border-dashed border-slate-300 hover:border-blue-400 bg-white rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-all relative overflow-hidden">
+                className="border-2 border-dashed border-slate-300 hover:border-brand bg-white rounded-xl p-5 text-center flex flex-col items-center justify-center gap-2 cursor-pointer transition-all relative overflow-hidden">
                 <input
                   type="file"
                   accept="image/*"
@@ -609,11 +609,11 @@ export default function CarFormModal({
                   <Spinner label="Uploading images..." />
                 ) : (
                   <>
-                    <div className="p-2.5 bg-blue-50 text-blue-600 rounded-full border border-blue-105">
-                      <Upload className="w-5 h-5 text-blue-600" />
+                    <div className="p-2.5 bg-brand/10 text-brand rounded-full border border-brand/10">
+                      <Upload className="w-5 h-5 text-brand" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-blue-600 hover:underline">
+                      <span className="text-xs font-semibold text-brand hover:underline">
                         Click to upload files
                       </span>
                       <span className="text-xs text-zinc-500">
@@ -690,7 +690,7 @@ export default function CarFormModal({
                             key={index}
                             className={`relative group/thumb border rounded-xl overflow-hidden aspect-video bg-zinc-50 flex items-center justify-center transition-all ${
                               isMain
-                                ? "border-blue-600 ring-2 ring-blue-500/20"
+                                ? "border-brand ring-2 ring-brand/20"
                                 : "border-zinc-200 hover:border-zinc-350"
                             }`}>
                             <img
@@ -710,7 +710,7 @@ export default function CarFormModal({
                                       imageUrl: url,
                                     }))
                                   }
-                                  className="bg-blue-600 hover:bg-blue-500 text-white text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
+                                  className="bg-brand hover:bg-brand-dark text-white text-[9px] font-bold px-2 py-1 rounded cursor-pointer w-full text-center">
                                   Set Main
                                 </button>
                               )}
@@ -747,7 +747,7 @@ export default function CarFormModal({
 
                             {/* Main image label indicator */}
                             {isMain && (
-                              <span className="absolute top-1 left-1 bg-blue-600 text-white text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shadow-xs font-mono">
+                              <span className="absolute top-1 left-1 bg-brand text-white text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shadow-xs font-mono">
                                 Main
                               </span>
                             )}
@@ -877,7 +877,7 @@ export default function CarFormModal({
             <button
               type="submit"
               disabled={isSaving}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans inline-flex items-center gap-2"
+              className="px-5 py-2 bg-brand hover:bg-brand-dark disabled:opacity-50 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans inline-flex items-center gap-2"
               id="form_btn_submit">
               {isSaving ? (
                 <>

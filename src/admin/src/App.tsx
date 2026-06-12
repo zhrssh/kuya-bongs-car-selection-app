@@ -261,21 +261,21 @@ export default function App() {
       <header className="border-b border-zinc-200/60 bg-white/75 backdrop-blur-md sticky top-0 z-40 transition-all">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo & Headline */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <img
-              src="https://placehold.co/36x36/2563eb/ffffff?text=KBCS"
-              alt="Kuya Bong's Car Selection"
-              className="rounded-lg cursor-pointer"
+              src="/logo.png"
+              alt="KBCS – Kuya Bong's Car Selection"
+              className="w-14 h-14 rounded-xl flex-shrink-0 cursor-pointer"
               onClick={() => navigate("/")}
             />
+            <div className="w-px h-9 bg-navy/30" />
             <div className="cursor-pointer" onClick={() => navigate("/")}>
-              <h1 className="text-base font-semibold tracking-tight text-zinc-900 font-sans">
-                Kuya Bong's Car Selection
+              <h1 className="font-display font-extrabold text-2xl tracking-[-0.02em] text-navy leading-none">
+                KBCS
               </h1>
-              <p className="text-[11px] text-zinc-500 font-mono tracking-tight flex items-center gap-1.5 flex-wrap">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block"></span>
-                Manage Cars, Sellers &amp; Sales
-              </p>
+              <span className="text-xs font-sans font-medium text-zinc-500 block mt-1">
+                Manage Cars, Sellers & Sales
+              </span>
             </div>
           </div>
 
@@ -288,7 +288,7 @@ export default function App() {
                 onClick={() => navigate("/")}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium tracking-wide transition cursor-pointer ${
                   currentPath === "/" || currentPath === "/dashboard"
-                    ? "bg-blue-600 text-white shadow-xs font-semibold"
+                    ? "bg-brand text-white shadow-xs font-semibold"
                     : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
                 }`}
                 id="tab_metrics">
@@ -302,7 +302,7 @@ export default function App() {
                 onClick={() => navigate("/inventory")}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium tracking-wide transition cursor-pointer ${
                   currentPath === "/inventory"
-                    ? "bg-blue-600 text-white shadow-xs font-semibold"
+                    ? "bg-brand text-white shadow-xs font-semibold"
                     : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
                 }`}
                 id="tab_cms">
@@ -316,7 +316,7 @@ export default function App() {
                 onClick={() => navigate("/sellers")}
                 className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium tracking-wide transition cursor-pointer ${
                   currentPath === "/sellers"
-                    ? "bg-blue-600 text-white shadow-xs font-semibold"
+                    ? "bg-brand text-white shadow-xs font-semibold"
                     : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50"
                 }`}
                 id="tab_sellers">
@@ -361,8 +361,8 @@ export default function App() {
                     onClick={() => navigate("/login")}
                     className={`px-3 py-1.5 border rounded-lg text-xs font-semibold tracking-wide transition cursor-pointer focus:outline-none ${
                       currentPath === "/login"
-                        ? "bg-blue-600 border-blue-600 text-white shadow-xs"
-                        : "bg-blue-50/70 hover:bg-blue-100 border-blue-200 text-blue-600 hover:text-blue-700"
+                        ? "bg-brand border-brand text-white shadow-xs"
+                        : "bg-brand/10 hover:bg-brand/20 border-brand/20 text-brand hover:text-brand-dark"
                     }`}
                     id="btn_admin_login_header">
                     Sign In
@@ -405,7 +405,7 @@ export default function App() {
                 </p>
                 <button
                   onClick={() => navigate("/login")}
-                  className="mt-6 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
+                  className="mt-6 px-5 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
                   Sign In as Admin
                 </button>
               </div>
@@ -429,11 +429,11 @@ export default function App() {
                 <p className="text-xs text-zinc-500 mt-2 leading-relaxed">
                   You are attempting to access the Inventory CMS console. Please
                   sign in with your admin credentials to publish new cars,
-                  manage catalogs, or adjust pricing parameters.
+                  manage catalogs, or adjust                   pricing parameters.
                 </p>
                 <button
                   onClick={() => navigate("/login")}
-                  className="mt-6 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
+                  className="mt-6 px-5 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
                   Sign In as Admin
                 </button>
               </div>
@@ -457,7 +457,7 @@ export default function App() {
                 </p>
                 <button
                   onClick={() => navigate("/login")}
-                  className="mt-6 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
+                  className="mt-6 px-5 py-2.5 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer transition shadow-xs border border-transparent focus:outline-none">
                   Sign In as Admin
                 </button>
               </div>
@@ -477,7 +477,7 @@ export default function App() {
                   <div className="mt-6 flex gap-3 justify-center">
                     <button
                       onClick={() => navigate("/inventory")}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold cursor-pointer transition">
+                      className="px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-md text-xs font-semibold cursor-pointer transition">
                       Go to Inventory CMS
                     </button>
                     <button

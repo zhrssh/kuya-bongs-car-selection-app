@@ -34,7 +34,7 @@ export default function CarCompare({ isModalOpen = false, onModalClose }: CarCom
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 py-4 px-6 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-all animate-in slide-in-from-bottom duration-300">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-mono">
+              <span className="bg-brand text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-mono">
                 {compareIds.length}
               </span>
               <h3 className="font-semibold text-sm text-slate-800">
@@ -70,7 +70,7 @@ export default function CarCompare({ isModalOpen = false, onModalClose }: CarCom
               {compareIds.length >= 1 && (
                 <button
                   onClick={() => setInternalOpen(true)}
-                  className="px-4 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-full hover:bg-blue-700 transition shadow-xs cursor-pointer"
+                  className="px-4 py-1.5 bg-brand text-white text-xs font-semibold rounded-full hover:bg-brand-dark transition shadow-xs cursor-pointer"
                   id="btn_open_compare_specs">
                   Compare Side-by-Side
                 </button>
@@ -99,7 +99,7 @@ export default function CarCompare({ isModalOpen = false, onModalClose }: CarCom
 
             <div>
               <h3 className="text-xl font-display font-semibold text-zinc-900 tracking-tight flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-blue-600" />
+                <SlidersHorizontal className="w-5 h-5 text-brand" />
                 Vehicle Specification Comparison
               </h3>
               <p className="text-xs text-zinc-400 mt-1">
@@ -147,7 +147,7 @@ export default function CarCompare({ isModalOpen = false, onModalClose }: CarCom
                       return (
                         <td
                           key={id}
-                          className="py-3 px-4 text-center font-bold text-blue-600 text-sm">
+                          className="py-3 px-4 text-center font-bold text-brand text-sm">
                           ₱{item.price.toLocaleString()}
                         </td>
                       );

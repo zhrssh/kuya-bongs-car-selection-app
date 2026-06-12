@@ -54,7 +54,7 @@ export default function CarPagination() {
                 onClick={() => setCurrentPage(pg)}
                 className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
                   isSelected
-                    ? "bg-blue-600 border-blue-600 text-white shadow-xs font-bold"
+                    ? "bg-brand border-brand text-white shadow-xs font-bold"
                     : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
                 }`}
                 id={`btn_page_${pg}`}>

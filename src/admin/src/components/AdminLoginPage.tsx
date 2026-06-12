@@ -67,8 +67,8 @@ export default function AdminLoginPage({
       {/* Decorative branding header */}
       <div className="bg-slate-900 px-6 py-8 text-center text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.15),transparent)] pointer-events-none" />
-        <div className="mx-auto w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/35 flex items-center justify-center text-blue-400 mb-3 mt-1 shadow-inner">
-          <Lock className="w-5 h-5 text-blue-450" />
+        <div className="mx-auto w-12 h-12 rounded-xl bg-brand/10 border border-brand/35 flex items-center justify-center text-brand/65 mb-3 mt-1 shadow-inner">
+          <Lock className="w-5 h-5 text-brand" />
         </div>
         <h2 className="text-lg font-bold tracking-tight">
           Admin Access Portal
@@ -104,7 +104,7 @@ export default function AdminLoginPage({
             <label className="text-xs font-semibold text-slate-700 tracking-wide block font-sans">
               Username
             </label>
-            <div className="relative rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:ring-1 focus-within:ring-blue-500/30 focus-within:border-blue-500">
+            <div className="relative rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:ring-1 focus-within:ring-brand/30 focus-within:border-brand">
               <input
                 type="text"
                 required
@@ -124,7 +124,7 @@ export default function AdminLoginPage({
             <label className="text-xs font-semibold text-slate-705 tracking-wide block font-sans">
               Password
             </label>
-            <div className="relative rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:ring-1 focus-within:ring-blue-500/30 focus-within:border-blue-500 flex items-center">
+            <div className="relative rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:ring-1 focus-within:ring-brand/30 focus-within:border-brand flex items-center">
               <input
                 type={showPassword ? "text" : "password"}
                 required
@@ -154,7 +154,7 @@ export default function AdminLoginPage({
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold tracking-wide cursor-pointer transition-all shadow-xs border border-blue-750 focus:outline-none ${
+            className={`w-full flex items-center justify-center gap-2 px-4 py-3 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold tracking-wide cursor-pointer transition-all shadow-xs border border-brand-dark focus:outline-none ${
               isSubmitting ? "opacity-80 cursor-wait" : ""
             }`}
             id="admin_login_submit">
@@ -182,7 +182,7 @@ export default function AdminLoginPage({
               </>
             ) : (
               <>
-                <Key className="w-3.5 h-3.5 text-blue-105" />
+                <Key className="w-3.5 h-3.5 text-brand/10" />
                 <span>Login</span>
               </>
             )}

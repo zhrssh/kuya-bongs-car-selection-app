@@ -108,7 +108,7 @@ export default function ListingDetailModal({
 
             {/* Condition badge overlay */}
             <div className="absolute bottom-4 left-4">
-              <span className="bg-blue-600 text-white rounded-full px-3 py-1 text-xs font-semibold shadow-xs">
+              <span className="bg-brand text-white rounded-full px-3 py-1 text-xs font-semibold shadow-xs">
                 {CarConditionLabel[car.condition] || car.condition} Condition
               </span>
             </div>
@@ -129,7 +129,7 @@ export default function ListingDetailModal({
                 {car.make} {car.model}
               </h2>
               <div className="flex items-center gap-2">
-                <span className="font-display font-semibold text-2xl text-blue-600">
+                <span className="font-display font-semibold text-2xl text-brand">
                   {formattedPrice}
                 </span>
                 <span className="text-sm text-gray-500 font-medium">
@@ -208,8 +208,8 @@ export default function ListingDetailModal({
             {/* Listing Status Control (Admin-Only action item integrated perfectly) */}
             <div className="bg-white border border-zinc-200 p-5 rounded-2xl shadow-xs space-y-4 font-sans">
               <div className="flex items-center gap-2">
-                <div className="bg-blue-50 p-1.5 rounded-lg text-blue-600 border border-blue-100">
-                  <ShieldCheck className="w-4 h-4 text-blue-600" />
+                <div className="bg-brand/10 p-1.5 rounded-lg text-brand border border-brand/15">
+                  <ShieldCheck className="w-4 h-4 text-brand" />
                 </div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 font-mono">
                   Listing Status Control
@@ -231,12 +231,12 @@ export default function ListingDetailModal({
                     onClick={() => onUpdateStatus(car.id!, CarStatus.Available)}
                     className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer ${
                       car.status! === CarStatus.Available
-                        ? "bg-blue-50 border-blue-200 text-blue-700 font-semibold"
+                        ? "bg-brand/10 border-brand/20 text-brand-dark font-semibold"
                         : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100"
                     }`}
                     id="status_btn_available">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Available ? "bg-blue-600" : "bg-zinc-400"}`}></span>
+                      className={`w-1.5 h-1.5 rounded-full mb-1 ${car.status! === CarStatus.Available ? "bg-brand" : "bg-zinc-400"}`}></span>
                 <span className="text-[10px] tracking-tight">
                   {CarStatusLabel[CarStatus.Available]}
                 </span>
@@ -279,7 +279,7 @@ export default function ListingDetailModal({
                 Dealer contact info
               </h4>
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 shrink-0">
+                <div className="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center text-brand shrink-0">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
@@ -302,8 +302,8 @@ export default function ListingDetailModal({
                       revealContact === "phone" ? "none" : "phone",
                     )
                   }
-                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
-                  <Phone className="h-4 w-4 mb-1 text-blue-600" />
+                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-brand font-semibold cursor-pointer transition-colors focus:outline-none">
+                  <Phone className="h-4 w-4 mb-1 text-brand" />
                   <span className="text-[11px] leading-tight text-slate-600 font-normal">
                     Call agent
                    </span>
@@ -321,8 +321,8 @@ export default function ListingDetailModal({
                        revealContact === "email" ? "none" : "email",
                      )
                    }
-                   className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-blue-600 font-semibold cursor-pointer transition-colors focus:outline-none">
-                   <Mail className="h-4 w-4 mb-1 text-blue-600" />
+                  className="flex flex-col items-center justify-center py-2.5 px-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-brand font-semibold cursor-pointer transition-colors focus:outline-none">
+                  <Mail className="h-4 w-4 mb-1 text-brand" />
                    <span className="text-[11px] leading-tight text-slate-600 font-normal">
                      Email agent
                    </span>
@@ -335,7 +335,7 @@ export default function ListingDetailModal({
               </div>
 
               {revealContact === "email" && (
-                <div className="text-center text-xs text-blue-800 bg-blue-50 border border-blue-100 p-2.5 rounded-2xl font-mono select-all animate-in fade-in duration-200">
+                <div className="text-center text-xs text-brand-dark bg-brand/10 border border-brand/15 p-2.5 rounded-2xl font-mono select-all animate-in fade-in duration-200">
                   {car.seller?.email}
                 </div>
               )}

@@ -150,7 +150,7 @@ export default function EventLogs({ logs, isLoading }: EventLogsProps) {
                     <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded flex-shrink-0 border leading-none tracking-wider select-none ${
                       isCmsCreate ? 'bg-emerald-950 text-emerald-405 border-emerald-900' :
                       isCmsDelete ? 'bg-rose-950 text-rose-405 border-rose-900' :
-                      isCmsUpdate ? 'bg-blue-950 text-blue-405 border-blue-900' :
+                      isCmsUpdate ? 'bg-brand/10 text-brand/60 border-brand/30' :
                       'bg-zinc-800 text-zinc-400 border-zinc-700'
                     }`}>
                       {log.type}

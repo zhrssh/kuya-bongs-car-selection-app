@@ -39,7 +39,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
       case CarCondition.Excellent:
         return 'bg-emerald-50 text-emerald-700 border-emerald-200/60';
       case CarCondition.VeryGood:
-        return 'bg-blue-50 text-blue-700 border-blue-200/60';
+        return 'bg-brand/10 text-brand-dark border-brand/20';
       case CarCondition.Good:
       default:
         return 'bg-amber-50 text-amber-700 border-amber-200/60';
@@ -52,7 +52,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
       <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 py-4 px-6 z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-all animate-in slide-in-from-bottom duration-300">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-mono">
+            <span className="bg-brand text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold font-mono">
               {comparingCars.length}
             </span>
             <h3 className="font-semibold text-sm text-slate-800">
@@ -87,7 +87,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
             {comparingCars.length >= 1 && (
               <button
                 onClick={() => setIsExpanded(true)}
-                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-full transition shadow-xs cursor-pointer focus:outline-none"
+                className="px-4 py-1.5 bg-brand hover:bg-brand-dark text-white text-xs font-semibold rounded-full transition shadow-xs cursor-pointer focus:outline-none"
                 id="btn_open_compare_specs"
               >
                 Compare Side-by-Side
@@ -117,7 +117,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
 
             <div>
               <h3 className="text-xl font-display font-semibold text-zinc-900 tracking-tight flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-blue-600" />
+                <SlidersHorizontal className="w-5 h-5 text-brand" />
                 Vehicle Specification Comparison
               </h3>
               <p className="text-xs text-zinc-400 mt-1 font-sans">
@@ -174,7 +174,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                     {comparingCars.map((car) => (
                       <td
                         key={car.id}
-                        className="py-3.5 px-4 text-center font-bold text-blue-600 text-sm font-mono"
+                        className="py-3.5 px-4 text-center font-bold text-brand text-sm font-mono"
                       >
                         {formatValue(car.price, true)}
                       </td>
@@ -319,7 +319,7 @@ export const ComparePanel: React.FC<ComparePanelProps> = ({
                             setIsExpanded(false);
                             onSelectCar(car);
                           }}
-                          className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-full transition-all cursor-pointer focus:outline-none shadow-xs"
+                          className="px-4 py-1.5 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-full transition-all cursor-pointer focus:outline-none shadow-xs"
                         >
                           View Details
                         </button>

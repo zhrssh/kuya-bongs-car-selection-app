@@ -145,7 +145,7 @@ export default function SellersTab({
               setFormError("");
               setIsFormOpen(true);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition focus:outline-none self-start md:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-brand hover:bg-brand-dark active:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition focus:outline-none self-start md:self-auto"
             id="btn_add_seller_trigger">
             <Plus className="w-4 h-4" />
             <span>Register New Agent</span>
@@ -176,8 +176,8 @@ export default function SellersTab({
                 {totalSellers}
               </span>
             </div>
-            <div className="bg-blue-50 text-blue-600 p-3 rounded-xl border border-blue-100">
-              <Users className="w-5 h-5 text-blue-600" />
+            <div className="bg-brand/10 text-brand p-3 rounded-xl border border-brand/15">
+              <Users className="w-5 h-5 text-brand" />
             </div>
           </div>
 
@@ -339,7 +339,7 @@ export default function SellersTab({
                               setFormError("");
                               setIsFormOpen(true);
                             }}
-                            className="p-1.5 rounded-md text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                            className="p-1.5 rounded-md text-zinc-400 hover:text-brand hover:bg-brand/10 transition cursor-pointer"
                             title="Edit seller"
                             id={`btn_edit_seller_${index}`}>
                             <Edit className="w-3.5 h-3.5" />
@@ -397,8 +397,8 @@ export default function SellersTab({
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-zinc-150">
                 <div className="flex items-center gap-2">
-                  <div className="bg-blue-50 p-1.5 rounded text-blue-600 border border-blue-100">
-                    <Sparkles className="w-4 h-4 text-blue-600" />
+                  <div className="bg-brand/10 p-1.5 rounded text-brand border border-brand/15">
+                    <Sparkles className="w-4 h-4 text-brand" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm text-zinc-950 font-sans">
@@ -505,7 +505,7 @@ export default function SellersTab({
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition">
+                    className="px-5 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition">
                     {editingSeller ? "Save Changes" : "Register Agent"}
                   </button>
                 </div>

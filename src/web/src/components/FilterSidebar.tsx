@@ -72,7 +72,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={onReset}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors focus:outline-none"
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-brand transition-colors focus:outline-none"
             title="Reset all filters"
           >
             <RotateCcw className="h-3 w-3" />
@@ -100,7 +100,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               placeholder="e.g. Autopilot, AWD, V8..."
               value={filters.searchQuery}
               onChange={(e) => onFilterChange('searchQuery', e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+              className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
             />
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           </div>
@@ -113,7 +113,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <select
             value={filters.make}
             onChange={(e) => onFilterChange('make', e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer"
+            className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer"
           >
             <option value="">All Brands</option>
             {makes.map((make) => (
@@ -132,7 +132,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             value={filters.model}
             onChange={(e) => onFilterChange('model', e.target.value)}
             disabled={modelsForMake.length === 0}
-            className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer disabled:opacity-50"
+            className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer disabled:opacity-50"
           >
             <option value="">
               {filters.make ? `All ${filters.make} Models` : 'All Models'}
@@ -159,7 +159,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   onClick={() => onFilterChange('condition', isSelected ? '' : cond)}
                   className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                      ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
@@ -182,7 +182,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 placeholder="No Min"
                 value={filters.priceMin}
                 onChange={(e) => onFilterChange('priceMin', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
               />
             </div>
             <div>
@@ -192,7 +192,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 placeholder="No Max"
                 value={filters.priceMax}
                 onChange={(e) => onFilterChange('priceMax', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
               />
             </div>
           </div>
@@ -203,7 +203,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onPriceQuickSelect('', '1500000')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.priceMax === '1500000' && filters.priceMin === ''
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -214,7 +214,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onPriceQuickSelect('1500000', '3000000')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.priceMin === '1500000' && filters.priceMax === '3000000'
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -225,7 +225,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onPriceQuickSelect('3000000', '')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.priceMin === '3000000' && filters.priceMax === ''
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -246,7 +246,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 placeholder="No Min"
                 value={filters.yearMin}
                 onChange={(e) => onFilterChange('yearMin', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
               />
             </div>
             <div>
@@ -256,7 +256,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 placeholder="No Max"
                 value={filters.yearMax}
                 onChange={(e) => onFilterChange('yearMax', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
               />
             </div>
           </div>
@@ -267,7 +267,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onYearQuickSelect('2024', '')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.yearMin === '2024' && filters.yearMax === ''
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -278,7 +278,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onYearQuickSelect('2020', '2024')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.yearMin === '2020' && filters.yearMax === '2024'
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -289,7 +289,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onYearQuickSelect('2015', '2019')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.yearMin === '2015' && filters.yearMax === '2019'
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -300,7 +300,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               onClick={() => onYearQuickSelect('', '2015')}
               className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                 filters.yearMin === '' && filters.yearMax === '2015'
-                  ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                  ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                   : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -322,7 +322,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   onClick={() => onFilterChange('bodyType', isSelected ? '' : type)}
                   className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-bold'
+                      ? 'border-brand bg-brand/10 text-brand-dark font-bold'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
@@ -340,7 +340,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <select
             value={filters.fuelType}
             onChange={(e) => onFilterChange('fuelType', e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer"
+            className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer"
           >
             <option value="">All Fuel Types</option>
             {fuelTypes.map((fuel) => (
@@ -364,7 +364,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   onClick={() => onFilterChange('transmission', isSelected ? '' : trans)}
                   className={`text-xs py-2 rounded-full border font-medium transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50/70 text-blue-700 font-semibold'
+                      ? 'border-brand bg-brand/10 text-brand-dark font-semibold'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
                   }`}
                 >

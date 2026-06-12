@@ -189,16 +189,17 @@ export default function App() {
 
           <div className="flex items-center gap-3">
             <img
-              src="https://placehold.co/44x44/2563eb/ffffff?text=KBCS"
-              alt="Kuya Bong's Car Selection"
-              className="rounded-xl"
+              src="/logo.png"
+              alt="KBCS – Kuya Bong's Car Selection"
+              className="w-14 h-14 rounded-xl flex-shrink-0"
             />
+            <div className="w-px h-9 bg-navy/30" />
             <div>
-              <h1 className="font-display font-bold text-lg tracking-tight text-slate-900 leading-none">
-                KUYA BONG'S <span className="font-light text-slate-500">CAR SELECTION</span>
+              <h1 className="font-display font-extrabold text-2xl tracking-[-0.02em] text-navy leading-none">
+                KBCS
               </h1>
-              <span className="text-[10px] font-mono tracking-widest text-blue-600 uppercase block font-bold mt-1">
-                Quality Cars. Fair Prices.
+              <span className="text-xs font-sans font-medium text-slate-500 block mt-1">
+                Kuya Bong's Car Selection
               </span>
             </div>
           </div>
@@ -209,7 +210,7 @@ export default function App() {
               placeholder="Search by brand, model or keyword..."
               value={filters.searchQuery}
               onChange={(e) => handleChange('searchQuery', e.target.value)}
-              className="w-full bg-slate-100 border-none py-2 px-9 rounded-full text-xs outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-800"
+              className="w-full bg-slate-100 border-none py-2 px-9 rounded-full text-xs outline-none focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all text-slate-800"
             />
             <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
 
@@ -231,11 +232,11 @@ export default function App() {
           <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
 
             <div className="relative bg-slate-900 text-white rounded-3xl p-6 sm:p-10 md:p-12 overflow-hidden shadow-sm flex flex-col justify-center min-h-[160px] md:min-h-[180px] border border-slate-800">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-700/10 via-slate-900/40 to-slate-950/90 pointer-events-none" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand/10 via-slate-900/40 to-slate-950/90 pointer-events-none" />
 
               <div className="relative z-10 max-w-xl">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-semibold text-blue-300 mb-3.5 tracking-wide uppercase leading-none">
-                  <Star className="h-3 w-3 text-blue-400" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-[11px] font-semibold text-brand/60 mb-3.5 tracking-wide uppercase leading-none">
+                  <Star className="h-3 w-3 text-brand/65" />
                   BROWSE APPROVED VEHICLES
                 </div>
                 <h2 className="font-display font-bold text-2xl sm:text-3xl leading-tight tracking-tight">
@@ -279,7 +280,7 @@ export default function App() {
                       <Filter className="h-3.5 w-3.5 mr-0.5" />
                       Filters
                       {activeFiltersCount > 0 && (
-                        <span className="bg-blue-600 text-white rounded-full w-4.5 h-4.5 text-[9px] flex items-center justify-center font-bold">
+                        <span className="bg-brand text-white rounded-full w-4.5 h-4.5 text-[9px] flex items-center justify-center font-bold">
                           {activeFiltersCount}
                         </span>
                       )}
@@ -296,7 +297,7 @@ export default function App() {
                             setSortKey(e.target.value as SortKey);
                             setCurrentPage(1);
                           }}
-                          className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-full py-1.5 px-3 pl-8 pr-8 text-xs font-medium text-slate-800 outline-none hover:border-slate-300 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer"
+                          className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-full py-1.5 px-3 pl-8 pr-8 text-xs font-medium text-slate-800 outline-none hover:border-slate-300 focus:bg-white focus:ring-2 focus:ring-brand/20 transition-all cursor-pointer"
                         >
                           <option value="relevance">Featured & Relevance</option>
                           <option value="price-asc">Price: Low to High</option>
@@ -395,7 +396,7 @@ export default function App() {
 
                     <button
                       onClick={handleResetFilters}
-                      className="text-xs text-blue-650 hover:text-blue-700 font-semibold ml-auto px-2 py-1 rounded cursor-pointer transition-colors focus:outline-none"
+                      className="text-xs text-brand hover:text-brand-dark font-semibold ml-auto px-2 py-1 rounded cursor-pointer transition-colors focus:outline-none"
                     >
                       Reset All
                     </button>
@@ -497,7 +498,7 @@ export default function App() {
                                   onClick={() => setCurrentPage(pg)}
                                   className={`w-9 h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition cursor-pointer border ${
                                     isSelected
-                                      ? "bg-blue-600 border-blue-600 text-white shadow-xs font-bold"
+                                      ? "bg-brand border-brand text-white shadow-xs font-bold"
                                       : "bg-white border-zinc-200 text-zinc-650 hover:bg-zinc-50"
                                   }`}
                                 >
@@ -533,7 +534,7 @@ export default function App() {
                     </div>
                     <button
                       onClick={handleResetFilters}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-6 py-2.5 rounded-full transition-all cursor-pointer focus:outline-none"
+                      className="bg-brand hover:bg-brand-dark text-white text-xs font-semibold px-6 py-2.5 rounded-full transition-all cursor-pointer focus:outline-none"
                     >
                       Reset Active Filters
                     </button>

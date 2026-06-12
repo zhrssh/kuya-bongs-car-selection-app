@@ -86,7 +86,7 @@ export default function CarFilterSidebar({
           <div className="flex items-center gap-2">
             <button
               onClick={() => resetFilters()}
-              className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors focus:outline-none"
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-brand transition-colors focus:outline-none"
               title="Reset all filters">
               <RotateCcw className="h-3 w-3" />
               Clear All
@@ -114,7 +114,7 @@ export default function CarFilterSidebar({
                 onChange={(e) =>
                   handleChange("searchQuery", e.target.value)
                 }
-                className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 pl-9 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
               />
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
             </div>
@@ -128,7 +128,7 @@ export default function CarFilterSidebar({
             <select
               value={filters.make}
               onChange={(e) => handleChange("make", e.target.value)}
-              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer">
+              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer">
               <option value="">All Brands</option>
               {uniqueMakes.map((make) => (
                 <option key={make} value={make}>
@@ -147,7 +147,7 @@ export default function CarFilterSidebar({
               value={filters.model}
               onChange={(e) => handleChange("model", e.target.value)}
               disabled={modelsForMake.length === 0}
-              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer disabled:opacity-50">
+              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer disabled:opacity-50">
               <option value="">
                 {filters.make
                   ? `All ${filters.make} Models`
@@ -182,7 +182,7 @@ export default function CarFilterSidebar({
                     }
                     className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                       isSelected
-                        ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                        ? "border-brand bg-brand/10 text-brand-dark font-bold"
                         : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     }`}>
                     {CarConditionLabel[cond]}
@@ -209,7 +209,7 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("priceMin", e.target.value)
                   }
-                  className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
                 />
               </div>
               <div>
@@ -223,7 +223,7 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("priceMax", e.target.value)
                   }
-                  className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
                 />
               </div>
             </div>
@@ -236,7 +236,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.priceMax === "1500000" &&
                   filters.priceMin === ""
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 Under ₱1.5M
@@ -249,7 +249,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.priceMin === "1500000" &&
                   filters.priceMax === "3000000"
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 ₱1.5M - ₱3M
@@ -260,7 +260,7 @@ export default function CarFilterSidebar({
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.priceMin === "3000000" &&
                   filters.priceMax === ""
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 ₱3M+
@@ -285,7 +285,7 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("yearMin", e.target.value)
                   }
-                  className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
                 />
               </div>
               <div>
@@ -299,7 +299,7 @@ export default function CarFilterSidebar({
                   onChange={(e) =>
                     handleChange("yearMax", e.target.value)
                   }
-                  className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800"
+                  className="w-full bg-slate-50 border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800"
                 />
               </div>
             </div>
@@ -311,7 +311,7 @@ export default function CarFilterSidebar({
                 onClick={() => handleYearQuickSelect("2024", "")}
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "2024" && filters.yearMax === ""
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 2024 & Newer
@@ -321,7 +321,7 @@ export default function CarFilterSidebar({
                 onClick={() => handleYearQuickSelect("2020", "2024")}
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "2020" && filters.yearMax === "2024"
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 2020 - 2024
@@ -331,7 +331,7 @@ export default function CarFilterSidebar({
                 onClick={() => handleYearQuickSelect("2015", "2019")}
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "2015" && filters.yearMax === "2019"
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 2015 - 2019
@@ -341,7 +341,7 @@ export default function CarFilterSidebar({
                 onClick={() => handleYearQuickSelect("", "2015")}
                 className={`text-[10px] px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   filters.yearMin === "" && filters.yearMax === "2015"
-                    ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                    ? "border-brand bg-brand/10 text-brand-dark font-bold"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                 }`}>
                 2015 & Older
@@ -365,7 +365,7 @@ export default function CarFilterSidebar({
                     }
                     className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-all cursor-pointer ${
                       isSelected
-                        ? "border-blue-500 bg-blue-50/70 text-blue-700 font-bold"
+                        ? "border-brand bg-brand/10 text-brand-dark font-bold"
                         : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     }`}>
                     {CarBodyTypeLabel[type] || type}
@@ -383,7 +383,7 @@ export default function CarFilterSidebar({
             <select
               value={filters.fuelType}
               onChange={(e) => handleChange("fuelType", e.target.value)}
-              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all font-sans text-slate-800 cursor-pointer">
+              className="w-full bg-slate-55 border border-slate-200 outline-none rounded-xl py-2.5 px-3 text-xs focus:bg-white focus:ring-2 focus:ring-brand/10 transition-all font-sans text-slate-800 cursor-pointer">
               <option value="">All Fuel Types</option>
               {uniqueFuelTypes.map((fuel) => (
                 <option key={fuel} value={fuel}>
@@ -412,7 +412,7 @@ export default function CarFilterSidebar({
                     }
                     className={`text-xs py-2 rounded-full border font-medium transition-all cursor-pointer ${
                       isSelected
-                        ? "border-blue-500 bg-blue-50/70 text-blue-700 font-semibold"
+                        ? "border-brand bg-brand/10 text-brand-dark font-semibold"
                         : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                     }`}>
                     {CarTransmissionLabel[trans]}

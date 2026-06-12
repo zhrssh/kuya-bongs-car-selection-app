@@ -78,7 +78,7 @@ export default function CarTable({ cars, onOpenEdit, onDelete }: CarTableProps) 
                   <span
                     className={`text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-full font-mono uppercase border ${
                       !car.status || car.status === CarStatus.Available
-                        ? "bg-blue-50/60 text-blue-700 border-blue-200"
+                        ? "bg-brand/10 text-brand-dark border-brand/20"
                         : car.status === CarStatus.Sold
                           ? "bg-emerald-50/60 text-emerald-700 border-emerald-200"
                           : "bg-amber-50/60 text-amber-700 border-amber-200"
@@ -97,7 +97,7 @@ export default function CarTable({ cars, onOpenEdit, onDelete }: CarTableProps) 
                   {car.mileage.toLocaleString()} km
                 </td>
 
-                <td className="p-4 font-bold font-mono text-blue-605">
+                <td className="p-4 font-bold font-mono text-brand">
                   ₱{car.price.toLocaleString()}
                 </td>
 

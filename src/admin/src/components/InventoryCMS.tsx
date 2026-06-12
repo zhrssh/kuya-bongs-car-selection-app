@@ -132,7 +132,7 @@ export default function InventoryCMS({
             onClick={() => setIsFilterSidebarOpen(!isFilterSidebarOpen)}
             className={`flex items-center gap-1.5 px-3 py-2 border rounded-lg text-xs font-semibold cursor-pointer transition ${
               isFilterSidebarOpen
-                ? "bg-blue-50 border-blue-200 text-blue-700 font-bold"
+                ? "bg-brand/10 border-brand/20 text-brand-dark font-bold"
                 : "bg-white border-zinc-200 hover:bg-zinc-50 text-zinc-700"
             }`}
             id="toggle_filters_btn">
@@ -155,7 +155,7 @@ export default function InventoryCMS({
 
           <button
             onClick={handleOpenAdd}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-550 text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-xs font-semibold cursor-pointer shadow-xs transition font-sans"
             id="btn_add_car">
             <Plus className="w-3.5 h-3.5 text-white" />
             Add Vehicle
@@ -232,7 +232,7 @@ export default function InventoryCMS({
               </p>
               <button
                 onClick={() => resetFilters()}
-                className="mt-4 text-xs bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition cursor-pointer font-medium"
+                className="mt-4 text-xs bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand-dark transition cursor-pointer font-medium"
                 id="reset_empty_state">
                 Clear Filters
               </button>

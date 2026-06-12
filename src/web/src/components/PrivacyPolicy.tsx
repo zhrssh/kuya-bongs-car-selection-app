@@ -6,7 +6,7 @@ export default function PrivacyPolicy() {
     <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
       <Link
         to="/"
-        className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-semibold mb-8 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-brand hover:text-brand-dark font-semibold mb-8 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Browse
