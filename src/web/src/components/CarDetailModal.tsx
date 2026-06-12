@@ -107,7 +107,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
       <div className="absolute inset-0 cursor-default" onClick={onClose} />
 
       {/* Modal Container */}
-      <div className="relative bg-bg-surface w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-in fade-in zoom-in duration-200">
+      <div className="relative bg-bg-surface w-full max-w-4xl rounded-2xl shadow-2xl overflow-y-auto md:overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-in fade-in zoom-in duration-200">
         {/* Close Button Pin */}
         <button
           onClick={onClose}
@@ -117,7 +117,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         </button>
 
         {/* Left Column: Visuals and Essential Specs (Scrollable on desktop) */}
-        <div className="w-full md:w-1/2 flex flex-col overflow-y-auto border-r border-bg-muted">
+        <div className="w-full md:w-1/2 flex flex-col md:overflow-y-auto border-r border-bg-muted">
           <div className="relative aspect-video md:aspect-4/3 bg-bg-dark shrink-0 group overflow-hidden">
             {/* Main Active Image */}
             <img
@@ -249,7 +249,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         </div>
 
         {/* Right Column: Dynamic Action & Contacts (Scrollable on desktop) */}
-        <div className="w-full md:w-1/2 flex flex-col overflow-y-auto bg-bg-raised p-6 md:p-8">
+        <div className="w-full md:w-1/2 flex flex-col md:overflow-y-auto bg-bg-raised p-6 md:p-8">
           <div className="flex flex-col gap-6">
             {/* Quick Contact buttons block */}
             <div className="bg-bg-surface border border-border rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.01)] flex flex-col gap-4">
