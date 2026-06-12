@@ -15,12 +15,12 @@ import { useCarStore } from "../stores/carStore";
 import { useInventoryStore } from "../stores/inventoryStore";
 
 interface CarFilterSidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export default function CarFilterSidebar({
-  isOpen,
+  isOpen = false,
   onClose,
 }: CarFilterSidebarProps) {
   const filters = useInventoryStore((s) => s.filters);
@@ -71,11 +71,13 @@ export default function CarFilterSidebar({
     updateFilter("yearMax", max);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="lg:col-span-1">
-      <aside className="bg-bg-surface rounded-2xl border border-border p-6 flex flex-col gap-6 transition-all duration-300 shadow-[0_1px_4px_rgba(0,0,0,0.01)]">
+    <aside
+      className={`
+        bg-bg-surface border border-border p-6 flex flex-col gap-6 transition-all duration-300
+        ${isOpen ? 'rounded-none shadow-lg h-full' : 'rounded-2xl shadow-[0_1px_4px_rgba(0,0,0,0.01)]'}
+      `}
+    >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="flex items-center gap-2">
@@ -101,7 +103,7 @@ export default function CarFilterSidebar({
         </div>
 
         {/* Main Form Fields */}
-        <div className="flex flex-col gap-5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1">
+        <div className={`flex flex-col gap-5 overflow-y-auto pr-1 ${isOpen ? 'flex-1 min-h-0' : 'max-h-[calc(100vh-280px)]'}`}>
           {/* Keyword Search */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-bold uppercase tracking-widest text-text-faint">
@@ -408,6 +410,5 @@ export default function CarFilterSidebar({
           </div>
         </div>
       </aside>
-    </div>
   );
 }

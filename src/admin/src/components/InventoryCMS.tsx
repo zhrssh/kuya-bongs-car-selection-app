@@ -1,10 +1,12 @@
 import { CarStatus, FilterState, SortKey, Skeleton, Select } from "@repo/shared";
+import { AnimatePresence, motion } from "motion/react";
 import {
   Grid as GridIcon,
   Plus,
   Search,
   SlidersHorizontal,
   Table,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "@repo/shared";
@@ -82,6 +84,22 @@ export default function InventoryCMS({
     ],
   );
 
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (filters.make) count++;
+    if (filters.model) count++;
+    if (filters.yearMin) count++;
+    if (filters.yearMax) count++;
+    if (filters.priceMin) count++;
+    if (filters.priceMax) count++;
+    if (filters.bodyType) count++;
+    if (filters.fuelType) count++;
+    if (filters.transmission) count++;
+    if (filters.searchQuery) count++;
+    if (filters.condition) count++;
+    return count;
+  }, [filters]);
+
   useEffect(() => {
     fetchCars(currentPage, statusTab, effectiveFilters, sortKey);
   }, [currentPage, statusTab, effectiveFilters, sortKey, refreshKey]);
@@ -137,7 +155,15 @@ export default function InventoryCMS({
             }`}
             id="toggle_filters_btn">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>{isFilterSidebarOpen ? "Hide Filters" : "Show Filters"}</span>
+            <span className="hidden lg:inline">{isFilterSidebarOpen ? "Hide Filters" : "Show Filters"}</span>
+            <span className="lg:hidden flex items-center gap-1.5">
+              Filters
+              {activeFiltersCount > 0 && (
+                <span className="bg-brand text-text-on-brand rounded-full w-4.5 h-4.5 text-[9px] flex items-center justify-center font-bold">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </span>
           </button>
 
           {/* Sorter Selector */}
@@ -182,11 +208,12 @@ export default function InventoryCMS({
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-        {/* Sidebar Filters */}
-        <CarFilterSidebar
-          isOpen={isFilterSidebarOpen}
-          onClose={() => setIsFilterSidebarOpen(false)}
-        />
+        {/* Desktop Sidebar */}
+        {isFilterSidebarOpen && (
+          <div className="hidden lg:block">
+            <CarFilterSidebar onClose={() => setIsFilterSidebarOpen(false)} />
+          </div>
+        )}
         {/* Listings Section */}
         <div
           className={
@@ -208,6 +235,95 @@ export default function InventoryCMS({
                 onChange={(v) => setStatusTab(v as CarStatus)}
               />
           </div>
+
+          {/* Active Filter Chips */}
+          {activeFiltersCount > 0 && (
+            <div className="flex flex-wrap gap-1.5 items-center bg-bg-muted/60 border border-border/50 p-3 rounded-2xl">
+              <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest select-none mr-1.5 leading-none">
+                Active Filters ({activeFiltersCount}):
+              </span>
+
+              {filters.make && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  {filters.make}
+                  <button onClick={() => updateFilter("make", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {filters.model && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  {filters.model}
+                  <button onClick={() => updateFilter("model", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {(filters.priceMin || filters.priceMax) && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  Price: {filters.priceMin ? `₱${Number(filters.priceMin).toLocaleString("en-PH")}` : "₱0"} - {filters.priceMax ? `₱${Number(filters.priceMax).toLocaleString("en-PH")}` : "No Max"}
+                  <button onClick={() => { updateFilter("priceMin", ""); updateFilter("priceMax", ""); }} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {filters.condition && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  Condition: {filters.condition}
+                  <button onClick={() => updateFilter("condition", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {(filters.yearMin || filters.yearMax) && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  Year: {filters.yearMin || "Before"} - {filters.yearMax || "Latest"}
+                  <button onClick={() => { updateFilter("yearMin", ""); updateFilter("yearMax", ""); }} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {filters.bodyType && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  {filters.bodyType}
+                  <button onClick={() => updateFilter("bodyType", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {filters.fuelType && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  {filters.fuelType}
+                  <button onClick={() => updateFilter("fuelType", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {filters.transmission && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  {filters.transmission}
+                  <button onClick={() => updateFilter("transmission", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {filters.searchQuery && (
+                <span className="inline-flex items-center gap-1.5 bg-bg-surface text-xs text-text-body border border-border px-3 py-1 rounded-full">
+                  "{filters.searchQuery}"
+                  <button onClick={() => updateFilter("searchQuery", "")} className="text-text-faint hover:text-text-secondary-hover cursor-pointer">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+
+              <button
+                onClick={() => resetFilters()}
+                className="text-xs text-brand hover:text-brand-dark font-semibold ml-auto px-2 py-1 rounded cursor-pointer transition-colors focus:outline-none"
+              >
+                Reset All
+              </button>
+            </div>
+          )}
 
           {/* Main Stock Content Layout */}
           {isLoading && cars.length === 0 ? (
@@ -250,6 +366,34 @@ export default function InventoryCMS({
         {/* Listings Section Container end */}
       </div>{" "}
       {/* Main Grid Layout end */}
+
+      {/* Mobile Filter Drawer */}
+      <AnimatePresence>
+        {isFilterSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-50 bg-bg-dark/40 backdrop-blur-md flex justify-end lg:hidden"
+          >
+            <div className="absolute inset-0" onClick={() => setIsFilterSidebarOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, x: "100%" }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="relative bg-white w-full max-w-sm h-full shadow-2xl flex flex-col"
+            >
+              <CarFilterSidebar
+                isOpen={isFilterSidebarOpen}
+                onClose={() => setIsFilterSidebarOpen(false)}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <CarCompare isModalOpen={isCompareModalOpen} onModalClose={() => setIsCompareModalOpen(false)} />
       <CarFormModal
         isOpen={isFormOpen}
