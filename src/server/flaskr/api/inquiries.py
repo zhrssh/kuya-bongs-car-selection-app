@@ -70,17 +70,20 @@ def inquire_about_car(car_id):
         sender_email=data.sender_email,
         message=data.message,
         interest_type=data.interest_type,
+        consent_given=data.consent_given,
     )
     db.session.add(lead)
     db.session.commit()
 
     # Send email
     subject = f"New Inquiry: {car.make} {car.model}"
+    consent_label = "Yes" if data.consent_given else "No"
     body = f"""
     New Inquiry for {car.make} {car.model} (ID: {car.id})
 
     From: {data.sender_name} ({data.sender_email})
     Type: {data.interest_type}
+    Consent Given: {consent_label}
 
     Message:
     {data.message}

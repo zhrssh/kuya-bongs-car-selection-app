@@ -8,7 +8,8 @@ def test_inquire_about_car_success(client, car_in_db):
         "sender_name": "Test User",
         "sender_email": "test@example.com",
         "message": "I am interested in this car.",
-        "interest_type": "questions"
+        "interest_type": "questions",
+        "consent_given": True,
     }
 
     env_vars = {
@@ -40,7 +41,8 @@ def test_inquire_about_car_invalid_car(client):
         "sender_name": "Test User",
         "sender_email": "test@example.com",
         "message": "I am interested in this car.",
-        "interest_type": "questions"
+        "interest_type": "questions",
+        "consent_given": True,
     }
 
     response = client.post(f"/api/cars/{test_uuid}/inquire", json=inquiry_data)

@@ -5,3 +5,4 @@ class InquirySchema(BaseModel):
     sender_email: str
     message: str
     interest_type: str
+    consent_given: bool = False

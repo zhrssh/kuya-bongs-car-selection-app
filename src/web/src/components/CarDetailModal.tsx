@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { sendEmail } from "../apiClient";
 import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel, Spinner, ErrorState } from "@repo/shared";
 import { Car } from "../types";
@@ -35,6 +36,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
   const [userPhone, setUserPhone] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [interestType, setInterestType] = useState("questions"); // 'questions' | 'test-drive' | 'finance'
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [messageTouched, setMessageTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -42,6 +46,10 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
     "none" | "phone" | "email"
   >("none");
   const [activeImgIndex, setActiveImgIndex] = useState(0);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = userEmail === "" || emailRegex.test(userEmail);
+  const isMessageValid = message.trim().length > 0;
 
   const carImages = [car.imageUrl, ...(car.images ?? [])];
 
@@ -64,13 +72,13 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
 
   const handleSubmitMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userName || !userEmail || !car) return;
+    if (!userName || !userEmail || !isEmailValid || !isMessageValid || !car) return;
 
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
-      await sendEmail(car, userName, userEmail, message, interestType);
+      await sendEmail(car, userName, userEmail, message, interestType, consentGiven);
       setSubmitSuccess(true);
       // Reset form fields after delay
       setTimeout(() => {
@@ -78,6 +86,9 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         setUserName("");
         setUserPhone("");
         setUserEmail("");
+        setConsentGiven(false);
+        setEmailTouched(false);
+        setMessageTouched(false);
         setSubmitSuccess(false);
       }, 5000);
     } catch (error) {
@@ -386,8 +397,14 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                         placeholder="john@example.com"
                         value={userEmail}
                         onChange={(e) => setUserEmail(e.target.value)}
-                        className="w-full bg-white border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800"
+                        onBlur={() => setEmailTouched(true)}
+                        className={`w-full bg-white border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 transition-all text-slate-800 ${
+                          emailTouched && !isEmailValid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500'
+                        }`}
                       />
+                      {emailTouched && !isEmailValid && (
+                        <p className="text-[10px] text-red-500 mt-1">Please enter a valid email address</p>
+                      )}
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
@@ -407,9 +424,10 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 {/* Message TextArea */}
                 <div>
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                    Your Message
+                    Your Message *
                   </label>
                   <textarea
+                    required
                     rows={3}
                     placeholder={
                       interestType === "test-drive"
@@ -420,8 +438,31 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                     }
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full bg-white border border-slate-200 outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-slate-800"
+                    onBlur={() => setMessageTouched(true)}
+                    className={`w-full bg-white border outline-none rounded-xl py-2 px-3 text-xs focus:ring-2 focus:ring-blue-500/10 transition-all text-slate-800 ${
+                      messageTouched && !isMessageValid ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-blue-500'
+                    }`}
                   />
+                  {messageTouched && !isMessageValid && (
+                    <p className="text-[10px] text-red-500 mt-1">Please enter a message</p>
+                  )}
+                </div>
+
+                {/* Consent checkbox */}
+                <div className="flex items-start gap-2">
+                  <input
+                    id="consent"
+                    type="checkbox"
+                    checked={consentGiven}
+                    onChange={(e) => setConsentGiven(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <label htmlFor="consent" className="text-[11px] text-slate-500 leading-relaxed cursor-pointer select-none">
+                    I consent to my information being shared with the seller for inquiry purposes in accordance with the{' '}
+                    <Link to="/privacy" className="text-blue-600 hover:text-blue-700 underline font-medium">
+                      Privacy Policy
+                    </Link>.
+                  </label>
                 </div>
 
                 {submitError && (
@@ -431,7 +472,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                 {/* Submit button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting || !userName || !userEmail}
+                  disabled={isSubmitting || !userName || !userEmail || !isEmailValid || !isMessageValid || !consentGiven}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-full text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 focus:outline-none">
                   {isSubmitting ? (
                     <>

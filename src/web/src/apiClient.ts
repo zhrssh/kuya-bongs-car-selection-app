@@ -48,6 +48,7 @@ export async function sendEmail(
   userEmail: String,
   message: String,
   interestType: String,
+  consentGiven: boolean,
 ): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/api/cars/${car.id}/inquire`, {
     method: "POST",
@@ -59,6 +60,7 @@ export async function sendEmail(
       sender_email: userEmail,
       message: message,
       interest_type: interestType,
+      consent_given: consentGiven,
     }),
   });
 

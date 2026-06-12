@@ -25,6 +25,7 @@ class Lead(db.Model):
     sender_email: Mapped[str] = mapped_column(String(120), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     interest_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    consent_given: Mapped[bool] = mapped_column(nullable=False, default=False)
     created: Mapped[datetime] = mapped_column(DateTime, default=func.now())
 
     def __repr__(self):
