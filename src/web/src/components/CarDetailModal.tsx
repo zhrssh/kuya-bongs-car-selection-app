@@ -14,7 +14,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { sendEmail } from "../apiClient";
 import { CarBodyTypeLabel, CarConditionLabel, CarFuelTypeLabel, CarTransmissionLabel, Spinner, ErrorState } from "@repo/shared";
 import { Car } from "../types";
@@ -43,29 +43,7 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
   >("none");
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
-  // Generate 4 beautiful images for any car if not defined
-  const carImages = useMemo(() => {
-    if (car.images && car.images.length > 0) {
-      return car.images;
-    }
-    // Generate beautiful and diverse placeholder images from picsum matching the vehicle's unique ID
-    if (car.imageUrl.includes("picsum.photos/seed/")) {
-      const match = car.imageUrl.match(/\/seed\/([^\/]+)/);
-      const baseSeed = match ? match[1] : car.id;
-      return [
-        car.imageUrl,
-        `https://picsum.photos/seed/${baseSeed}-int/800/600`,
-        `https://picsum.photos/seed/${baseSeed}-back/800/600`,
-        `https://picsum.photos/seed/${baseSeed}-side/800/600`,
-      ];
-    }
-    return [
-      car.imageUrl,
-      `https://picsum.photos/seed/${car.id}-interior/800/600`,
-      `https://picsum.photos/seed/${car.id}-dashboard/800/600`,
-      `https://picsum.photos/seed/${car.id}-engine/800/600`,
-    ];
-  }, [car]);
+  const carImages = [car.imageUrl, ...(car.images ?? [])];
 
   const handlePrevImage = () => {
     setActiveImgIndex((prev) => (prev === 0 ? carImages.length - 1 : prev - 1));
@@ -236,33 +214,6 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
                   {car.exteriorColor} over {car.interiorColor}
                 </span>
               </div>
-            </div>
-
-            {/* Vehicle History Check --REMOVED */}
-            {/* <div className="border border-emerald-100 bg-emerald-50/30 rounded-xl p-4 flex flex-col gap-3">
-              <h4 className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider leading-none">
-                <ShieldCheck className="h-4.5 w-4.5 text-emerald-600" />
-                Verified Car History
-              </h4>
-              <ul className="text-xs text-emerald-900 grid grid-cols-2 gap-2 mt-1">
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <strong>{car.history.owners}</strong>{" "}
-                  {car.history.owners === 1 ? "Owner" : "Owners"}
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <strong>{car.history.accidents}</strong> accidents reported
-                </li>
-                <li className="col-span-2 flex items-start gap-1.5 mt-1 border-t border-emerald-100 pt-2">
-                  <span className="text-[10px] uppercase font-bold text-emerald-700 block">
-                    Service Status:{" "}
-                  </span>
-                  <span className="font-normal italic text-slate-700">
-                    {car.history.serviceHistory}
-                  </span>
-                </li>
-              </ul>
             </div>
 
             {/* Description */}
