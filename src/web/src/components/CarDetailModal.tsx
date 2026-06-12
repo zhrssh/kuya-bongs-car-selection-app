@@ -81,7 +81,6 @@ export const CarDetailModal: React.FC<CarDetailModalProps> = ({
         setSubmitSuccess(false);
       }, 5000);
     } catch (error) {
-      console.error("Error submitting inquiry:", error);
       setSubmitError("Failed to send inquiry. Please try again later.");
     } finally {
       setIsSubmitting(false);

@@ -142,7 +142,6 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
         });
       }
     } catch (err) {
-      console.error("Error fetching cars:", err);
       alert("Failed to load cars. Please try again.");
       set({ error: "Failed to load cars. Please try again." });
     } finally {
@@ -167,7 +166,6 @@ export const useInventoryStore = create<InventoryState>((set, get) => ({
         }
       }
     } catch (err) {
-      console.error("Error deleting car:", err);
       alert("Failed to delete car. Please try again.");
       set({ error: "Failed to delete car. Please try again." });
     }

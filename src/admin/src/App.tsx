@@ -75,8 +75,8 @@ export default function App() {
           setIsAdmin(false);
         }
       })
-      .catch((err) => {
-        console.error("Error fetching admin auth status:", err);
+      .catch(() => {
+        alert("Connection error. Please try again.");
         setIsAdmin(false);
       })
       .finally(() => setIsCheckingAuth(false));
@@ -127,8 +127,7 @@ export default function App() {
           );
         }
       })
-      .catch((err) => {
-        console.error("Error fetching logs:", err);
+      .catch(() => {
         alert("Failed to load logs. Please try again.");
       })
       .finally(() => setLogsLoading(false));
@@ -206,7 +205,6 @@ export default function App() {
         setLogRefreshKey((prev) => prev + 1);
       }
     } catch (err) {
-      console.error("Error adding car:", err);
       alert("Failed to add car. Please try again.");
     } finally {
       setIsAddingCar(false);
@@ -241,7 +239,6 @@ export default function App() {
         setRefreshKey((prev) => prev + 1);
       }
     } catch (err) {
-      console.error("Error updating car:", err);
       alert("Failed to update car. Please try again.");
     } finally {
       setIsUpdatingCar(false);

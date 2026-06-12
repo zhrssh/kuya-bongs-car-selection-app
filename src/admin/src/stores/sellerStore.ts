@@ -33,7 +33,6 @@ export const useSellerStore = create<SellerStore>((set, get) => ({
         }
       }
     } catch (err) {
-      console.error("Error fetching sellers:", err);
       alert("Failed to load sellers. Please try again.");
       set({ error: "Failed to load sellers. Please try again." });
     } finally {
@@ -56,7 +55,6 @@ export const useSellerStore = create<SellerStore>((set, get) => ({
         alert(data.message || "Failed to add seller.");
       }
     } catch (err) {
-      console.error("Error adding seller:", err);
       alert("Failed to add seller. Please try again.");
     }
   },
@@ -79,7 +77,6 @@ export const useSellerStore = create<SellerStore>((set, get) => ({
         alert(data.message || "Failed to update seller.");
       }
     } catch (err) {
-      console.error("Error updating seller:", err);
       alert("Failed to update seller. Please try again.");
     }
   },
@@ -98,7 +95,6 @@ export const useSellerStore = create<SellerStore>((set, get) => ({
         alert("Failed to delete seller.");
       }
     } catch (err) {
-      console.error("Error deleting seller:", err);
       alert("Failed to delete seller. Please try again.");
     }
   },
@@ -126,7 +122,6 @@ export const useSellerStore = create<SellerStore>((set, get) => ({
         alert(data.message || "Failed to toggle seller status.");
       }
     } catch (err) {
-      console.error("Error toggling seller status:", err);
       alert("Failed to toggle seller status. Please try again.");
     }
   },

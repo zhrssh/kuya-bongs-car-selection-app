@@ -93,10 +93,10 @@ export default function CarFormModal({
         credentials: "include",
       });
       if (!res.ok) {
-        console.error("Failed to delete uploaded file:", url);
+        alert("Failed to delete uploaded file.");
       }
     } catch (err) {
-      console.error("Error deleting uploaded file:", err);
+      alert("Failed to delete uploaded file. Please try again.");
     }
   };
 
