@@ -327,7 +327,7 @@ export default function App() {
               </button>
             </nav>
 
-            <div className="flex items-center gap-2 border-t sm:border-t-0 sm:border-l border-border/65 pt-3 sm:pt-0 sm:pl-4">
+            <div className="flex items-center gap-2 sm:border-l border-border/65 sm:pl-4">
               {isAdmin ? (
                 <div className="flex items-center gap-2">
                   <span className="hidden sm:flex items-center gap-1.5 text-[10px] uppercase font-bold font-mono tracking-wider bg-success-bg text-success-text px-2.5 py-1 rounded-full border border-success-border shadow-xs header-status-tag">
